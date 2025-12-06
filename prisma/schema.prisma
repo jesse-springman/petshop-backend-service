@@ -9,7 +9,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model customer {
+model Customer {
   id String  @id @default(uuid()) 
   customer_name String 
   pet_name String

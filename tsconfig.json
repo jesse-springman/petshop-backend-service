@@ -1,5 +1,11 @@
 {
   "compilerOptions": {
+    "paths": {
+      "src/*": ["src/*"],
+      "prisma/*": ["prisma/*"],
+      "infra/*": ["infra/*"],
+      "use-cases/*": ["src/use-cases/*"]
+    },
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "resolvePackageJsonExports": true,
@@ -23,5 +29,7 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false
-  }
+  },
+
+  
 }

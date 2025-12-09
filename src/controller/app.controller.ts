@@ -1,17 +1,36 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Post } from '@nestjs/common';
+import { CreateCustomerBody } from 'src/DTOs/create.customer';
+import { PostCustomer } from 'src/use-cases/post-customer';
 import { GetCustomer } from 'src/use-cases/get-customer';
 
-@Controller('customers')
+
+@Controller()
 export class AppController {
   constructor
-    (private readonly getCustomer : GetCustomer,
+    (private readonly postCustomer : PostCustomer,
+     private readonly getCustomer : GetCustomer
     ) { }
 
 
+  @HttpCode(201)  
+  @Post('cadastro')
+    async insertCustomersData(@Body()Body: CreateCustomerBody){
+      const { customer_name, pet_name } = Body
+      await this.postCustomer.execute(customer_name, pet_name );
 
-  @Get()
-    async customersData(){
-      await this.getCustomer.execute();
+      return{
+        message : 'Cliente Cadastrado com sucesso',
+        customer_name,
+        pet_name
+      }
+    }
+
+
+  @Get('customers')
+    async allCustomersData(){
+      const allCustomers = await this.getCustomer.findAllClient();
+      return allCustomers ;
+      
     }
   
 }

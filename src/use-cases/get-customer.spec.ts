@@ -1,51 +1,43 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { GetCustomer } from "./get-customer";
+import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication } from '@nestjs/common';
+import request from 'supertest';
+import { AppModule } from 'src/app.module';
 import { PrismaService } from "prisma/database/prisma.service";
-import e from "express";
+import { mockPrisma } from '../../test/prisma.mock';
 
-describe('GetCustomer', ()=>{
-    let dataClient : GetCustomer;
-    let prisma : PrismaService
 
-    beforeEach(async()=>{
-        const module: TestingModule = await Test.createTestingModule({
-            providers:[
-                GetCustomer,
-                {
-                    provide: PrismaService,
-                    useValue:{
-                        customer:{
-                            create: jest.fn(),
-                        },
-                    },
-                },
-            ],
-        }).compile();
+describe('GET /customers (com Prisma mockado)', () => {
+  let app: INestApplication;
 
-        dataClient = module.get(GetCustomer);
-        prisma = module.get(PrismaService)
-    });
+  beforeAll(async () => {
+    mockPrisma.customer.findMany.mockResolvedValue([
+      { id: 1, customer_name: 'Jesse', pet_name: 'Cacau' },
+    ]);
 
-    it('must create a client with with success', async()=>{
-        const fakeClient = {
-            id: '543',
-            customer_name: 'Jesse Springman',
-            pet_name:'Cacau',
-             created_at: new Date(),
-        };
-
-        jest.spyOn(prisma.customer, 'create').mockResolvedValue(fakeClient);
-
-        const result = await dataClient.execute();
-
-        expect(result).toEqual(fakeClient);
-        expect(result)
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
     })
+      .overrideProvider(PrismaService)
+      .useValue(mockPrisma)
+      .compile();
 
+    app = moduleFixture.createNestApplication();
+    await app.init();
+  });
 
-    it('must throw InternalServerError in failure', async()=>{
-        jest.spyOn(prisma.customer, 'create').mockRejectedValue(new Error('DB error'));
+  afterAll(async () => {
+    await app.close();
+  });
 
-        await expect (dataClient.execute()).rejects.toThrow('Um erro inesperado ocorreu')
-    })
-})  
+  it('deve retornar um array de customers', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/customers')
+      .expect(200);
+
+    expect(response.body).toEqual([
+      { id: 1, customer_name: 'Jesse', pet_name: 'Cacau' },
+    ]);
+
+    expect(mockPrisma.customer.findMany).toHaveBeenCalledTimes(1);
+  });
+});

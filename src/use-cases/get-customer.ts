@@ -1,32 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import { InternalServerError } from 'infra/erros';
-import { PrismaService } from 'prisma/database/prisma.service';
+import { Get, Injectable } from "@nestjs/common";
+import { PrismaService } from "prisma/database/prisma.service";
 
 @Injectable()
 export class GetCustomer {
+    constructor(private readonly prisma: PrismaService){}
 
-    constructor(private readonly prisma: PrismaService) { }
-
-    async execute() {
-
-        try {
-            const client = await this.prisma.customer.create({
-                data: {
-                    customer_name: 'Jessé Springman',
-                    pet_name: 'Cacau'
-                }
-            })
-            return client
-        }
-
-        catch (error: any) {
-            const erroService = new InternalServerError({
-                cause: error,
-                statusCode: error.status
-            });
-
-            throw erroService;
-        }
+    async findAllClient() {
+     const customers = await this.prisma.customer.findMany();
+       return customers
     }
-
 }

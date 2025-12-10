@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { AppModule } from 'src/app.module';
+import { AppModule } from 'src/back-end/app.module';
 import { PrismaService } from "prisma/database/prisma.service";
-import { mockPrisma } from '../../test/prisma.mock';
+import { mockPrisma } from '../../../test/prisma.mock';
 
 
 describe('GET /customers (com Prisma mockado)', () => {

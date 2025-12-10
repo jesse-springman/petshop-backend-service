@@ -4,7 +4,7 @@
       "src/*": ["src/*"],
       "prisma/*": ["prisma/*"],
       "infra/*": ["infra/*"],
-      "use-cases/*": ["src/use-cases/*"]
+      "use-cases/*": ["src/back-end/use-cases/*"]
     },
     "module": "nodenext",
     "moduleResolution": "nodenext",

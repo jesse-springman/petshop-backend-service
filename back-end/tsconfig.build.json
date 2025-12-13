@@ -1,0 +1,27 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["src/**/*.ts"],
+  "exclude": [
+    "node_modules",
+    "test",
+    "dist",
+    "**/*spec.ts",
+    "./front-end/**/*"
+  ],
+  "compilerOptions": {
+    "baseUrl": "./",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "resolvePackageJsonExports": true,
+    "paths": {
+      "dto/*": ["src/dto/*"],
+      "use-cases/*": ["src/use-cases/*"],
+      "service/*": ["src/service/*"],
+      "controller/*": ["src/controller/*"],
+      "prisma/*": ["prisma/*"],
+      "infra/*": ["infra/*"]
+    }
+  },
+
+  
+}

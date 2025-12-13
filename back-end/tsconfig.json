@@ -35,6 +35,6 @@
   },
 
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist", "test", "**/*spec.ts", "**/*.tsx", "../front-end"]
+  "exclude": ["node_modules", "dist", "test", "**/*.tsx", "../front-end"]
   
 }

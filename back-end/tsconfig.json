@@ -1,14 +1,5 @@
 {
   "compilerOptions": {
-    "paths": {
-      "src/*": ["./src/*"],
-      "prisma/*": ["./prisma/*"],
-      "infra/*": ["./infra/*"],
-      "use-cases/*": ["./src/use-cases/*"],
-      "dto/*": ["./src/dto/*"],
-      "service*":["./src/service/*"],
-      "controller/*": ["./src/controller/*"]
-    },
     "module": "commonjs",
     "moduleResolution": "node",
     "esModuleInterop": true,
@@ -21,7 +12,6 @@
     "target": "ES2023",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
     "types": ["node", "jest"],
     "lib": ["es2021"],
     "incremental": true,

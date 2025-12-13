@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpCode, Post } from '@nestjs/common';
-import { CreateCustomerBody } from 'dto/create.customer';
-import { PostCustomer } from 'use-cases/post-customer';
-import { GetCustomer } from 'use-cases/get-customer';
+import { CreateCustomerBody } from '../dto/create.customer';
+import { PostCustomer } from '../use-cases/post-customer';
+import { GetCustomer } from '../use-cases/get-customer';
 
 
 @Controller()

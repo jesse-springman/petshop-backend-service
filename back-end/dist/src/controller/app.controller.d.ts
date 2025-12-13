@@ -1,6 +1,6 @@
-import { CreateCustomerBody } from 'dto/create.customer';
-import { PostCustomer } from 'use-cases/post-customer';
-import { GetCustomer } from 'use-cases/get-customer';
+import { CreateCustomerBody } from '../dto/create.customer';
+import { PostCustomer } from '../use-cases/post-customer';
+import { GetCustomer } from '../use-cases/get-customer';
 export declare class AppController {
     private readonly postCustomer;
     private readonly getCustomer;

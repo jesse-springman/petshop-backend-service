@@ -12,7 +12,9 @@
     "target": "ES2023",
     "sourceMap": true,
     "outDir": "./dist",
+    "rootDir": "./src" ,
     "types": ["node", "jest"],
+    "typeRoots": ["./node_modules/@types", "./src"], 
     "lib": ["es2021"],
     "incremental": true,
     "strict": true,
@@ -25,6 +27,6 @@
   },
 
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist", "test", "**/*.tsx", "../front-end"]
+  "exclude": ["node_modules", "dist", "src/test", "**/*.tsx", "../front-end"]
   
 }

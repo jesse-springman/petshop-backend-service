@@ -4,7 +4,7 @@
     "install:all": "npm --prefix back-end install && npm --prefix front-end install",
 
     "dev": "npm-run-all -p dev:back dev:front",
-    "dev:back": "npm --prefix back-end run start:dev",
+    "dev:back": "npm --prefix back-end run dev",
     "dev:front": "npm --prefix front-end run dev",
 
     "build": "npm-run-all build:back build:front",
@@ -12,7 +12,7 @@
     "build:front": "npm --prefix front-end run build",
 
     "start": "npm-run-all -p start:back start:front",
-    "start:back": "npm --prefix back-end run start:prod",
+    "start:back": "npm --prefix back-end run start",
     "start:front": "npm --prefix front-end run start",
 
     "test": "npm --prefix back-end run test"

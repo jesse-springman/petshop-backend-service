@@ -5,22 +5,26 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AppModule = void 0;
-const common_1 = require("@nestjs/common");
-const app_controller_1 = require("./controller/app.controller");
-const app_service_1 = require("./service/app.service");
-const prisma_service_1 = require("../prisma/database/prisma.service");
-const post_customer_1 = require("./use-cases/post-customer");
-const get_customer_1 = require("./use-cases/get-customer");
-let AppModule = class AppModule {
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-exports.AppModule = AppModule;
-exports.AppModule = AppModule = __decorate([
-    (0, common_1.Module)({
-        imports: [],
-        controllers: [app_controller_1.AppController],
-        providers: [app_service_1.AppService, prisma_service_1.PrismaService, post_customer_1.PostCustomer, get_customer_1.GetCustomer],
-    })
-], AppModule);
-//# sourceMappingURL=app.module.js.map
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.GetCustomer = void 0;
+const common_1 = require("@nestjs/common");
+const prisma_service_1 = require("../prisma/database/prisma.service");
+let GetCustomer = class GetCustomer {
+    prisma;
+    constructor(prisma) {
+        this.prisma = prisma;
+    }
+    async findAllClient() {
+        const customers = await this.prisma.customer.findMany();
+        return customers;
+    }
+};
+exports.GetCustomer = GetCustomer;
+exports.GetCustomer = GetCustomer = __decorate([
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+], GetCustomer);
+//# sourceMappingURL=get-customer.js.map

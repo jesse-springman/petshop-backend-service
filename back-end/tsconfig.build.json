@@ -9,6 +9,8 @@
     "./front-end/**/*"
   ],
   "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
     "baseUrl": "./",
     "module": "nodenext",
     "moduleResolution": "nodenext",

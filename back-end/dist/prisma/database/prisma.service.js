@@ -13,6 +13,7 @@ let PrismaService = class PrismaService extends client_1.PrismaClient {
     async onModuleInit() {
         await this.$connect();
         console.log('DATABASE_URL API:', process.env.DATABASE_URL);
+        console.log(process.env.ttt);
     }
     async onModuleDestroy() {
         await this.$disconnect();

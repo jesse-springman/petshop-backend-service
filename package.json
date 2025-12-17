@@ -11,10 +11,7 @@
     "build:back": "npm --prefix back-end run build",
     "build:front": "npm --prefix front-end run build",
 
-    "start": "npm-run-all -p start:back start:front",
-    "start:back": "npm --prefix back-end run start",
-    "start:front": "npm --prefix front-end run start",
-
+    "start": "node back-end/dist/main.js",
     "test": "npm --prefix back-end run test"
   },
   "devDependencies": {

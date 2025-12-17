@@ -10,7 +10,7 @@ async function bootstrap() {
         whitelist: true,
         forbidNonWhitelisted: true,
     }));
-    const port = 3001;
+    const port = Number(process.env.PORT) || 3001;
     await app.listen(port, '0.0.0.0');
     console.log(`🚀 Server running on http://localhost:${port}`);
 }

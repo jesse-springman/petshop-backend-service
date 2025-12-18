@@ -7,7 +7,7 @@ export class GetCustomer {
 
     async findAllClient() {
      const customers = await this.prisma.customer.findMany();
-     const tt = process.env.VERCEL_FORCE_NO_BUILD_CACHE
+    
        return customers
     }
 }

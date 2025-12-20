@@ -2,7 +2,9 @@
 
 
 type BtProps = {
-    children: React.ReactNode
+    children: React.ReactNode;
+    type?:"button" | "submit" | "reset";
+    disabled?: boolean;
 };
 
 export default function Button({children}: BtProps) {

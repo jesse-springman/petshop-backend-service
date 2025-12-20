@@ -1,8 +1,12 @@
 "use client";
 
 import Button from '@/components/Button'
+import { useRouter } from 'next//navigation';
 
 export default function HomePage() {
+
+  const router = useRouter();
+
   return (
     <main className='min-h-screen bg-gradient-to-b from[#0B0E11] to-[#1A1D22] flex flex-col items-center justify-center p-4 md:p-8'>
 
@@ -26,9 +30,12 @@ export default function HomePage() {
 
 
         <div className="flex flex-col gap-4">
-          <Button>
+          <button
+            onClick={()=> router.push("/cadastro")}
+            className='bg-amber-500 text-black hover:bg-amber-600 px-8 py-4 roundend-xl font-semibold transition duration-300 shadow-md hover:shadow-lg'
+          >
             Cadastro
-          </Button>
+          </button>
 
           <Button>
             Clientes Cadastrados

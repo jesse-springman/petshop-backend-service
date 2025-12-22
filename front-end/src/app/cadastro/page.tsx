@@ -37,6 +37,17 @@ export default function FormCadastro(){
                     namePet
                 })
             });
+
+
+            if(response.ok){
+            setMessage("Cadastro realizado com sucesso!");
+            setNameClient("");
+            setNamePet("");
+            setTimeout(()=> router.push("/"),7000);
+            }else{
+            setMessage("Erro ao cadastrar. Tente novamente.");
+            }
+
         }
 
         catch (error) {

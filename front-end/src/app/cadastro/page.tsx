@@ -80,7 +80,7 @@ export default function FormCadastro(){
                         />
 
 
-                        <label className="block text-gray-300 mb-2 text-lg">
+                        <label className="block mt-5 text-gray-300 mb-2 text-lg">
                             Nome do Pet
                         </label>
 
@@ -107,11 +107,10 @@ export default function FormCadastro(){
                     </Button>
                 </form>
 
-                <button
+                <Button 
                     onClick={() => router.push('/')}
-                    className="mt-6 text-gray-400 hover:text-amber-400 text-center w-full"
-                >
-                    ← Voltar para início</button>
+                    >
+                    ← Voltar para início</Button>
             </div>
         </main>
     )

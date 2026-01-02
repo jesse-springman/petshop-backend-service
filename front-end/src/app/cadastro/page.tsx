@@ -1,10 +1,10 @@
 'use client';
 
-import React, { use, useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/Button';
 
-export default function POST() {
+export default function FormCadastro() {
   const [nameClient, setNameClient] = useState('');
   const [namePet, setNamePet] = useState('');
   const [loading, setLoading] = useState(false);

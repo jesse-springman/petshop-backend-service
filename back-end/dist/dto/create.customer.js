@@ -19,14 +19,14 @@ exports.CreateCustomerBody = CreateCustomerBody;
 __decorate([
     (0, class_validator_1.Length)(5, 10),
     (0, class_validator_1.IsNotEmpty)({
-        message: 'this field can not empty'
+        message: 'this field can not empty',
     }),
     __metadata("design:type", String)
 ], CreateCustomerBody.prototype, "customer_name", void 0);
 __decorate([
     (0, class_validator_1.Length)(3, 10),
     (0, class_validator_1.IsNotEmpty)({
-        message: 'this field can not empty'
+        message: 'this field can not empty',
     }),
     __metadata("design:type", String)
 ], CreateCustomerBody.prototype, "pet_name", void 0);

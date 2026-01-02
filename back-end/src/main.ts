@@ -6,6 +6,17 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  const allowedOrigins =
+    process.env.NODE_ENV === 'production'
+      ? ['petshopbackendservice.vercel.app']
+      : ['http://localhost:3000'];
+
+  app.enableCors({
+    origin: allowedOrigins,
+    methods: 'GET, POST, PATCH, DELETE, OPTIONS',
+    allowedHeaders: 'Content-Type, Authorization',
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -13,9 +24,7 @@ async function bootstrap() {
     }),
   );
 
-  const port = Number(process.env.PORT) || 3001;
-
-  await app.listen(port, '0.0.0.0');
-  console.log(`🚀 Server running on http://localhost:${port}`);
+  await app.listen(3001);
+  console.log(`🚀 Server running on http://localhost:3001`);
 }
 bootstrap();

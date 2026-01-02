@@ -30,7 +30,7 @@ let AppController = class AppController {
         return {
             message: 'Cliente Cadastrado com sucesso',
             customer_name,
-            pet_name
+            pet_name,
         };
     }
     async allCustomersData() {

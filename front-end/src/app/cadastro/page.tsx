@@ -4,7 +4,7 @@ import React, { use, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/Button';
 
-export default function FormCadastro() {
+export default function POST() {
   const [nameClient, setNameClient] = useState('');
   const [namePet, setNamePet] = useState('');
   const [loading, setLoading] = useState(false);
@@ -48,7 +48,7 @@ export default function FormCadastro() {
     } catch (error) {
       setMessage('Erro na conexão com o servidor.');
     } finally {
-      setLoading(true);
+      setLoading(false);
     }
   };
 

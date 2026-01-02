@@ -8,7 +8,7 @@ async function bootstrap() {
 
   const allowedOrigins =
     process.env.NODE_ENV === 'production'
-      ? ['petshopbackendservice.vercel.app']
+      ? ['https://petshopbackendservice-peach.vercel.app']
       : ['http://localhost:3000'];
 
   app.enableCors({

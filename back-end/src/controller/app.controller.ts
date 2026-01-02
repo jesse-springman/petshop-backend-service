@@ -23,7 +23,7 @@ export class AppController {
     };
   }
 
-  @Get('customers')
+  @Get('clientes')
   async allCustomersData() {
     const allCustomers = await this.getCustomer.findAllClient();
     return allCustomers;

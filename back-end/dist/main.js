@@ -7,7 +7,7 @@ const common_1 = require("@nestjs/common");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     const allowedOrigins = process.env.NODE_ENV === 'production'
-        ? ['petshopbackendservice.vercel.app']
+        ? ['https://petshopbackendservice-peach.vercel.app']
         : ['http://localhost:3000'];
     app.enableCors({
         origin: allowedOrigins,

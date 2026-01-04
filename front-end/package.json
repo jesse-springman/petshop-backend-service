@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "test": "jest",
+    "test:clientes": "jest __tests__/get-clientes.spec.tsx",
+    "test:cadastro": "jest __tests__/post-cadastro.spec.ts",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
@@ -19,6 +21,8 @@
     "@babel/preset-env": "^7.28.5",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.1",
+    "@testing-library/user-event": "^14.6.1",
     "@types/jest": "^30.0.0",
     "@types/node": "^20",
     "@types/react": "^19",

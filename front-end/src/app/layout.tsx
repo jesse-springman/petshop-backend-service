@@ -1,24 +1,18 @@
-import "./globals.css";
-import { Orbitron } from "next/font/google";
-import { Inter } from 'next/font/google';
+// src/app/layout.tsx
+'use client';
+import './globals.css';
+import { UserProvider } from '@/context/UserContext';
 
-const inter = Inter({ subsets: ['latin'] });
-const orbitron = Orbitron({
-  subsets: ["latin"],
-  weight: ["400", "600", "700"],
-});
-
-
-
-export const metadata = {
-  title: "Petshop",
-  description: "Front-end da aplicação",
-};
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="pt-BR">
-      <body className={`${inter.className} bg-[#0B0E11] text-gray-200 min-h-screen`}>{children}</body>
+      <body className="bg-gradient-to-b from-[#0B0E11] to-[#1A1D22] min-h-screen text-gray-200 antialiased">
+        <UserProvider>{children}</UserProvider>
+      </body>
     </html>
   );
 }

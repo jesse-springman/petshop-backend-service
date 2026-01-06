@@ -108,7 +108,7 @@ export default function ClientsList() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#0B0E11] to-[#1A1D22] flex items-center justify-center p-4">
-      <div className="bg-[#1A1D22] p-8 md:p-12 rounded-2xl shadow-2xl border border-amber-500/20 max-w-9/12 w-full">
+      <div className="bg-[#1A1D22] p-8 md:p-12 rounded-2xl border-4border-amber-500/50 shadow-2xl [box-shadow:_0_0_40px_rgba(251,191,36,0.2)] max-w-9/12 w-full">
         <div>
           <button
             onClick={() => {
@@ -139,7 +139,7 @@ export default function ClientsList() {
         {!loading && !erro && clients.length > 0 && (
           <div className="w-full overflow-x-auto">
             <table className="w-full table-fixed min-w-full divide-y divide-amber-500 shadow-2xl border border-amber-500/20">
-              <thead className="bg-[#0B0E11]">
+              <thead className="bg-[#0B0E11] ">
                 <tr>
                   <th className="w-1/3 px-6 py-4 text-left text-sm text-xl text-amber-300 uppercase tracking-wider">
                     Nome do Dono

@@ -57,7 +57,7 @@ export default function FormCadastro() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#0B0E11] to-[#1A1D22] flex items-center justify-center p-4">
-      <div className="bg-[#1A1D22] p-8 md:p-12 rounded-2xl shadow-2xl border border-amber-500/20 max-w-md w-full">
+      <div className="bg-[#1A1D22] p-8 md:p-12 rounded-2xl shadow-2xl [box-shadow:_0_0_40px_rgba(251,191,36,0.2)] border-amber-500/20   max-w-md w-full">
         <h1 className="text-4xl font-bold text-amber-400 text-center mb-8">
           Cadastro de Cliente
         </h1>

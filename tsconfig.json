@@ -1,6 +1,4 @@
 {
   "files": [],
-  "references": [
-    { "path": "./back-end" }
-  ]
+  "references": [{ "path": "./back-end" }]
 }

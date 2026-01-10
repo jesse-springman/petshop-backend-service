@@ -25,7 +25,7 @@ export default function HomePage() {
     try {
       const url = process.env.NEXT_PUBLIC_API_URL;
 
-      const response = await fetch(`${url}/login`, {
+      const response = await fetch(`${url}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nameClient }),
@@ -35,6 +35,7 @@ export default function HomePage() {
       if (response.ok) {
         login(data.userName || nameClient.toLowerCase());
         setErrorAuth('');
+        setIsLoggedIn(true);
       } else {
         setErrorAuth('Acesso não autorizado');
       }
@@ -111,7 +112,7 @@ export default function HomePage() {
             )}
 
             {errorAuth && (
-              <h2 className="text-5xl font-bold text-red-400 mb-4 drop-shadow-2xl">
+              <h2 className="m-4 text-center text-2xl font-bold text-red-400 mb-4 drop-shadow-2xl">
                 {errorAuth}
               </h2>
             )}

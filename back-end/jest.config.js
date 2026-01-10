@@ -12,4 +12,5 @@ module.exports = {
   injectGlobals: true,
   testMatch: ['**/__tests__/**/*.ts', '**/?(*.)+(spec|test).ts'],
   collectCoverageFrom: ['src/**/*.{ts,tsx}', '!src/**/*.d.ts'],
+  setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
 };

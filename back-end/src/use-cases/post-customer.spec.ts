@@ -1,52 +1,51 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { PostCustomer } from "./post-customer";
-import { PrismaService } from "../prisma/database/prisma.service";
+import { Test, TestingModule } from '@nestjs/testing';
+import { PostCustomer } from './post-customer';
+import { PrismaService } from '../prisma/database/prisma.service';
 
+describe('PostCustomer', () => {
+  let dataClient: PostCustomer;
+  let prisma: PrismaService;
 
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        PostCustomer,
+        {
+          provide: PrismaService,
+          useValue: {
+            customer: {
+              create: jest.fn(),
+            },
+          },
+        },
+      ],
+    }).compile();
 
-describe('PostCustomer', ()=>{
-    let dataClient : PostCustomer;
-    let prisma : PrismaService
+    dataClient = module.get(PostCustomer);
+    prisma = module.get(PrismaService);
+  });
 
-    beforeEach(async()=>{
-        const module: TestingModule = await Test.createTestingModule({
-            providers:[
-                PostCustomer,
-                {
-                    provide: PrismaService,
-                    useValue:{
-                        customer:{
-                            create: jest.fn(),
-                        },
-                    },
-                },
-            ],
-        }).compile();
+  it('must create a client with with success', async () => {
+    const fakeClient = {
+      id: '543',
+      customer_name: 'Jesse Springman',
+      pet_name: 'Cacau',
+      created_at: new Date(),
+    };
 
-        dataClient = module.get(PostCustomer);
-        prisma = module.get(PrismaService)
-    });
+    jest.spyOn(prisma.customer, 'create').mockResolvedValue(fakeClient);
 
-    it('must create a client with with success', async()=>{
-        const fakeClient = {
-            id: '543',
-            customer_name: 'Jesse Springman',
-            pet_name:'Cacau',
-             created_at: new Date(),
-        };
+    const result = await dataClient.execute('Jessé', 'Cacau');
 
-        jest.spyOn(prisma.customer, 'create').mockResolvedValue(fakeClient);
+    expect(result).toEqual(fakeClient);
 
-        const result = await dataClient.execute("Jessé", "Cacau");
-
-        expect(result).toEqual(fakeClient);
-        expect(prisma.customer.create).toHaveBeenLastCalledWith({
-            data:{
-                customer_name: "Jessé",
-                pet_name: "Cacau"
-            }
-        })
-    })
-
-
-})  
+    expect(prisma.customer.create).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        data: {
+          customer_name: 'Jessé',
+          pet_name: 'Cacau',
+        },
+      }),
+    );
+  });
+});

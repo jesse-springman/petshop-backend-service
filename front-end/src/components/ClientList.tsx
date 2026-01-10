@@ -23,13 +23,12 @@ const formatDate = (dateString: string) => {
   }).format(new Date(dateString));
 };
 
-const admin = process.env.ADMINS;
-
 export default function ClientsList() {
   const [clients, setClient] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState('');
   const [editClient, setEditClient] = useState<Client | null>(null);
+  const [dataUpdated, setDataUpdated] = useState(false);
   const [editForm, setEditForm] = useState({ customer_name: '', pet_name: '' });
   const router = useRouter();
   const { login, userName, logout, isAdmin } = useUser();
@@ -61,12 +60,13 @@ export default function ClientsList() {
         body: JSON.stringify(editForm),
       });
 
-      if (response.ok) {
+      if (response.status === 204 || response.ok) {
         setClient(
           clients.map((c) =>
             c.id === editClient.id ? { ...c, ...editForm } : c,
           ),
         );
+        setDataUpdated(true);
         handleCancel();
       } else {
         alert('Erro em atualizar');
@@ -115,7 +115,7 @@ export default function ClientsList() {
               logout();
               router.push('/');
             }}
-            className="text-red-500 hover:text-red-300 font-medium"
+            className="text-red-500 hover:text-red-300 font-medium  cursor-pointer"
           >
             Sair
           </button>
@@ -202,6 +202,7 @@ export default function ClientsList() {
                           >
                             Salvar
                           </button>
+
                           <button
                             onClick={handleCancel}
                             className="text-red-400 hover:text-red-300 font-medium cursor-pointer"
@@ -236,6 +237,12 @@ export default function ClientsList() {
                 ))}
               </tbody>
             </table>
+
+            {dataUpdated && (
+              <h2 className="text-2xl m-8 text-center text-green-400">
+                Cliente Atualizado com Sucesso
+              </h2>
+            )}
           </div>
         )}
 

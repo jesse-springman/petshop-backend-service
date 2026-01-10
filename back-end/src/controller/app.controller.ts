@@ -1,14 +1,54 @@
-import { Body, Controller, Get, HttpCode, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  NotFoundException,
+  Patch,
+  Post,
+  UnauthorizedException,
+  Param,
+  HttpStatus,
+} from '@nestjs/common';
 import { CreateCustomerBody } from '../dto/create.customer';
+import { UpdateCustomerDto } from '../dto/update-customer';
 import { PostCustomer } from '../use-cases/post-customer';
 import { GetCustomer } from '../use-cases/get-customer';
+import { PatchCustomer } from '../use-cases/patch-customer';
 
 @Controller()
 export class AppController {
+  private readonly admins = (process.env.ADMINS || '')
+    .split(',')
+    .map((admin) => admin.trim().toLowerCase());
+
   constructor(
     private readonly postCustomer: PostCustomer,
     private readonly getCustomer: GetCustomer,
-  ) {}
+    private readonly patchCustomer: PatchCustomer,
+  ) {
+    console.log('ADMINS from env:', process.env.ADMINS);
+    console.log('Parsed admins:', this.admins);
+  }
+
+  @Post()
+  validateLogin(@Body() body: { nameClient: string }) {
+    const name = body.nameClient.toLowerCase();
+
+    if (!name) {
+      throw new BadRequestException('Nome obrigatório');
+    }
+
+    if (this.admins.includes(name)) {
+      return {
+        success: true,
+        userName: name,
+        message: 'Acesso liberado',
+      };
+    }
+    throw new UnauthorizedException('Acesso não autorizado');
+  }
 
   @HttpCode(201)
   @Post('cadastro')
@@ -27,5 +67,21 @@ export class AppController {
   async allCustomersData() {
     const allCustomers = await this.getCustomer.findAllClient();
     return allCustomers;
+  }
+
+  @Patch('clientes/:id')
+  async updateData(
+    @Param('id') id: string,
+    @Body() updateCustomerDto: UpdateCustomerDto,
+  ) {
+    try {
+      await this.patchCustomer.update(id, updateCustomerDto);
+      return HttpStatus.NO_CONTENT;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw Error('Erro ao atualizar cliente');
+    }
   }
 }

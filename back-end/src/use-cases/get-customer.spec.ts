@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../app.module';
-import { PrismaService } from "../prisma/database/prisma.service";
-import { mockPrisma } from '../__mocks__/prisma.mock'
+import { PrismaService } from '../prisma/database/prisma.service';
+import { mockPrisma } from '../__mocks__/prisma.mock';
 
 describe('GET /customers (com Prisma mockado)', () => {
   let app: INestApplication;
@@ -30,7 +30,7 @@ describe('GET /customers (com Prisma mockado)', () => {
 
   it('deve retornar um array de customers', async () => {
     const response = await request(app.getHttpServer())
-      .get('/customers')
+      .get('/clientes')
       .expect(200);
 
     expect(response.body).toEqual([

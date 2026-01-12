@@ -27,13 +27,13 @@ export class AppController {
     private readonly postCustomer: PostCustomer,
     private readonly getCustomer: GetCustomer,
     private readonly patchCustomer: PatchCustomer,
-  ) {
-    console.log('ADMINS from env:', process.env.ADMINS);
-    console.log('Parsed admins:', this.admins);
-  }
+  ) {}
 
   @Post()
   validateLogin(@Body() body: { nameClient: string }) {
+    console.log('POST / recebido!');
+    console.log('Body recebido:', body);
+
     const name = body.nameClient.toLowerCase();
 
     if (!name) {

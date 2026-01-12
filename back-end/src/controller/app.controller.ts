@@ -17,6 +17,8 @@ import { PostCustomer } from '../use-cases/post-customer';
 import { GetCustomer } from '../use-cases/get-customer';
 import { PatchCustomer } from '../use-cases/patch-customer';
 
+console.log('VERSÃO NOVA DEPLOYADA - 2026-01-12 18:00');
+
 @Controller()
 export class AppController {
   private readonly admins = (process.env.ADMINS || '')

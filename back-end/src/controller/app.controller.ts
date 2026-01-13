@@ -33,7 +33,7 @@ export class AppController {
 
   @Post()
   validateLogin(@Body() body: { nameClient: string }) {
-    console.log('POST / recebido!');
+    console.log('POST / recebido000!');
     console.log('Body recebido:', body);
 
     const name = body.nameClient.toLowerCase();

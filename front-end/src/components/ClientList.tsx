@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/Button';
 import { useUser } from '@/context/UserContext';
+import toast from 'react-hot-toast';
+import ConfirmModal from './confimModal';
 
 type Client = {
   id: string;
@@ -32,6 +34,8 @@ export default function ClientsList() {
   const [editForm, setEditForm] = useState({ customer_name: '', pet_name: '' });
   const router = useRouter();
   const { login, userName, logout, isAdmin } = useUser();
+  const [modelDeleteOpen, setModelDeleteOpen] = useState(false);
+  const [clientToDelete, setClientToDelete] = useState<Client | null>(null);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
@@ -42,6 +46,34 @@ export default function ClientsList() {
       pet_name: client.pet_name,
     });
   }
+
+  const openDeleteModal = (client: Client) => {
+    setClientToDelete(client);
+    setModelDeleteOpen(true);
+  };
+
+  const handleDelete = async (client: Client) => {
+    if (!clientToDelete) return;
+
+    try {
+      const response = await fetch(`${API_URL}/clientes/${client.id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (response.ok) {
+        setClient(clients.filter((c) => c.id !== client.id));
+        toast.success('Cliente excluído com sucesso', {
+          duration: 4000,
+          position: 'top-right',
+        });
+      } else {
+        toast.error('Erro ao excluir cliente');
+      }
+    } catch (error) {
+      toast.error('Erro ao excluir cliente');
+    }
+  };
 
   const handleCancel = () => {
     setEditClient(null);
@@ -230,6 +262,13 @@ export default function ClientsList() {
                           >
                             Editar ✏️
                           </button>
+
+                          <button
+                            onClick={() => openDeleteModal(client)}
+                            className="ml-12 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded cursor-pointer"
+                          >
+                            Excluir
+                          </button>
                         </td>
                       </>
                     )}
@@ -250,6 +289,13 @@ export default function ClientsList() {
           <Button onClick={() => router.push('/')}>Voltar ao inicio</Button>
         </div>
       </div>
+      <ConfirmModal
+        isOpen={modelDeleteOpen}
+        onClose={() => setModelDeleteOpen(false)}
+        onConfirm={() => handleDelete}
+        title="Confirmar exclusão"
+        message={`Tem certeza que deseja excluir o cliente ${clientToDelete?.customer_name} e o pet ${clientToDelete?.pet_name} ?`}
+      />
     </main>
   );
 }

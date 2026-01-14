@@ -5,6 +5,7 @@ import { PrismaService } from './prisma/database/prisma.service';
 import { PostCustomer } from './use-cases/post-customer';
 import { GetCustomer } from './use-cases/get-customer';
 import { PatchCustomer } from './use-cases/patch-customer';
+import { DeleteCustomer } from './use-cases/delete-customer';
 
 @Module({
   imports: [],
@@ -15,6 +16,7 @@ import { PatchCustomer } from './use-cases/patch-customer';
     PostCustomer,
     GetCustomer,
     PatchCustomer,
+    DeleteCustomer,
   ],
 })
 export class AppModule {}

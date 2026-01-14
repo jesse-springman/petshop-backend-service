@@ -10,12 +10,14 @@ import {
   UnauthorizedException,
   Param,
   HttpStatus,
+  Delete,
 } from '@nestjs/common';
 import { CreateCustomerBody } from '../dto/create.customer';
 import { UpdateCustomerDto } from '../dto/update-customer';
 import { PostCustomer } from '../use-cases/post-customer';
 import { GetCustomer } from '../use-cases/get-customer';
 import { PatchCustomer } from '../use-cases/patch-customer';
+import { DeleteCustomer } from '../use-cases/delete-customer';
 
 console.log('VERSÃO NOVA DEPLOYADA - 2026-01-12 18:00');
 
@@ -29,6 +31,7 @@ export class AppController {
     private readonly postCustomer: PostCustomer,
     private readonly getCustomer: GetCustomer,
     private readonly patchCustomer: PatchCustomer,
+    private readonly deleteCustomer: DeleteCustomer,
   ) {}
 
   @Post()
@@ -85,5 +88,16 @@ export class AppController {
       }
       throw Error('Erro ao atualizar cliente');
     }
+  }
+
+  @Delete('clientes/:id')
+  async delete(@Param('id') id: string) {
+    const deleted = await this.deleteCustomer.delete(id);
+
+    if (!deleted) {
+      throw new NotFoundException(`Cliente não encontrado`);
+    }
+
+    return { message: 'Clinte deletado com sucesso' };
   }
 }

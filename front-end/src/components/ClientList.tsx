@@ -52,17 +52,17 @@ export default function ClientsList() {
     setModelDeleteOpen(true);
   };
 
-  const handleDelete = async (client: Client) => {
+  const handleDelete = async () => {
     if (!clientToDelete) return;
 
     try {
-      const response = await fetch(`${API_URL}/clientes/${client.id}`, {
+      const response = await fetch(`${API_URL}/clientes/${clientToDelete.id}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
       });
 
       if (response.ok) {
-        setClient(clients.filter((c) => c.id !== client.id));
+        setClient(clients.filter((c) => c.id !== clientToDelete.id));
         toast.success('Cliente excluído com sucesso', {
           duration: 4000,
           position: 'top-right',
@@ -292,7 +292,7 @@ export default function ClientsList() {
       <ConfirmModal
         isOpen={modelDeleteOpen}
         onClose={() => setModelDeleteOpen(false)}
-        onConfirm={() => handleDelete}
+        onConfirm={() => handleDelete()}
         title="Confirmar exclusão"
         message={`Tem certeza que deseja excluir o cliente ${clientToDelete?.customer_name} e o pet ${clientToDelete?.pet_name} ?`}
       />

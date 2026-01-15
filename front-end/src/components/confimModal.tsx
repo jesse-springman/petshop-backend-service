@@ -67,14 +67,14 @@ export default function ConfirmModal({
                 <div className="mt-6 flex justify-center space-x-4">
                   <button
                     type="button"
-                    className="inline-flex justify-center rounded-lg border border-transparent bg-gray-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
+                    className="inline-flex justify-center rounded-lg border border-transparent bg-gray-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer"
                     onClick={onClose}
                   >
                     Cancelar
                   </button>
                   <button
                     type="button"
-                    className="inline-flex justify-center rounded-lg border border-transparent bg-red-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-red-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+                    className="inline-flex justify-center rounded-lg border border-transparent bg-red-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-red-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 cursor-pointer"
                     onClick={() => {
                       onConfirm();
                       onClose();

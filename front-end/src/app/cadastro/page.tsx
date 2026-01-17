@@ -7,7 +7,6 @@ import Button from '@/components/Button';
 export default function FormCadastro() {
   const [nameClient, setNameClient] = useState('');
   const [namePet, setNamePet] = useState('');
-  const [userName, setUserName] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const router = useRouter();
@@ -35,7 +34,6 @@ export default function FormCadastro() {
         body: JSON.stringify({
           customer_name: nameClient,
           pet_name: namePet,
-          owner_name: userName,
         }),
       });
 
@@ -43,7 +41,6 @@ export default function FormCadastro() {
         setMessage('Cadastro realizado com sucesso!');
         setNameClient('');
         setNamePet('');
-        setUserName('');
         setTimeout(() => router.push('/'), 7000);
       } else {
         setMessage('Erro ao cadastrar. Tente novamente.');
@@ -87,19 +84,6 @@ export default function FormCadastro() {
               onChange={(e) => setNamePet(e.target.value)}
               className="w-full px-4 py-3  bg-[#0B0E11] border border-gray-700 rounded-lg text-white focus:outline-none focus:border-amber-500 transation"
               placeholder="Ex: Tobby"
-              disabled={loading}
-            />
-
-            <label className="block mt-5 text-gray-300 mb-2 text-lg">
-              Nome do Admin
-            </label>
-
-            <input
-              type="text"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
-              className="w-full px-4 py-3  bg-[#0B0E11] border border-gray-700 rounded-lg text-white focus:outline-none focus:border-amber-500 transation"
-              placeholder="Ex: Código do Gerente"
               disabled={loading}
             />
           </div>

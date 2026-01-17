@@ -98,6 +98,6 @@ export class AppController {
       throw new NotFoundException(`Cliente não encontrado`);
     }
 
-    return { message: 'Clinte deletado com sucesso' };
+    return { message: 'Cliente deletado com sucesso' };
   }
 }

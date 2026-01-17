@@ -1,6 +1,16 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import ClientsList from '../components/ClientList';
 
+jest.mock('../context/UserContext', () => ({
+  UserProvider: ({ children }: { children: React.ReactNode }) => children,
+  useUser: () => ({
+    userName: 'jesse',
+    isAdmin: true,
+    login: jest.fn(),
+    logout: jest.fn(),
+  }),
+}));
+
 // Mock correto do useRouter (corrigindo o typo "navegation" → "navigation")
 jest.mock('next/navigation', () => ({
   useRouter: () => ({

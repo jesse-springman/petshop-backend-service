@@ -2,9 +2,12 @@ import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.use(cookieParser());
 
   const allowedOrigins =
     process.env.NODE_ENV === 'production'
@@ -40,6 +43,7 @@ async function bootstrap() {
 
     methods: 'GET, POST, PATCH, DELETE, OPTIONS',
     allowedHeaders: 'Content-Type, Authorization',
+    credentials: true,
   });
 
   app.useGlobalPipes(

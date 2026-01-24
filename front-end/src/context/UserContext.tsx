@@ -1,57 +1,85 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+'use client';
+
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from 'react';
+import toast from 'react-hot-toast';
 
 type UserContextType = {
   userName: string | null;
   login: (name: string) => void;
   logout: () => void;
-  isAdmin: boolean | undefined;
+  isAdmin: boolean;
+  loading: boolean;
 };
-
-const admins = process.env.ADMINS;
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  const [userName, setUserName] = useState<string | null>(() => {
-    //carrega localStorage ao iniciar
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('petshop_user');
-    }
-    return null;
-  });
+  const [userName, setUserName] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [loading, setLoading] = useState(true);
+
+  const URL_API = process.env.NEXT_PUBLIC_API_URL;
+
+  useEffect(() => {
+    const checkUser = async () => {
+      try {
+        const response = await fetch(`${URL_API}/auth/me`, {
+          credentials: 'include',
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          login(data.userName);
+          setUserName(data.userName);
+          setIsAdmin(data.isAdmin);
+        } else {
+          setUserName(null);
+          setIsAdmin(false);
+        }
+      } catch (error) {
+        console.log('nao logado');
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkUser();
+  }, [URL_API]);
 
   const login = (name: string) => {
-    const trimed = name.trim().toLowerCase();
-
-    if (trimed) {
-      setUserName(trimed);
-      localStorage.setItem('petshop_user', trimed);
-
-      localStorage.setItem(
-        'is_admin',
-        admins?.includes(trimed) ? 'true' : 'false',
-      );
-    }
+    const nameAdmin = name.trim().toLowerCase();
+    setUserName(nameAdmin);
+    setIsAdmin(true);
+    toast.success('Acesso Autorizado');
   };
 
-  const isAdmin = admins?.includes(userName?.toLowerCase() || '');
-
-  const logout = () => {
-    setUserName(null);
-    localStorage.removeItem('petshop_user');
+  const logout = async () => {
+    try {
+      await fetch(`${URL_API}/auth/logout`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+    } finally {
+      setUserName(null);
+      setIsAdmin(false);
+      toast.success('Sessão encerrada');
+    }
   };
 
   return (
-    <UserContext.Provider value={{ userName, login, logout, isAdmin }}>
-      {children}
+    <UserContext.Provider value={{ userName, login, logout, isAdmin, loading }}>
+      {!loading ? children : <div className="min-h-screen bg-black" />}
     </UserContext.Provider>
   );
 }
 
 export function useUser() {
   const context = useContext(UserContext);
-  if (!context) {
-    throw new Error('useUser must be used within UserProvider');
-  }
+  if (!context) throw new Error('useUser must be used within UserProvider');
   return context;
 }

@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
@@ -7,7 +6,6 @@ import {
   NotFoundException,
   Patch,
   Post,
-  UnauthorizedException,
   Param,
   HttpStatus,
   Delete,
@@ -19,41 +17,15 @@ import { GetCustomer } from '../use-cases/get-customer';
 import { PatchCustomer } from '../use-cases/patch-customer';
 import { DeleteCustomer } from '../use-cases/delete-customer';
 
-console.log('VERSÃO NOVA DEPLOYADA - 2026-01-12 18:00');
-
 @Controller()
 export class AppController {
-  private readonly admins = (process.env.ADMINS || '')
-    .split(',')
-    .map((admin) => admin.trim().toLowerCase());
-
   constructor(
     private readonly postCustomer: PostCustomer,
+
     private readonly getCustomer: GetCustomer,
     private readonly patchCustomer: PatchCustomer,
     private readonly deleteCustomer: DeleteCustomer,
   ) {}
-
-  @Post()
-  validateLogin(@Body() body: { nameClient: string }) {
-    console.log('POST / recebido000!');
-    console.log('Body recebido:', body);
-
-    const name = body.nameClient.toLowerCase();
-
-    if (!name) {
-      throw new BadRequestException('Nome obrigatório');
-    }
-
-    if (this.admins.includes(name)) {
-      return {
-        success: true,
-        userName: name,
-        message: 'Acesso liberado',
-      };
-    }
-    throw new UnauthorizedException('Acesso não autorizado');
-  }
 
   @HttpCode(201)
   @Post('cadastro')

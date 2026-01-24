@@ -120,6 +120,10 @@ export default function ClientsList() {
         const data = await response.json();
         console.log('Dados recebidos:', data);
         setClient(data);
+
+        if (!isAdmin) {
+          router.push('/');
+        }
       } catch (error) {
         console.error('Erro fetch:', error);
         setErro(
@@ -132,7 +136,7 @@ export default function ClientsList() {
     };
 
     getDataClients();
-  }, []);
+  }, [isAdmin]);
 
   //const allClients = clients.filter((client) => client.isAdmin === admin);
 
@@ -143,10 +147,7 @@ export default function ClientsList() {
       <div className="bg-[#1A1D22] p-8 md:p-12 rounded-2xl border-4border-amber-500/50 shadow-2xl [box-shadow:_0_0_40px_rgba(251,191,36,0.2)] max-w-9/12 w-full">
         <div>
           <button
-            onClick={() => {
-              logout();
-              router.push('/');
-            }}
+            onClick={logout}
             className="text-red-500 hover:text-red-300 font-medium  cursor-pointer"
           >
             Sair

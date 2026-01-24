@@ -5,13 +5,15 @@ import { useUser } from '@/context/UserContext';
 import { log } from 'console';
 import { useRouter } from 'next//navigation';
 import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 
 export default function HomePage() {
   const { userName, login } = useUser();
   const [inputName, setInputName] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [errorAuth, setErrorAuth] = useState('');
   const router = useRouter();
+
+  const isLoggedIn = !!userName;
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,18 +31,19 @@ export default function HomePage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nameClient }),
+        credentials: 'include',
       });
       const data = await response.json();
 
       if (response.ok) {
         login(data.userName || nameClient.toLowerCase());
         setErrorAuth('');
-        setIsLoggedIn(true);
+        login(nameClient);
       } else {
-        setErrorAuth('Acesso não autorizado');
+        toast.error('Acesso não autorizado');
       }
     } catch (error) {
-      setErrorAuth('Erro na conexão com o servidor');
+      toast.error('Erro na conexão com o servidor');
     }
   };
 

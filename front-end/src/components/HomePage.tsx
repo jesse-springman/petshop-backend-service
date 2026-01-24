@@ -2,7 +2,7 @@
 
 import Button from '@/components/Button';
 import { useUser } from '@/context/UserContext';
-import { useRouter } from 'next//navigation';
+import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 
@@ -24,9 +24,7 @@ export default function HomePage() {
     }
 
     try {
-      const url = process.env.NEXT_PUBLIC_API_URL;
-
-      const response = await fetch(`${url}`, {
+      const response = await fetch('/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nameClient }),
@@ -37,7 +35,6 @@ export default function HomePage() {
       if (response.ok) {
         login(data.userName || nameClient.toLowerCase());
         setErrorAuth('');
-        login(nameClient);
       } else {
         toast.error('Acesso não autorizado');
       }

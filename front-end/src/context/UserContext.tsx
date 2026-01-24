@@ -70,7 +70,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
       setUserName(null);
       setIsAdmin(false);
       toast.success('Sessão encerrada');
-      router.push('/');
+      router.replace('/');
     }
   };
 

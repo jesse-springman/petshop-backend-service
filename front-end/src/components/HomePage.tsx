@@ -2,7 +2,6 @@
 
 import Button from '@/components/Button';
 import { useUser } from '@/context/UserContext';
-import { log } from 'console';
 import { useRouter } from 'next//navigation';
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';

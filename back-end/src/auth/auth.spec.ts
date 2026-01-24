@@ -73,4 +73,13 @@ describe('Routine Authentication', () => {
       .set('Cookie', [`access_token=${expiredToken}`]);
     expect(response.status).toBe(401);
   });
+
+  it('It should clear cookie when make logout', async () => {
+    const response = await request(app.getHttpServer()).post('/auth/logout');
+
+    const cookie = response.get('Set-Cookie');
+
+    expect(cookie).toBeDefined();
+    expect(cookie![0]).toContain('access_token=;');
+  });
 });

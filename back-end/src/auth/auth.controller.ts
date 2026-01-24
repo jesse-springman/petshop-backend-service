@@ -50,7 +50,7 @@ export class AuthController {
     response.cookie('access_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: 'none',
       path: '/',
       maxAge: 1 * 24 * 60 * 60 * 1000,
     });
@@ -73,7 +73,12 @@ export class AuthController {
 
   @Post('auth/logout')
   logout(@Res({ passthrough: true }) response: Response) {
-    response.clearCookie('access_token');
+    response.clearCookie('access_token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'none',
+      path: '/',
+    });
     return { message: 'Sessão encerrada' };
   }
 }

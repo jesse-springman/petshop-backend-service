@@ -39,6 +39,11 @@ export default function ClientsList() {
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
+  async function handleLogout() {
+    await logout();
+    router.replace('/');
+  }
+
   function handleEdit(client: Client) {
     setEditClient(client);
     setEditForm({
@@ -147,7 +152,7 @@ export default function ClientsList() {
       <div className="bg-[#1A1D22] p-8 md:p-12 rounded-2xl border-4border-amber-500/50 shadow-2xl [box-shadow:_0_0_40px_rgba(251,191,36,0.2)] max-w-9/12 w-full">
         <div>
           <button
-            onClick={logout}
+            onClick={handleLogout}
             className="text-red-500 hover:text-red-300 font-medium  cursor-pointer"
           >
             Sair

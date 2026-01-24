@@ -8,7 +8,6 @@ import {
   useEffect,
 } from 'react';
 import toast from 'react-hot-toast';
-import { useRouter } from 'next/router';
 
 type UserContextType = {
   userName: string | null;
@@ -24,7 +23,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const [userName, setUserName] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
   const URL_API = process.env.NEXT_PUBLIC_API_URL;
 
@@ -66,11 +64,11 @@ export function UserProvider({ children }: { children: ReactNode }) {
         method: 'POST',
         credentials: 'include',
       });
+    } catch {
     } finally {
       setUserName(null);
       setIsAdmin(false);
       toast.success('Sessão encerrada');
-      router.replace('/');
     }
   };
 

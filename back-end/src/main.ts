@@ -9,38 +9,10 @@ async function bootstrap() {
 
   app.use(cookieParser());
 
-  const allowedOrigins =
-    process.env.NODE_ENV === 'production'
-      ? [
-          'https://petshopbackendservice-peach.vercel.app',
-          'https://petshopbackendservice.vercel.app',
-          /https:\/\/petshopbackendservice-git-.*\.vercel\.app/,
-        ]
-      : ['http://localhost:3000'];
+  const allowedOrigins = process.env.ALLOWED_ORIGIN;
 
   app.enableCors({
-    origin: (
-      origin: string | undefined,
-      callback: (err: Error | null, allow?: boolean) => void,
-    ) => {
-      if (!origin) {
-        return callback(null, true);
-      }
-
-      const isAllowed = allowedOrigins.some((allowed) => {
-        if (allowed instanceof RegExp) {
-          return allowed.test(origin);
-        }
-        return origin === allowed || origin.endsWith(allowed);
-      });
-
-      if (isAllowed) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-
+    origin: allowedOrigins,
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true,
   });

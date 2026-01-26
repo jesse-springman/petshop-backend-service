@@ -29,7 +29,7 @@ describe('Routine Authentication', () => {
     const server = app.getHttpServer();
 
     const response = await request(server)
-      .post('/')
+      .post('/auth/login')
       .send({ nameClient: 'jesse' });
 
     expect(response.status).toBe(200);
@@ -41,7 +41,7 @@ describe('Routine Authentication', () => {
 
   it('it should fail when user be invalid', async () => {
     const response = await request(app.getHttpServer())
-      .post('/')
+      .post('/auth/login')
       .send({ nameClient: 'inexisteente' });
 
     expect(response.status).toBe(401);

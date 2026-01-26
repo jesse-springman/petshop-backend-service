@@ -35,7 +35,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
         if (response.ok) {
           const data = await response.json();
-          login(data.userName);
           setUserName(data.userName);
           setIsAdmin(data.isAdmin);
         } else {

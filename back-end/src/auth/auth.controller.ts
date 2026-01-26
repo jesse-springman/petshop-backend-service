@@ -24,14 +24,14 @@ interface AutenticateRequest extends Response {
   user: JwtPayload;
 }
 
-@Controller()
+@Controller('auth')
 export class AuthController {
   constructor(
     private authService: AuthService,
     private jwtService: JwtService,
   ) {}
 
-  @Post()
+  @Post('login')
   @HttpCode(200)
   login(
     @Body() body: { nameClient: string },
@@ -58,7 +58,7 @@ export class AuthController {
     return { success: true, userName: user.username };
   }
 
-  @Get('auth/me')
+  @Get('me')
   @UseGuards(AuthGuard)
   getProfile(@Req() req: AutenticateRequest) {
     if (!req.user) {
@@ -71,7 +71,7 @@ export class AuthController {
     };
   }
 
-  @Post('auth/logout')
+  @Post('logout')
   logout(@Res({ passthrough: true }) response: Response) {
     response.clearCookie('access_token', {
       httpOnly: true,

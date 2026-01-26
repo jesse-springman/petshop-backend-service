@@ -12,6 +12,8 @@ export default function HomePage() {
   const [errorAuth, setErrorAuth] = useState('');
   const router = useRouter();
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
   const isLoggedIn = !!userName;
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -24,7 +26,7 @@ export default function HomePage() {
     }
 
     try {
-      const response = await fetch('/auth/login', {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nameClient }),

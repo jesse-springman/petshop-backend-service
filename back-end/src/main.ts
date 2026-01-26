@@ -9,10 +9,8 @@ async function bootstrap() {
 
   app.use(cookieParser());
 
-  const allowedOrigins = process.env.ALLOWED_ORIGIN;
-
   app.enableCors({
-    origin: allowedOrigins,
+    origin: [/\.vercel\.app$/],
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true,
   });
@@ -21,10 +19,12 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
+      transform: true,
     }),
   );
 
-  await app.listen(3001);
-  console.log(`running http://localhost:3001`);
+  const port = process.env.PORT || 3001;
+  await app.listen(port);
+  console.log(`running http://localhost:${port}`);
 }
 bootstrap();

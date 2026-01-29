@@ -12,8 +12,10 @@ async function bootstrap() {
 
   app.use(cookieParser());
 
+  const inProd = process.env.NODE_ENV === 'production';
+
   app.enableCors({
-    origin: [/\.vercel\.app$/],
+    origin: inProd ? process.env.ALLOWED_ORIGIN : 'http://localhost:3000',
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true,
   });

@@ -15,4 +15,8 @@ model Customer {
   customer_name String 
   pet_name String
   created_at DateTime @default(now())
+  address String?
+  pet_breed String?
+  number_customer String?
+  last_bath DateTime @default(now())
 }

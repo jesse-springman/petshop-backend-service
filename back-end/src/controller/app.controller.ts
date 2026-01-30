@@ -30,14 +30,7 @@ export class AppController {
   @HttpCode(201)
   @Post('cadastro')
   async insertCustomersData(@Body() Body: CreateCustomerBody) {
-    const { customer_name, pet_name } = Body;
-    await this.postCustomer.execute(customer_name, pet_name);
-
-    return {
-      message: 'Cliente Cadastrado com sucesso',
-      customer_name,
-      pet_name,
-    };
+    return await this.postCustomer.execute(Body);
   }
 
   @Get('clientes')

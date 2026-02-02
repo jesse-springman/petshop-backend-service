@@ -39,9 +39,9 @@ export default function ClientsList() {
     customer_name: '',
     pet_name: '',
     address: '',
-    last_bath: '',
     number_customer: '',
     pet_breed: '',
+    last_bath: '',
   });
   const router = useRouter();
   const { login, userName, logout, isAdmin } = useUser();
@@ -58,12 +58,12 @@ export default function ClientsList() {
   function handleEdit(client: Client) {
     setEditClient(client);
     setEditForm({
-      customer_name: client.customer_name,
-      pet_name: client.pet_name,
-      address: client.address,
+      customer_name: client.customer_name || '',
+      pet_name: client.pet_name || '',
+      address: client.address || '',
       last_bath: client.last_bath ? client.last_bath.split('T')[0] : '',
-      number_customer: client.number_customer,
-      pet_breed: client.pet_breed,
+      number_customer: client.number_customer || '',
+      pet_breed: client.pet_breed || '',
     });
   }
 
@@ -136,6 +136,7 @@ export default function ClientsList() {
       }
     } catch (error) {
       toast.error('Erro na conexão');
+      console.log(erro);
     }
   };
 
@@ -178,29 +179,34 @@ export default function ClientsList() {
 
         {!loading && !erro && clients.length > 0 && (
           <div className="overflow-x-auto rounded-xl border border-amber-500/20">
-            {/* MUDANÇA AQUI: Removi table-fixed para as colunas respirarem */}
             <table className="w-full text-left border-collapse">
               <thead className="bg-[#0B0E11]">
                 <tr>
-                  <th className="px-4 py-4 text-amber-300 text-xs uppercase tracking-wider">
+                  <th className="px-4 py-4 text-amber-300 text-base uppercase tracking-wider">
                     Dono
                   </th>
-                  <th className="px-4 py-4 text-amber-300 text-xs uppercase tracking-wider">
-                    Telefone
-                  </th>
-                  <th className="px-4 py-4 text-amber-300 text-xs uppercase tracking-wider">
-                    Endereço
-                  </th>
-                  <th className="px-4 py-4 text-amber-300 text-xs uppercase tracking-wider">
+                  <th className="px-4 py-4 text-amber-300 text-base uppercase tracking-wider">
                     Pet
                   </th>
-                  <th className="px-4 py-4 text-amber-300 text-xs uppercase tracking-wider">
+                  <th className="px-4 py-4 text-amber-300 text-base uppercase tracking-wider">
+                    Endereço
+                  </th>
+                  <th className="px-4 py-4 text-amber-300 text-base uppercase tracking-wider">
+                    Telefone
+                  </th>
+
+                  <th className="px-4 py-4 text-amber-300 text-base uppercase tracking-wider">
                     Raça
                   </th>
-                  <th className="px-4 py-4 text-amber-300 text-xs uppercase tracking-wider">
+                  <th className="px-4 py-4 text-amber-300 text-base uppercase tracking-wider">
                     Último Banho
                   </th>
-                  <th className="px-4 py-4 text-amber-300 text-xs uppercase tracking-wider text-center">
+
+                  <th className="px-4 py-4 text-amber-300 text-base uppercase tracking-wider ">
+                    Criando em
+                  </th>
+
+                  <th className="px-4 py-4 text-amber-300 text-base uppercase tracking-wider text-center">
                     Ações
                   </th>
                 </tr>
@@ -220,23 +226,7 @@ export default function ClientsList() {
                             name="customer_name"
                             value={editForm.customer_name}
                             onChange={handleChange}
-                            className="w-full bg-[#1A1D22] text-base text-white p-1 rounded border border-amber-500/30"
-                          />
-                        </td>
-                        <td className="p-2">
-                          <input
-                            name="number_customer"
-                            value={editForm.number_customer}
-                            onChange={handleChange}
-                            className="w-full bg-[#1A1D22] text-base text-white p-1 rounded border border-amber-500/30"
-                          />
-                        </td>
-                        <td className="p-2">
-                          <input
-                            name="address"
-                            value={editForm.address}
-                            onChange={handleChange}
-                            className="w-full bg-[#1A1D22] text-base text-white p-1 rounded border border-amber-500/30"
+                            className="w-full  text-base text-white p-1 rounded border border-amber-500/30"
                           />
                         </td>
                         <td className="p-2">
@@ -244,7 +234,23 @@ export default function ClientsList() {
                             name="pet_name"
                             value={editForm.pet_name}
                             onChange={handleChange}
-                            className="w-full bg-[#1A1D22] text-base text-white p-1 rounded border border-amber-500/30"
+                            className="w-full  text-base text-white p-1 rounded border border-amber-500/30"
+                          />
+                        </td>
+                        <td className="p-2">
+                          <input
+                            name="address"
+                            value={editForm.address}
+                            onChange={handleChange}
+                            className="w-full  text-base text-white p-1 rounded border border-amber-500/30"
+                          />
+                        </td>
+                        <td className="p-2">
+                          <input
+                            name="number_customer"
+                            value={editForm.number_customer}
+                            onChange={handleChange}
+                            className="w-full  text-base text-white p-1 rounded border border-amber-500/30"
                           />
                         </td>
                         <td className="p-2">
@@ -252,7 +258,7 @@ export default function ClientsList() {
                             name="pet_breed"
                             value={editForm.pet_breed}
                             onChange={handleChange}
-                            className="w-full bg-[#1A1D22] text-base text-white p-1 rounded border border-amber-500/30"
+                            className="w-full  text-base text-white p-1 rounded border border-amber-500/30"
                           />
                         </td>
                         <td className="p-2">
@@ -261,19 +267,20 @@ export default function ClientsList() {
                             type="date"
                             value={editForm.last_bath}
                             onChange={handleChange}
-                            className="w-full bg-[#1A1D22] text-base text-white p-1 rounded border border-amber-500/30"
+                            className="w-full  text-base text-white p-1 rounded border border-amber-500/30"
                           />
                         </td>
+
                         <td className="p-2 text-center space-x-2">
                           <button
                             onClick={handleSave}
-                            className="text-green-400 text-xs"
+                            className="text-green-400 text-base hover:scale-125 transition cursor-pointer"
                           >
                             Salvar
                           </button>
                           <button
                             onClick={handleCancel}
-                            className="text-red-400 text-xs"
+                            className="text-red-400 text-base hover:scale-125 transition cursor-pointer"
                           >
                             X
                           </button>
@@ -285,23 +292,28 @@ export default function ClientsList() {
                         <td className="px-4 py-3 text-white text-base">
                           {client.customer_name}
                         </td>
-                        <td className="px-4 py-3 text-gray-400 text-base">
-                          {client.number_customer || '—'}
+                        <td className="px-4 py-3 text-white text-base font-medium">
+                          {client.pet_name}
                         </td>
                         <td className="px-4 py-3 text-gray-400 text-base truncate max-w-[150px]">
                           {client.address || '—'}
                         </td>
-                        <td className="px-4 py-3 text-white text-base font-medium">
-                          {client.pet_name}
+                        <td className="px-4 py-3 text-gray-400 text-base">
+                          {client.number_customer || '—'}
                         </td>
                         <td className="px-4 py-3 text-gray-400 text-base">
                           {client.pet_breed || '—'}
                         </td>
-                        <td className="px-4 py-3 text-gray-400 text-xs">
+                        <td className="px-4 py-3 text-gray-400 text-base">
                           {client.last_bath
                             ? formatDate(client.last_bath)
                             : 'Não registrado'}
                         </td>
+
+                        <td className="px-4 py-3 text-gray-400 text-base">
+                          {formatDate(client.created_at)}
+                        </td>
+
                         <td className="px-4 py-3 text-center">
                           <div className="flex justify-center gap-4">
                             <button

@@ -7,7 +7,6 @@ import {
   Patch,
   Post,
   Param,
-  HttpStatus,
   Delete,
 } from '@nestjs/common';
 import { CreateCustomerBody } from '../dto/create.customer';
@@ -44,15 +43,7 @@ export class AppController {
     @Param('id') id: string,
     @Body() updateCustomerDto: UpdateCustomerDto,
   ) {
-    try {
-      await this.patchCustomer.update(id, updateCustomerDto);
-      return HttpStatus.NO_CONTENT;
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      throw Error('Erro ao atualizar cliente');
-    }
+    await this.patchCustomer.update(id, updateCustomerDto);
   }
 
   @Delete('clientes/:id')

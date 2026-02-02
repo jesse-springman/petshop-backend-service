@@ -42,8 +42,8 @@ export default function FormCadastro() {
           pet_name: namePet,
           pet_breed: racaPet,
           number_customer: numberCustomer,
+          last_bath: lastBath,
           address,
-          lastBath,
         }),
       });
 

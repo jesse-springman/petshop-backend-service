@@ -1,4 +1,4 @@
-import { IsString, IsOptional } from 'class-validator';
+import { IsDateString, IsString, IsOptional } from 'class-validator';
 
 export class UpdateCustomerDto {
   @IsOptional()
@@ -21,6 +21,7 @@ export class UpdateCustomerDto {
   @IsString()
   pet_breed?: string;
 
+  @IsDateString()
   @IsOptional()
   last_bath?: string;
 }

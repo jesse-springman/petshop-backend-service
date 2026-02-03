@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { PrismaService } from '../prisma/database/prisma.service';
 
@@ -16,13 +16,26 @@ export class PostCustomer {
   constructor(private readonly prisma: PrismaService) {}
 
   async execute(dataBody: DataCustomer) {
+    let lastBath: Date | undefined;
+
+    if (dataBody.last_bath) {
+      const parsed = new Date(dataBody.last_bath);
+
+      if (isNaN(parsed.getTime())) {
+        throw new BadRequestException('Data de último banho inválida');
+      }
+
+      lastBath = parsed;
+    }
+
     const client = await this.prisma.customer.create({
       data: {
-        ...dataBody,
+        customer_name: dataBody.customer_name,
+        pet_name: dataBody.pet_name,
+        address: dataBody.address,
+        number_customer: dataBody.number_customer,
         pet_breed: dataBody.pet_breed ?? undefined,
-        last_bath: dataBody.last_bath
-          ? new Date(dataBody.last_bath)
-          : undefined,
+        last_bath: lastBath ?? undefined,
       },
     });
     return client;

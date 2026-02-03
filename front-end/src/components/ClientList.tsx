@@ -295,22 +295,22 @@ export default function ClientsList() {
                         <td className="px-4 py-3 text-white text-base font-medium">
                           {client.pet_name}
                         </td>
-                        <td className="px-4 py-3 text-gray-400 text-base truncate max-w-[150px]">
+                        <td className="px-4 py-3 text-white text-base truncate max-w-[150px]">
                           {client.address || '—'}
                         </td>
-                        <td className="px-4 py-3 text-gray-400 text-base">
+                        <td className="px-4 py-3 text-white text-base">
                           {client.number_customer || '—'}
                         </td>
-                        <td className="px-4 py-3 text-gray-400 text-base">
+                        <td className="px-4 py-3 text-white text-base">
                           {client.pet_breed || '—'}
                         </td>
-                        <td className="px-4 py-3 text-gray-400 text-base">
+                        <td className="px-4 py-3 text-white text-base">
                           {client.last_bath
                             ? formatDate(client.last_bath)
                             : 'Não registrado'}
                         </td>
 
-                        <td className="px-4 py-3 text-gray-400 text-base">
+                        <td className="px-4 py-3 text-white text-base">
                           {formatDate(client.created_at)}
                         </td>
 

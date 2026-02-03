@@ -37,6 +37,7 @@ export class PostCustomer {
         pet_name: dataBody.pet_name,
         address: dataBody.address,
         number_customer: dataBody.number_customer,
+
         pet_breed: dataBody.pet_breed ?? undefined,
         last_bath: lastBath ?? undefined,
       },

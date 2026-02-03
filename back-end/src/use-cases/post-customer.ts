@@ -16,6 +16,9 @@ export class PostCustomer {
   constructor(private readonly prisma: PrismaService) {}
 
   async execute(dataBody: DataCustomer) {
+    console.log('CHEGOU NO BACKEND NOVO 🚀');
+    console.log(dataBody);
+
     let lastBath: Date | undefined;
 
     if (dataBody.last_bath) {

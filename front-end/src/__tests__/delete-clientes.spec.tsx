@@ -44,13 +44,21 @@ describe('DELETE client', () => {
       id: '1',
       customer_name: 'João',
       pet_name: 'Rex',
-      created_at: '2025-01-01',
+      created_at: '2025-08-30T14:48:03.026Z',
+      address: 'av luis-15 n=134',
+      number_customer: '19993451232',
+      pet_beed: 'vira-lata',
+      last_bath: '2026-01-28T21:31:18.551Z',
     },
     {
       id: '2',
       customer_name: 'Maria',
       pet_name: 'Luna',
-      created_at: '2025-01-02',
+      created_at: '2025-08-31T10:20:00.000Z',
+      address: 'Rua mario azevedo n=14',
+      number_customer: '19983350238',
+      pet_beed: 'vira-lata',
+      last_bath: '2026-02-02T21:31:18.551Z',
     },
   ];
 
@@ -81,7 +89,7 @@ describe('DELETE client', () => {
 
     const joao = await screen.findByText('João');
     const row = joao.closest('tr')!;
-    const deleteButton = within(row).getByText('Excluir');
+    const deleteButton = within(row).getByLabelText('Excluir');
 
     fireEvent.click(deleteButton);
 
@@ -90,7 +98,7 @@ describe('DELETE client', () => {
     ).toBeInTheDocument();
 
     expect(
-      screen.getByText(/Tem certeza que deseja excluir o cliente João/i),
+      screen.getByText(/Excluir cliente João e o pet Rex?/i),
     ).toBeInTheDocument();
   });
 
@@ -104,7 +112,7 @@ describe('DELETE client', () => {
 
     const joao = await screen.findByText('João');
     const row = joao.closest('tr')!;
-    fireEvent.click(within(row).getByText('Excluir'));
+    fireEvent.click(within(row).getByLabelText('Excluir'));
 
     const modal = await screen.findByRole('dialog');
     const confirmButton = within(modal).getByRole('button', {
@@ -116,7 +124,6 @@ describe('DELETE client', () => {
     await waitFor(() => {
       expect(toast.success).toHaveBeenCalledWith(
         'Cliente excluído com sucesso',
-        expect.any(Object),
       );
     });
 
@@ -156,7 +163,7 @@ describe('DELETE client', () => {
 
     const joao = await screen.findByText('João');
     const row = joao.closest('tr')!;
-    fireEvent.click(within(row).getByText('Excluir'));
+    fireEvent.click(within(row).getByLabelText('Excluir'));
 
     const modal = await screen.findByRole('dialog');
     fireEvent.click(within(modal).getByRole('button', { name: 'Excluir' }));

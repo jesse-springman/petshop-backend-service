@@ -29,13 +29,24 @@ describe('UpdateMock', () => {
 
   describe('UpdatedCustomer', () => {
     const id = '123';
-    const dto = { customer_name: 'nomeNovo', pet_name: 'petNovo' };
+    const dto = {
+      customer_name: 'nomeNovo',
+      pet_name: 'petNovo',
+      address: 'lala',
+      number_customer: '1999900990',
+      pet_breed: 'pastor',
+      last_bath: '2026-03-30T21:31:18.551Z',
+    };
 
     it('shoud update customer when found', async () => {
       mockPrisma.customer.findUnique.mockResolvedValue({
         id,
         customer_name: 'antigo',
         pet_name: 'antigo',
+        address: 'antigo',
+        number_customer: '111111111',
+        pet_breed: 'antigo',
+        last_bath: '2026-03-30T21:31:18.551Z',
       });
 
       mockPrisma.customer.update.mockResolvedValue({ id, ...dto });
@@ -46,10 +57,15 @@ describe('UpdateMock', () => {
         where: { id },
       });
 
-      expect(mockPrisma.customer.update).toHaveBeenCalledWith({
-        where: { id },
-        data: dto,
-      });
+      expect(mockPrisma.customer.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id },
+          data: {
+            ...dto,
+            last_bath: expect.any(Date) as unknown as Date,
+          },
+        }),
+      );
 
       expect(result).toEqual({ id, ...dto });
     });
@@ -73,17 +89,30 @@ describe('UpdateMock', () => {
         id,
         customer_name: 'joao',
         pet_name: 'petAtualizado',
+        address: 'ze123',
+        number_customer: '22223321',
+        pet_breed: 'pit',
+        last_bath: '2026-03-30T21:31:18.551Z',
       });
 
       const result = await service.update(id, partialDto);
+
+      console.log(result);
 
       expect(mockPrisma.customer.update).toHaveBeenCalledWith({
         where: { id },
         data: partialDto,
       });
 
-      expect(result.pet_name).toBe('petAtualizado');
-      expect(result.customer_name).toBe('joao');
+      expect(result).toEqual({
+        id: '123',
+        customer_name: 'joao',
+        pet_name: 'petAtualizado',
+        address: 'ze123',
+        number_customer: '22223321',
+        pet_breed: 'pit',
+        last_bath: '2026-03-30T21:31:18.551Z',
+      });
     });
   });
 });

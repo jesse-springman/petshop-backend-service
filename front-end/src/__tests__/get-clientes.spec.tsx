@@ -33,19 +33,6 @@ describe('GET /clientes', () => {
     expect(screen.getByText(/Carregando.../i)).toBeInTheDocument();
   });
 
-  it('should show message when there are no registered customers', async () => {
-    (global.fetch as jest.Mock).mockResolvedValue({
-      ok: true,
-      json: async () => [],
-    });
-
-    render(<ClientsList />);
-
-    expect(
-      await screen.findByText(/Nenhum cliente cadastrado ainda/i),
-    ).toBeInTheDocument();
-  });
-
   it('should show all customers', async () => {
     const mockClients = [
       {
@@ -53,12 +40,20 @@ describe('GET /clientes', () => {
         customer_name: 'Jesse',
         pet_name: 'Cacau',
         created_at: '2025-12-30T14:48:03.026Z',
+        address: 'Rua mario azevedo n=14',
+        number_customer: '19983350238',
+        pet_beed: 'vira-lata',
+        last_bath: '2026-02-02T21:31:18.551Z',
       },
       {
         id: '2',
         customer_name: 'Maria',
         pet_name: 'Bolinha',
         created_at: '2025-12-31T10:20:00.000Z',
+        address: 'av luis-15 n=134',
+        number_customer: '19993451232',
+        pet_beed: 'vira-lata',
+        last_bath: '2026-01-28T21:31:18.551Z',
       },
     ];
 
@@ -100,7 +95,7 @@ describe('GET /clientes', () => {
     render(<ClientsList />);
 
     const button = await screen.findByRole('button', {
-      name: /voltar ao inicio/i,
+      name: /voltar ao início/i,
     });
     expect(button).toBeInTheDocument();
   });

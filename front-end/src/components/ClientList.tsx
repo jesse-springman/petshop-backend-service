@@ -19,7 +19,11 @@ type Client = {
   pet_breed: string;
 };
 
-const formatDate = (dateString: string) => {
+const formatDate = (dateString: string | null | undefined) => {
+  if (!dateString || isNaN(Date.parse(dateString))) {
+    return '-';
+  }
+
   return new Intl.DateTimeFormat('pt-BR', {
     day: '2-digit',
     month: '2-digit',
@@ -159,7 +163,6 @@ export default function ClientsList() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#0B0E11] to-[#1A1D22] flex items-center justify-center p-6">
-      {/* MUDANÇA AQUI: max-w-6xl para centralizar e não esticar demais */}
       <div className="bg-[#1A1D22] p-6 md:p-10 rounded-2xl border border-amber-500/20 shadow-2xl [box-shadow:_0_0_40px_rgba(251,191,36,0.1)] max-w-9/12 w-full">
         <div className="flex justify-between items-center mb-6">
           <button
@@ -206,7 +209,7 @@ export default function ClientsList() {
                     Criando em
                   </th>
 
-                  <th className="px-4 py-4 text-amber-300 text-base uppercase tracking-wider text-center">
+                  <th className="px-4 py-4 text-amber-300 text-base uppercase ">
                     Ações
                   </th>
                 </tr>
@@ -265,15 +268,21 @@ export default function ClientsList() {
                           <input
                             name="last_bath"
                             type="date"
+                            aria-label="último banho"
                             value={editForm.last_bath}
                             onChange={handleChange}
                             className="w-full  text-base text-white p-1 rounded border border-amber-500/30"
                           />
                         </td>
 
+                        <td className="text-base text-white p-4  border-amber-500/30">
+                          {formatDate(client.created_at)}
+                        </td>
+
                         <td className="p-2 text-center space-x-2">
                           <button
                             onClick={handleSave}
+                            aria-label="Salvar"
                             className="text-green-400 text-base hover:scale-125 transition cursor-pointer"
                           >
                             Salvar
@@ -281,6 +290,7 @@ export default function ClientsList() {
                           <button
                             onClick={handleCancel}
                             className="text-red-400 text-base hover:scale-125 transition cursor-pointer"
+                            aria-label="Cancelar"
                           >
                             X
                           </button>
@@ -318,13 +328,15 @@ export default function ClientsList() {
                           <div className="flex justify-center gap-4">
                             <button
                               onClick={() => handleEdit(client)}
-                              className="hover:scale-125 transition"
+                              className="hover:scale-125 transition cursor-pointer"
+                              aria-label="editar"
                             >
                               ✏️
                             </button>
                             <button
                               onClick={() => openDeleteModal(client)}
-                              className="hover:scale-125 transition"
+                              className="hover:scale-125 transition cursor-pointer"
+                              aria-label="Excluir"
                             >
                               🗑️
                             </button>

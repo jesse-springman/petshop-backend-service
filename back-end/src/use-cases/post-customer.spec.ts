@@ -26,26 +26,29 @@ describe('PostCustomer', () => {
   });
 
   it('must create a client with with success', async () => {
-    const fakeClient = {
-      id: '543',
+    const DTO = {
       customer_name: 'Jesse Springman',
       pet_name: 'Cacau',
+      address: 'ze123',
+      number_customer: '22223321',
+      pet_breed: 'pit',
+      last_bath: new Date('2026-03-30T21:31:18.551Z'),
+    };
+
+    const fakeClient = {
+      id: '543',
+      ...DTO,
       created_at: new Date(),
     };
 
-    jest.spyOn(prisma.customer, 'create').mockResolvedValue(fakeClient);
+    jest.spyOn(prisma.customer, 'create').mockResolvedValue(fakeClient as any);
 
-    const result = await dataClient.execute('Jessé', 'Cacau');
+    const result = await dataClient.execute(DTO);
+
+    expect(prisma.customer.create).toHaveBeenLastCalledWith({
+      data: DTO,
+    });
 
     expect(result).toEqual(fakeClient);
-
-    expect(prisma.customer.create).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        data: {
-          customer_name: 'Jessé',
-          pet_name: 'Cacau',
-        },
-      }),
-    );
   });
 });

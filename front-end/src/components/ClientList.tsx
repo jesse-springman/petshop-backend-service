@@ -39,6 +39,12 @@ export default function ClientsList() {
   const [erro, setErro] = useState('');
   const [dataUpdated, setDataUpdated] = useState(false);
   const [editClient, setEditClient] = useState<Client | null>(null);
+  const router = useRouter();
+  const { login, userName, logout, isAdmin } = useUser();
+  const [modelDeleteOpen, setModelDeleteOpen] = useState(false);
+  const [clientToDelete, setClientToDelete] = useState<Client | null>(null);
+  const [searchData, setSearchData] = useState('');
+  const [clientsFilters, setClientsFilters] = useState<Client[]>([]);
   const [editForm, setEditForm] = useState({
     customer_name: '',
     pet_name: '',
@@ -47,10 +53,6 @@ export default function ClientsList() {
     pet_breed: '',
     last_bath: '',
   });
-  const router = useRouter();
-  const { login, userName, logout, isAdmin } = useUser();
-  const [modelDeleteOpen, setModelDeleteOpen] = useState(false);
-  const [clientToDelete, setClientToDelete] = useState<Client | null>(null);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
@@ -161,6 +163,19 @@ export default function ClientsList() {
     getDataClients();
   }, [isAdmin]);
 
+  useEffect(() => {
+    if (searchData.trim() === '') {
+      setClientsFilters(clients);
+    } else {
+      const filter = clients.filter((filtering) =>
+        filtering.customer_name
+          .toLowerCase()
+          .includes(searchData.toLowerCase()),
+      );
+      setClientsFilters(filter);
+    }
+  }, [searchData, clients]);
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#0B0E11] to-[#1A1D22] flex items-center justify-center p-6">
       <div className="bg-[#1A1D22] p-6 md:p-10 rounded-2xl border border-amber-500/20 shadow-2xl [box-shadow:_0_0_40px_rgba(251,191,36,0.1)] max-w-9/12 w-full">
@@ -177,10 +192,26 @@ export default function ClientsList() {
           Clientes Cadastrados
         </h1>
 
+        <div className="flex justify-center">
+          <input
+            type="text"
+            className=" mb-10 text-base text-white p-1 rounded border border-amber-500/30 w-80 p-2"
+            placeholder="Digite o nome do cliente..."
+            value={searchData}
+            onChange={(e) => setSearchData(e.target.value)}
+          />
+        </div>
+
+        {!loading && !erro && searchData && clientsFilters.length === 0 && (
+          <p className="text-3xl font-bold text-amber-400 text-center mb-8">
+            Nenhum cliente encontrado com esse nome
+          </p>
+        )}
+
         {loading && <p className="text-center text-gray-400">Carregando...</p>}
         {erro && <p className="text-center text-red-500">{erro}</p>}
 
-        {!loading && !erro && clients.length > 0 && (
+        {!loading && !erro && clientsFilters.length > 0 && (
           <div className="overflow-x-auto rounded-xl border border-amber-500/20">
             <table className="w-full text-left border-collapse">
               <thead className="bg-[#0B0E11]">
@@ -216,7 +247,7 @@ export default function ClientsList() {
               </thead>
 
               <tbody className="bg-[#0B0E11] divide-y divide-amber-500/10">
-                {clients.map((client, index) => (
+                {clientsFilters.map((client, index) => (
                   <tr
                     key={client.id || index}
                     className="hover:bg-amber-500/5 transition duration-200"

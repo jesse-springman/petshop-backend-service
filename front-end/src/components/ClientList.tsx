@@ -178,7 +178,7 @@ export default function ClientsList() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#0B0E11] to-[#1A1D22] flex items-center justify-center p-6">
-      <div className="bg-[#1A1D22] p-6 md:p-10 rounded-2xl border border-amber-500/20 shadow-2xl [box-shadow:_0_0_40px_rgba(251,191,36,0.1)] max-w-9/12 w-full">
+      <div className="bg-[#1A1D22] p-6 md:p-10 rounded-2xl border border-amber-500/20 shadow-2xl [box-shadow:_0_0_40px_rgba(251,191,36,0.1)] max-w-6xl w-full mx-auto">
         <div className="flex justify-between items-center mb-6">
           <button
             onClick={handleLogout}
@@ -195,7 +195,7 @@ export default function ClientsList() {
         <div className="flex justify-center">
           <input
             type="text"
-            className=" mb-10 text-base text-white p-1 rounded border border-amber-500/30 w-80 p-2"
+            className=" mb-10 text-base text-white p-1 rounded border border-amber-500/30 w-full max-w-md p-2"
             placeholder="Digite o nome do cliente..."
             value={searchData}
             onChange={(e) => setSearchData(e.target.value)}
@@ -213,7 +213,7 @@ export default function ClientsList() {
 
         {!loading && !erro && clientsFilters.length > 0 && (
           <div className="overflow-x-auto rounded-xl border border-amber-500/20">
-            <table className="w-full text-left border-collapse">
+            <table className="min-w-[800px] w-full text-left border-collapse">
               <thead className="bg-[#0B0E11]">
                 <tr>
                   <th className="px-4 py-4 text-amber-300 text-base uppercase tracking-wider">

@@ -57,7 +57,7 @@ export default function HomePage() {
             <img
               src="/pit.png"
               alt="New-Pettz"
-              className="w-full rounded-full border-4border-amber-500/50 shadow-2xl [box-shadow:_0_0_40px_rgba(251,191,36,0.2)]"
+              className="w-full rounded-full shadow-2xl [box-shadow:_0_0_40px_rgba(251,191,36,0.2)]"
             />
           </div>
 

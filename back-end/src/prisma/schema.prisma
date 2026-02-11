@@ -19,4 +19,38 @@ model Customer {
   pet_breed String?
   number_customer String?
   last_bath DateTime @default(now())
+
+  appointments Appointment[]
 }
+
+model Profissional {
+  id String @id @default(uuid())
+  name String
+  appointments Appointment[]
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELED
+}
+
+model Appointment {
+  id String @id @default(uuid())
+  date DateTime
+  status AppointmentStatus @default(SCHEDULED)
+  
+  customerId String
+  customer  Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  
+  profissionalId String
+  profissional Profissional @relation(fields: [profissionalId], references: [id], onDelete: Cascade)
+
+  notes String?
+  created_at DateTime @default(now())
+
+  @@index([date])
+  @@unique([date, profissionalId])
+  @@index([customerId])
+}
+

@@ -1,4 +1,4 @@
-import { PrismaService } from '../prisma/database/prisma.service';
+import { PrismaService } from '../../prisma/database/prisma.service';
 import { Prisma } from '@prisma/client';
 
 import {
@@ -15,10 +15,10 @@ interface dtoTime {
 }
 
 @Injectable()
-export class CreateAppointment {
+export class CreateAgenda {
   constructor(private prisma: PrismaService) {}
 
-  async execute(data: dtoTime) {
+  async execute(userId: string, data: dtoTime) {
     const parsedDate = new Date(data.date);
 
     if (isNaN(parsedDate.getTime())) {
@@ -38,6 +38,7 @@ export class CreateAppointment {
         data: {
           customerId: data.customerId,
           date: parsedDate,
+          userId,
           notes: data.notes,
         },
       });

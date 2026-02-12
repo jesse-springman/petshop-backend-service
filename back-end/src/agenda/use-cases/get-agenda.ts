@@ -1,4 +1,4 @@
-import { PrismaService } from '../prisma/database/prisma.service';
+import { PrismaService } from '../../prisma/database/prisma.service';
 import { Injectable, BadRequestException } from '@nestjs/common';
 
 interface dtoAppointments {
@@ -10,7 +10,7 @@ Injectable();
 export class GetAgenda {
   constructor(private prisma: PrismaService) {}
 
-  async execute({ start, end }: dtoAppointments) {
+  async execute(userId: string, { start, end }: dtoAppointments) {
     const startDate = new Date(start);
     const endDate = new Date(end);
 
@@ -20,6 +20,7 @@ export class GetAgenda {
 
     const appointments = await this.prisma.appointment.findMany({
       where: {
+        userId,
         date: {
           gte: startDate,
           lt: endDate,

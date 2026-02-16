@@ -8,7 +8,7 @@ import {
   ConflictException,
 } from '@nestjs/common';
 
-interface dtoTime {
+interface CreateDto {
   customerId: string;
   date: string;
   notes?: string;
@@ -18,7 +18,7 @@ interface dtoTime {
 export class CreateAgenda {
   constructor(private prisma: PrismaService) {}
 
-  async execute(userId: string, data: dtoTime) {
+  async execute(userId: string, data: CreateDto) {
     const parsedDate = new Date(data.date);
 
     if (isNaN(parsedDate.getTime())) {
@@ -47,8 +47,9 @@ export class CreateAgenda {
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === 'P2002'
-      )
+      ) {
         throw new ConflictException('Já existe um agendamento nesse horário');
+      }
       throw error;
     }
   }

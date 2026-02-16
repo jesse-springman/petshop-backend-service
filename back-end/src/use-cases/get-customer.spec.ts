@@ -28,7 +28,7 @@ describe('GET /customers (com Prisma mockado)', () => {
     await app.close();
   });
 
-  it('deve retornar um array de customers', async () => {
+  it('shouldt retorn um array in customers', async () => {
     const response = await request(app.getHttpServer())
       .get('/clientes')
       .expect(200);

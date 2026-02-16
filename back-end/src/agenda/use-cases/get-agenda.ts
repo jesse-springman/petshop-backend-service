@@ -1,12 +1,12 @@
 import { PrismaService } from '../../prisma/database/prisma.service';
 import { Injectable, BadRequestException } from '@nestjs/common';
 
-interface dtoAppointments {
+export interface dtoAppointments {
   start: string;
   end: string;
 }
 
-Injectable();
+@Injectable()
 export class GetAgenda {
   constructor(private prisma: PrismaService) {}
 

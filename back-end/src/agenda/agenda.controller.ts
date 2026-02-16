@@ -8,6 +8,8 @@ import {
   Query,
   Patch,
   Param,
+  Delete,
+  HttpCode,
 } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { CreateAgendaDto } from './dto/create-agenda.dto';
@@ -16,6 +18,7 @@ import { CreateAgenda } from './use-cases/post-agenda';
 import { GetAgenda } from './use-cases/get-agenda';
 import { PatchAgendaDTO } from './dto/update-agenda.dto';
 import { UpdateAgenda } from './use-cases/patch-agenda';
+import { DeleteScheduling } from './use-cases/delete-agenda';
 
 interface AuthRequest {
   user: {
@@ -30,6 +33,7 @@ export class AgendaController {
     private readonly createAgenda: CreateAgenda,
     private readonly getAgenda: GetAgenda,
     private readonly updateAgenda: UpdateAgenda,
+    private readonly deleteScheduling: DeleteScheduling,
   ) {}
 
   @Post()
@@ -51,5 +55,11 @@ export class AgendaController {
     @Body() body: PatchAgendaDTO,
   ) {
     return this.updateAgenda.execute(req.user.id, id, body);
+  }
+
+  @Delete(':id')
+  @HttpCode(204)
+  async deleteAgenda(@Request() res: AuthRequest, @Param('id') id: string) {
+    return this.deleteScheduling.execute(res.user.id, id);
   }
 }

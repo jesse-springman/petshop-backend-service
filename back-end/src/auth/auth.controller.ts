@@ -20,7 +20,7 @@ interface JwtPayload {
   role?: string;
 }
 
-interface AutenticateRequest extends Response {
+interface AutenticateRequest extends Request {
   user: JwtPayload;
 }
 

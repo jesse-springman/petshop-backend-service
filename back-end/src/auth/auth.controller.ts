@@ -13,11 +13,13 @@ import {
   HttpCode,
   UnauthorizedException,
 } from '@nestjs/common';
+import { CreateUserTdo } from './dto/create.user';
+import { Roles } from '@prisma/client';
 
 interface JwtPayload {
   username: string;
   sub: string;
-  role?: string;
+  role: Roles;
 }
 
 interface AutenticateRequest extends Request {
@@ -33,19 +35,19 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(200)
-  login(
-    @Body() body: { nameClient: string },
+  async login(
+    @Body() body: CreateUserTdo,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const user = this.authService.validateAdmin(body.nameClient);
+    const user = await this.authService.validateUser(body.name, body.password);
 
-    const paylaod: JwtPayload = {
-      sub: user.username,
-      username: user.username,
+    const payload: JwtPayload = {
+      sub: user.id,
+      username: user.name,
       role: user.role,
     };
 
-    const token = this.jwtService.sign(paylaod);
+    const token = this.jwtService.sign(payload);
 
     response.cookie('access_token', token, {
       httpOnly: true,
@@ -55,7 +57,17 @@ export class AuthController {
       maxAge: 1 * 24 * 60 * 60 * 1000,
     });
 
-    return { success: true, userName: user.username };
+    return { success: true, userName: user.name, role: user.role };
+  }
+
+  @Post('register')
+  @UseGuards(AuthGuard)
+  async registerUser(
+    @Req() req: AutenticateRequest,
+    @Body() body: CreateUserTdo,
+  ) {
+    const { sub, role } = req.user;
+    return await this.authService.register({ id: sub, role }, body);
   }
 
   @Get('me')
@@ -66,8 +78,10 @@ export class AuthController {
     }
 
     return {
+      userId: req.user.sub,
       userName: req.user.username,
-      isAdmin: req.user.role === 'admin',
+      role: req.user.role,
+      isAdmin: req.user.role === 'ADMIN',
     };
   }
 

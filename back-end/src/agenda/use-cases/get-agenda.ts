@@ -34,6 +34,7 @@ export class GetAgenda {
       orderBy: {
         date: 'asc',
       },
+      take: 20,
     });
 
     return appointments;

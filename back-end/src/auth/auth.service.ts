@@ -1,20 +1,55 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { PrismaService } from '../prisma/database/prisma.service';
+import { AuthUser } from './type/auth-type';
+import * as bcrypt from 'bcrypt';
+import { Roles } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
-  private get admins(): string[] {
-    return (process.env.ADMINS || '')
-      .split(',')
-      .map((adm) => adm.trim().toLowerCase());
-  }
+  constructor(private readonly prisma: PrismaService) {}
 
-  validateAdmin(nameClient: string): { username: string; role: string } {
-    const name = nameClient?.toLowerCase();
+  async validateUser(nameClient: string, password: string): Promise<AuthUser> {
+    const user = await this.prisma.users.findFirst({
+      where: { name: nameClient.toLowerCase() },
+    });
 
-    if (!this.admins.includes(name)) {
+    if (!user) {
       throw new UnauthorizedException('Acesso não autorizado');
     }
 
-    return { username: name, role: 'admin' };
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) {
+      throw new UnauthorizedException('Acesso não autorizado');
+    }
+    return {
+      id: user.id,
+      name: user.name,
+      role: user.roles,
+    };
+  }
+
+  async register(
+    currentUser: { id: string; role: string },
+    dataBodyReq: { name: string; password: string; role?: Roles },
+  ) {
+    if (currentUser.role !== 'ADMIN') {
+      throw new ForbiddenException('Apenas ADMIN pode criar usuários');
+    }
+
+    const passwordHashed = await bcrypt.hash(dataBodyReq.password, 10);
+
+    const newUser = await this.prisma.users.create({
+      data: {
+        name: dataBodyReq.name.toLowerCase(),
+        password: passwordHashed,
+        roles: dataBodyReq.role ?? 'USER',
+      },
+    });
+    return newUser;
   }
 }

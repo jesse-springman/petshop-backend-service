@@ -24,13 +24,17 @@ model Customer {
 }
 
 
+enum Roles {
+  ADMIN
+  USER
+}
+
 
 model Users {
   id String @id @default(uuid())
-  name String
-  email String @unique
+  name String 
   password  String
-
+  roles Roles
   appointments Appointment[]
   created_at DateTime @default(now())
 }

@@ -13,6 +13,6 @@ export function mockFetch<T>({ ok, status, body }: FetchResponseMock<T>) {
 }
 
 // Test vazio só pra Jest não reclamar que a suite está vazia
-test(' Mock Test', () => {
+test(" Mock Test", () => {
   expect(jest.fn()).toBeDefined();
 });

@@ -4,6 +4,7 @@ import { AuthGuard } from './auth.guard';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { PrismaService } from '../prisma/database/prisma.service';
+import { Register } from '../use-cases/post-register';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { PrismaService } from '../prisma/database/prisma.service';
   ],
 
   controllers: [AuthController],
-  providers: [AuthService, AuthGuard, PrismaService],
+  providers: [AuthService, AuthGuard, PrismaService, Register],
   exports: [AuthService],
 })
 export class AuthModule {}

@@ -7,7 +7,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import type { Request } from 'express';
 
-interface JwtPayload {
+export interface JwtPayload {
   username: string;
   sub: string;
 }

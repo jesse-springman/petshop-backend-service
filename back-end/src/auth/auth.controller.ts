@@ -13,13 +13,15 @@ import {
   HttpCode,
   UnauthorizedException,
 } from '@nestjs/common';
-import { CreateUserTdo } from './dto/create.user';
-import { Roles } from '@prisma/client';
+import { RegisterDto } from './dto/create.user';
+import { Role } from '@prisma/client';
+import { Register } from '../use-cases/post-register';
+import { Request } from 'express';
 
 interface JwtPayload {
   username: string;
   sub: string;
-  role: Roles;
+  role: Role;
 }
 
 interface AutenticateRequest extends Request {
@@ -31,12 +33,13 @@ export class AuthController {
   constructor(
     private authService: AuthService,
     private jwtService: JwtService,
+    private register: Register,
   ) {}
 
   @Post('login')
   @HttpCode(200)
   async login(
-    @Body() body: CreateUserTdo,
+    @Body() body: RegisterDto,
     @Res({ passthrough: true }) response: Response,
   ) {
     const user = await this.authService.validateUser(body.name, body.password);
@@ -48,11 +51,12 @@ export class AuthController {
     };
 
     const token = this.jwtService.sign(payload);
+    const isProd = process.env.NODE_ENV === 'production';
 
     response.cookie('access_token', token, {
       httpOnly: true,
-      secure: true,
-      sameSite: 'none',
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
       path: '/',
       maxAge: 1 * 24 * 60 * 60 * 1000,
     });
@@ -60,14 +64,14 @@ export class AuthController {
     return { success: true, userName: user.name, role: user.role };
   }
 
-  @Post('register')
   @UseGuards(AuthGuard)
+  @Post('register')
   async registerUser(
     @Req() req: AutenticateRequest,
-    @Body() body: CreateUserTdo,
+    @Body() body: RegisterDto,
   ) {
     const { sub, role } = req.user;
-    return await this.authService.register({ id: sub, role }, body);
+    return await this.register.execute({ id: sub, role }, body);
   }
 
   @Get('me')

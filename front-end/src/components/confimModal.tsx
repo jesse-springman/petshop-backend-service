@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { Fragment } from 'react/jsx-runtime';
-import { Dialog, Transition } from '@headlessui/react';
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { Fragment } from "react/jsx-runtime";
+import { Dialog, Transition } from "@headlessui/react";
+import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -16,8 +16,8 @@ export default function ConfirmModal({
   isOpen,
   onClose,
   onConfirm,
-  title = 'Corfimar excluisão',
-  message = 'Tem certeza que deseja excluir esse cliente, essa ação não pode ser desfeita',
+  title = "Corfimar excluisão",
+  message = "Tem certeza que deseja excluir esse cliente, essa ação não pode ser desfeita",
 }: ConfirmModalProps) {
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -47,10 +47,7 @@ export default function ConfirmModal({
             >
               <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-[#1A1D22] p-6 text-left align-middle shadow-2xl ring-1 ring-amber-500/30 transition-all">
                 <div className="flex items-center justify-center w-12 h-12 mx-auto rounded-full bg-amber-500/20">
-                  <ExclamationTriangleIcon
-                    className="h-6 w-6 text-amber-500"
-                    aria-hidden="true"
-                  />
+                  <ExclamationTriangleIcon className="h-6 w-6 text-amber-500" aria-hidden="true" />
                 </div>
 
                 <Dialog.Title

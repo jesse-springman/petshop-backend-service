@@ -1,11 +1,15 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import Button from '@/components/Button';
-import { useUser } from '@/context/UserContext';
-import toast from 'react-hot-toast';
-import ConfirmModal from './confimModal';
+import { useState, useEffect, useMemo, useRef } from "react";
+import { useRouter } from "next/navigation";
+import Button from "@/components/Button";
+import { useUser } from "@/context/UserContext";
+import toast from "react-hot-toast";
+import ConfirmModal from "./confimModal";
+import { deleteCliente } from "@/services/customer/delete";
+import { UpdateClientDTO } from "@/services/customer/patch";
+import { patchClientList } from "@/services/customer/patch";
+import { getClients } from "@/services/customer/get";
 
 type Client = {
   id: string;
@@ -21,55 +25,56 @@ type Client = {
 
 const formatDate = (dateString: string | null | undefined) => {
   if (!dateString || isNaN(Date.parse(dateString))) {
-    return '-';
+    return "-";
   }
 
-  return new Intl.DateTimeFormat('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   }).format(new Date(dateString));
 };
 
 export default function ClientsList() {
   const [clients, setClient] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
-  const [erro, setErro] = useState('');
+  const [erro, setErro] = useState("");
   const [dataUpdated, setDataUpdated] = useState(false);
   const [editClient, setEditClient] = useState<Client | null>(null);
   const router = useRouter();
   const { login, userName, logout, isAdmin } = useUser();
   const [modelDeleteOpen, setModelDeleteOpen] = useState(false);
   const [clientToDelete, setClientToDelete] = useState<Client | null>(null);
-  const [searchData, setSearchData] = useState('');
-  const [clientsFilters, setClientsFilters] = useState<Client[]>([]);
-  const [editForm, setEditForm] = useState({
-    customer_name: '',
-    pet_name: '',
-    address: '',
-    number_customer: '',
-    pet_breed: '',
-    last_bath: '',
+  const [searchData, setSearchData] = useState("");
+  const [editForm, setEditForm] = useState<UpdateClientDTO>({
+    customer_name: "",
+    pet_name: "",
+    address: "",
+    number_customer: "",
+    pet_breed: "",
+    last_bath: "",
   });
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  const hasFetched = useRef(false);
+
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
   async function handleLogout() {
     await logout();
-    router.replace('/');
+    router.replace("/");
   }
 
   function handleEdit(client: Client) {
     setEditClient(client);
     setEditForm({
-      customer_name: client.customer_name || '',
-      pet_name: client.pet_name || '',
-      address: client.address || '',
-      last_bath: client.last_bath ? client.last_bath.split('T')[0] : '',
-      number_customer: client.number_customer || '',
-      pet_breed: client.pet_breed || '',
+      customer_name: client.customer_name || "",
+      pet_name: client.pet_name || "",
+      address: client.address || "",
+      last_bath: client.last_bath ? client.last_bath.split("T")[0] : "",
+      number_customer: client.number_customer || "",
+      pet_breed: client.pet_breed || "",
     });
   }
 
@@ -79,34 +84,29 @@ export default function ClientsList() {
   };
 
   const handleDelete = async () => {
-    if (!clientToDelete) return;
-
     try {
-      const response = await fetch(`${API_URL}/clientes/${clientToDelete.id}`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-      });
+      if (!clientToDelete) return;
 
-      if (response.ok) {
-        setClient(clients.filter((c) => c.id !== clientToDelete.id));
-        toast.success('Cliente excluído com sucesso');
-      } else {
-        toast.error('Erro ao excluir cliente');
-      }
+      await deleteCliente(clientToDelete.id);
+
+      toast.success("Cliente excluído com sucesso");
+
+      const updated = clients.filter((c) => c.id !== clientToDelete.id);
+      setClient(updated);
     } catch (error) {
-      toast.error('Erro ao excluir cliente');
+      toast.error("Erro ao excluir cliente");
     }
   };
 
   const handleCancel = () => {
     setEditClient(null);
     setEditForm({
-      customer_name: '',
-      pet_name: '',
-      address: '',
-      last_bath: '',
-      number_customer: '',
-      pet_breed: '',
+      customer_name: "",
+      pet_name: "",
+      address: "",
+      last_bath: "",
+      number_customer: "",
+      pet_breed: "",
     });
   };
 
@@ -122,58 +122,49 @@ export default function ClientsList() {
     if (!editClient) return;
 
     try {
-      const response = await fetch(`${API_URL}/clientes/${editClient.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(editForm),
-      });
+      const response = await patchClientList(editClient.id, editForm);
 
       if (response.status === 204 || response.ok) {
-        setClient(
-          clients.map((c) =>
-            c.id === editClient.id ? { ...c, ...editForm } : c,
-          ),
+        setClient((prev) =>
+          prev.map((c) => (c.id === editClient.id ? { ...c, ...editForm, id: String(c.id) } : c)),
         );
-        toast.success('Dados Atualizados');
+
+        toast.success("Dados Atualizados");
         handleCancel();
         setDataUpdated(true);
-      } else {
-        toast.error('Erro na Atualização de dados');
       }
-    } catch (error) {
-      toast.error('Erro na conexão');
-      console.log(erro);
+    } catch (erro) {
+      toast.error("Erro na atualização");
     }
   };
 
   useEffect(() => {
-    const getDataClients = async () => {
+    if (!isAdmin || hasFetched.current) {
+      return;
+    }
+
+    hasFetched.current = true;
+
+    const fecthClientes = async () => {
       try {
-        const response = await fetch(`${API_URL}/clientes`);
-        if (!response.ok) throw new Error('Erro na busca');
-        const data = await response.json();
-        setClient(data);
-        if (!isAdmin) router.push('/');
+        const data = await getClients();
+        setClient([...data]);
       } catch (error) {
-        setErro('Não foi possível localizar os clientes.');
+        setErro("Não foi possível localizar os clientes");
       } finally {
         setLoading(false);
       }
     };
-    getDataClients();
+
+    fecthClientes();
   }, [isAdmin]);
 
-  useEffect(() => {
-    if (searchData.trim() === '') {
-      setClientsFilters(clients);
-    } else {
-      const filter = clients.filter((filtering) =>
-        filtering.customer_name
-          .toLowerCase()
-          .includes(searchData.toLowerCase()),
-      );
-      setClientsFilters(filter);
-    }
+  const clientsFilters = useMemo(() => {
+    if (searchData.trim() === "") return clients;
+
+    return clients.filter((client) =>
+      client.customer_name?.toLowerCase().includes(searchData.toLowerCase()),
+    );
   }, [searchData, clients]);
 
   return (
@@ -188,9 +179,7 @@ export default function ClientsList() {
           </button>
         </div>
 
-        <h1 className="text-3xl font-bold text-amber-400 text-center mb-8">
-          Clientes Cadastrados
-        </h1>
+        <h1 className="text-3xl font-bold text-amber-400 text-center mb-8">Clientes Cadastrados</h1>
 
         <div className="flex justify-center">
           <input
@@ -240,18 +229,13 @@ export default function ClientsList() {
                     Criando em
                   </th>
 
-                  <th className="px-4 py-4 text-amber-300 text-base uppercase ">
-                    Ações
-                  </th>
+                  <th className="px-4 py-4 text-amber-300 text-base uppercase ">Ações</th>
                 </tr>
               </thead>
 
               <tbody className="bg-[#0B0E11] divide-y divide-amber-500/10">
                 {clientsFilters.map((client, index) => (
-                  <tr
-                    key={client.id || index}
-                    className="hover:bg-amber-500/5 transition duration-200"
-                  >
+                  <tr key={client.id} className="hover:bg-amber-500/5 transition duration-200">
                     {editClient?.id === client.id ? (
                       /* MODO EDIÇÃO */
                       <>
@@ -330,25 +314,21 @@ export default function ClientsList() {
                     ) : (
                       /* MODO NORMAL */
                       <>
-                        <td className="px-4 py-3 text-white text-base">
-                          {client.customer_name}
-                        </td>
+                        <td className="px-4 py-3 text-white text-base">{client.customer_name}</td>
                         <td className="px-4 py-3 text-white text-base font-medium">
                           {client.pet_name}
                         </td>
                         <td className="px-4 py-3 text-white text-base truncate max-w-[150px]">
-                          {client.address || '—'}
+                          {client.address || "—"}
                         </td>
                         <td className="px-4 py-3 text-white text-base">
-                          {client.number_customer || '—'}
+                          {client.number_customer || "—"}
                         </td>
                         <td className="px-4 py-3 text-white text-base">
-                          {client.pet_breed || '—'}
+                          {client.pet_breed || "—"}
                         </td>
                         <td className="px-4 py-3 text-white text-base">
-                          {client.last_bath
-                            ? formatDate(client.last_bath)
-                            : 'Não registrado'}
+                          {client.last_bath ? formatDate(client.last_bath) : "Não registrado"}
                         </td>
 
                         <td className="px-4 py-3 text-white text-base">
@@ -383,7 +363,7 @@ export default function ClientsList() {
         )}
 
         <div className="mt-8 text-center">
-          <Button onClick={() => router.push('/')}>Voltar ao início</Button>
+          <Button onClick={() => router.push("/")}>Voltar ao início</Button>
         </div>
       </div>
 

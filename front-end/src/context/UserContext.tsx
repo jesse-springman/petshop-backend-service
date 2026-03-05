@@ -1,13 +1,7 @@
-'use client';
+"use client";
 
-import {
-  createContext,
-  useContext,
-  useState,
-  ReactNode,
-  useEffect,
-} from 'react';
-import toast from 'react-hot-toast';
+import { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import toast from "react-hot-toast";
 
 type UserContextType = {
   userName: string | null;
@@ -30,7 +24,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     const checkUser = async () => {
       try {
         const response = await fetch(`${URL_API}/auth/me`, {
-          credentials: 'include',
+          credentials: "include",
         });
 
         if (response.ok) {
@@ -42,7 +36,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
           setIsAdmin(false);
         }
       } catch (error) {
-        console.log('nao logado');
+        console.log("nao logado");
       } finally {
         setLoading(false);
       }
@@ -54,20 +48,20 @@ export function UserProvider({ children }: { children: ReactNode }) {
     const nameAdmin = name.trim().toLowerCase();
     setUserName(nameAdmin);
     setIsAdmin(true);
-    toast.success('Acesso Autorizado');
+    toast.success("Acesso Autorizado");
   };
 
   const logout = async () => {
     try {
       await fetch(`${URL_API}/auth/logout`, {
-        method: 'POST',
-        credentials: 'include',
+        method: "POST",
+        credentials: "include",
       });
     } catch {
     } finally {
       setUserName(null);
       setIsAdmin(false);
-      toast.success('Sessão encerrada');
+      toast.success("Sessão encerrada");
     }
   };
 
@@ -80,6 +74,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
 export function useUser() {
   const context = useContext(UserContext);
-  if (!context) throw new Error('useUser must be used within UserProvider');
+  if (!context) throw new Error("useUser must be used within UserProvider");
   return context;
 }

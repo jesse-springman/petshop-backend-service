@@ -8,8 +8,9 @@
   },
   "exclude": [
     "node_modules",
+    "dist",
     "test",
     "**/*.spec.ts",
-    "**/__mocks__/**"
+    "**/*.e2e-spec.ts"
   ]
 }

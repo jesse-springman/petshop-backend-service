@@ -8,6 +8,7 @@ import {
   Post,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateCustomerBody } from '../dto/create.customer';
 import { UpdateCustomerDto } from '../dto/update-customer';
@@ -15,6 +16,7 @@ import { PostCustomer } from '../use-cases/post-customer';
 import { GetCustomer } from '../use-cases/get-customer';
 import { PatchCustomer } from '../use-cases/patch-customer';
 import { DeleteCustomer } from '../use-cases/delete-customer';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller()
 export class AppController {
@@ -26,18 +28,20 @@ export class AppController {
     private readonly deleteCustomer: DeleteCustomer,
   ) {}
 
+  @UseGuards(AuthGuard)
   @HttpCode(201)
   @Post('cadastro')
-  async insertCustomersData(@Body() Body: CreateCustomerBody) {
-    return await this.postCustomer.execute(Body);
+  async insertCustomersData(@Body() body: CreateCustomerBody) {
+    return await this.postCustomer.execute(body);
   }
-
+  @UseGuards(AuthGuard)
   @Get('clientes')
   async allCustomersData() {
     const allCustomers = await this.getCustomer.findAllClient();
     return allCustomers;
   }
 
+  @UseGuards(AuthGuard)
   @Patch('clientes/:id')
   async updateData(
     @Param('id') id: string,
@@ -45,7 +49,7 @@ export class AppController {
   ) {
     await this.patchCustomer.update(id, updateCustomerDto);
   }
-
+  @UseGuards(AuthGuard)
   @Delete('clientes/:id')
   async delete(@Param('id') id: string) {
     const deleted = await this.deleteCustomer.delete(id);

@@ -6,10 +6,12 @@
   "license": "UNLICENSED",
   "scripts": {
     "dev": "npm run docker:up && npm run start:dev",
-    "build": "nest build",
+    "build": "prisma generate && prisma migrate deploy && nest build",
     "docker:up": "docker compose -f ../infra/compose.yaml up -d",
     "docker:down": "docker compose -f ../infra/compose.yaml down",
     "docker:stop": "docker compose -f ../infra/compose.yaml stop",
+    "migrate:prod": "dotenv -e .env.production -- prisma migrate deploy",
+    "migrate:dev": "dotenv -e .env -- prisma migrate dev",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "node dist/main.js",
     "start:dev": "nest start --watch",
@@ -23,7 +25,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "db:test:push": "dotenv -e .env.test -- prisma db push",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "vercel-build": "npx prisma generate && npx prisma migrate deploy && npm run build"
+    "vercel-build": "npx prisma generate && npx prisma migrate deploy && npm run build",
+    "create:admin": "dotenv -e .env.production -- ts-node scripts/create-admin.ts"
   },
   "dependencies": {
     "@nestjs/config": "^4.0.2",

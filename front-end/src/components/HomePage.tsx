@@ -12,10 +12,16 @@ export default function HomePage() {
   const [password, setPassword] = useState("");
   const [errorAuth, setErrorAuth] = useState("");
   const router = useRouter();
+  const { logout } = useUser();
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   const isLoggedIn = !!userName;
+
+  async function handlerLogout() {
+    await logout();
+    router.replace("/");
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,12 +79,23 @@ export default function HomePage() {
           </p>
 
           {isLoggedIn && (
-            <div className="mt-6 flex items-center gap-8">
-              <Button onClick={() => router.push("/cadastro")}>Cadastro de Clientes</Button>
+            <div>
+              <div className="mt-6 flex items-center gap-8">
+                <Button onClick={() => router.push("/cadastro")}>Cadastro de Clientes</Button>
 
-              <Button onClick={() => router.push("/registro")}>Cadastro de Funcionários</Button>
+                <Button onClick={() => router.push("/registro")}>Cadastro de Funcionários</Button>
 
-              <Button onClick={() => router.push("/clientes")}>Ver Clientes</Button>
+                <Button onClick={() => router.push("/clientes")}>Ver Clientes</Button>
+              </div>
+
+              <div>
+                <button
+                  onClick={handlerLogout}
+                  className="fixed top-6 right-6 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md cursor-pointer"
+                >
+                  Sair
+                </button>
+              </div>
             </div>
           )}
         </div>

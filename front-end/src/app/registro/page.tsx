@@ -1,13 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import { forbidden, useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import { registerData } from "@/services/register";
+import { log } from "console";
 
 export default function FormRegister() {
   const [nameUser, setNameUser] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setconfirmPassword] = useState("");
   const [role, setRole] = useState<"ADMIN" | "USER">("USER");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -18,6 +20,11 @@ export default function FormRegister() {
 
     if (!nameUser || !password) {
       setMessage("Preencha todos os campos!");
+      return;
+    }
+
+    if (confirmPassword !== password) {
+      setMessage("Erro, senhas estão diferentes");
       return;
     }
 
@@ -36,8 +43,9 @@ export default function FormRegister() {
       setPassword("");
 
       setTimeout(() => router.push("/"), 3000);
-    } catch (error) {
-      setMessage("Erro ao cadastrar. Tente novamente.");
+    } catch (error: any) {
+      const message = error?.response?.data?.message || "Erro ao cadastrar. Tente novamente.";
+      setMessage(message);
     } finally {
       setLoading(false);
     }
@@ -72,12 +80,26 @@ export default function FormRegister() {
 
             <input
               id="password"
-              className="w-full px-4 py-3 bg-[#0B0E11] border border-gray-700 rounded-lg text-white focus:outline-none focus:border-amber-500 transition"
+              className="w-full px-4 py-3 mb-5 bg-[#0B0E11] border border-gray-700 rounded-lg text-white focus:outline-none focus:border-amber-500 transition"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={loading}
             />
+
+            <label htmlFor="confirmPassword" className="block text-gray-300 mb-2 text-lg">
+              Confirmação de senha
+            </label>
+
+            <input
+              id="confirmPassword"
+              className="w-full px-4 py-3 bg-[#0B0E11] border border-gray-700 rounded-lg text-white focus:outline-none focus:border-amber-500 transition"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setconfirmPassword(e.target.value)}
+              disabled={loading}
+            />
+
             <label className="block mt-5 text-gray-300 mb-3 text-lg">Função</label>
 
             <div className="flex gap-4">

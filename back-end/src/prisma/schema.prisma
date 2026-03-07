@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
@@ -9,32 +9,45 @@ datasource db {
 }
 
 model Customer {
-  id String  @id @default(uuid()) 
-  customer_name String 
-  pet_name String
-  created_at DateTime @default(now())
-  address String?
-  pet_breed String?
+  id              String        @id @default(uuid())
+  customer_name   String
+  pet_name        String
+  created_at      DateTime      @default(now())
+  address         String?
+  last_bath       DateTime      @default(now())
   number_customer String?
-  last_bath DateTime @default(now())
+  pet_breed       String?
+  appointments    Appointment[]
+}
 
+model User {
+  id           String        @id @default(uuid())
+  name         String        @unique
+  password     String
+  role         Role
+  created_at   DateTime      @default(now())
   appointments Appointment[]
 }
 
+model Appointment {
+  id         String            @id @default(uuid())
+  customerId String
+  date       DateTime
+  status     AppointmentStatus @default(SCHEDULED)
+  notes      String?
+  created_at DateTime          @default(now())
+  userId     String
+  customer   Customer          @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  user       User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([date, userId])
+  @@index([date])
+  @@index([customerId])
+}
 
 enum Role {
   ADMIN
   USER
-}
-
-
-model User {
-  id String @id @default(uuid())
-  name String  @unique
-  password  String
-  role Role
-  appointments Appointment[]
-  created_at DateTime @default(now())
 }
 
 enum AppointmentStatus {
@@ -42,23 +55,3 @@ enum AppointmentStatus {
   COMPLETED
   CANCELED
 }
-
-model Appointment {
-  id String @id @default(uuid())
-  date DateTime
-  status AppointmentStatus @default(SCHEDULED)
-  
-  customerId String
-  customer  Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  
-  userId String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  notes String?
-  created_at DateTime @default(now())
-
-  @@index([date])
-  @@unique([date, userId])
-  @@index([customerId])
-}
-

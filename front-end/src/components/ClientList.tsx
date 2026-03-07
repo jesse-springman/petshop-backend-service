@@ -173,7 +173,7 @@ export default function ClientsList() {
         <div className="flex justify-between items-center mb-6">
           <button
             onClick={handleLogout}
-            className="text-red-500 hover:text-red-300 font-medium cursor-pointer"
+            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md cursor-pointer"
           >
             Sair
           </button>

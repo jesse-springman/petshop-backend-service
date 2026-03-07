@@ -12,6 +12,7 @@ import {
   Get,
   HttpCode,
   UnauthorizedException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { RegisterDto } from './dto/create.user';
 import { Role } from '@prisma/client';
@@ -70,8 +71,14 @@ export class AuthController {
     @Req() req: AutenticateRequest,
     @Body() body: RegisterDto,
   ) {
-    const { sub, role } = req.user;
-    return await this.register.execute({ id: sub, role }, body);
+    try {
+      const { sub, role } = req.user;
+      return await this.register.execute({ id: sub, role }, body);
+    } catch (error: any) {
+      if (error.message === 'Apenas ADMIN pode criar usuários') {
+        throw new ForbiddenException(error.message);
+      }
+    }
   }
 
   @Get('me')

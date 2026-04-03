@@ -25,18 +25,22 @@ export class GetAgenda {
           gte: startDate,
           lt: endDate,
         },
-
-        status: 'SCHEDULED',
       },
       include: {
-        customer: true,
+        customer: {
+          select: {
+            id: true,
+            customer_name: true,
+            pet_name: true,
+            pet_breed: true,
+          },
+        },
       },
       orderBy: {
         date: 'asc',
       },
-      take: 20,
     });
 
-    return appointments;
+    return appointments ?? [];
   }
 }

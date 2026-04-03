@@ -38,7 +38,7 @@ export class CreateAgenda {
         data: {
           customerId: data.customerId,
           date: parsedDate,
-          userId,
+          userId: userId,
           notes: data.notes,
         },
       });

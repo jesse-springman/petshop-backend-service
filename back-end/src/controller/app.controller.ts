@@ -49,14 +49,12 @@ export class AppController {
   ) {
     await this.patchCustomer.update(id, updateCustomerDto);
   }
+
   @UseGuards(AuthGuard)
   @Delete('clientes/:id')
+  @HttpCode(204)
   async delete(@Param('id') id: string) {
-    const deleted = await this.deleteCustomer.delete(id);
-
-    if (!deleted) {
-      throw new NotFoundException(`Cliente não encontrado`);
-    }
+    await this.deleteCustomer.delete(id);
 
     return { message: 'Cliente deletado com sucesso' };
   }

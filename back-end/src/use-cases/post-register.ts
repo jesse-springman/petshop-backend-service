@@ -14,7 +14,7 @@ export class Register {
     dataBodyReq: { name: string; password: string; role?: Role },
   ) {
     if (!currentUser || currentUser.role !== 'ADMIN') {
-      throw new Error('Apenas ADMIN pode criar usuários');
+      throw new ForbiddenException('Apenas ADMIN pode criar usuários');
     }
 
     const passwordHashed = await bcrypt.hash(dataBodyReq.password, 10);

@@ -1,7 +1,8 @@
-import { mockFetch } from "./__mocks__/fetch";
+import { mockFetch } from "../__mocks__/fetch";
 import { registerData } from "@/services/register";
 import { render, screen, fireEvent } from "@testing-library/react";
-import FormRegister from "../app/registro/page";
+import userEvent from "@testing-library/user-event";
+import FormRegister from "../../app/registro/page";
 
 jest.mock("next/navigation", () => ({
   useRouter: () => ({
@@ -63,15 +64,17 @@ describe("POST /registro", () => {
   it("should submit form", async () => {
     render(<FormRegister />);
 
-    fireEvent.change(screen.getByLabelText(/Nome do Colaborador/i), {
-      target: { value: "jesse" },
-    });
+    const user = userEvent.setup();
 
-    fireEvent.change(screen.getByLabelText(/senha/i), {
-      target: { value: "123456" },
-    });
+    const official = screen.getByLabelText(/Nome do Colaborador/i);
+    const password = screen.getByLabelText("Senha");
+    const confimPassword = screen.getByLabelText("Confirmação de senha");
 
-    fireEvent.click(screen.getByText(/Cadastrar/i));
+    await userEvent.type(official, "jesse");
+    await userEvent.type(password, "123456");
+    await userEvent.type(confimPassword, "123456");
+
+    await user.click(screen.getByRole("button", { name: /cadastrar/i }));
 
     expect(fetch).toHaveBeenCalled();
   });

@@ -17,15 +17,9 @@ export async function registerData(data: RegisterDto) {
     body: JSON.stringify(data),
   });
 
-  const responseData = await response.json();
-
   if (!response.ok) {
-    throw {
-      response: {
-        data: responseData,
-        status: response.status,
-      },
-    };
+    throw new Error("Erro ao cadastrar usuário");
   }
-  return responseData;
+
+  return await response.json();
 }

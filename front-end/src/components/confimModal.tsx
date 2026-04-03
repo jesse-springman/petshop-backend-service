@@ -3,14 +3,7 @@
 import { Fragment } from "react/jsx-runtime";
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
-
-interface ConfirmModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-  title?: string;
-  message?: string;
-}
+import { ConfirmModalProps } from "@/types/confirmModalProps";
 
 export default function ConfirmModal({
   isOpen,

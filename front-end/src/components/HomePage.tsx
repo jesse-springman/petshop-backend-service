@@ -79,19 +79,43 @@ export default function HomePage() {
           </p>
 
           {isLoggedIn && (
-            <div>
-              <div className="mt-6 flex items-center gap-8">
-                <Button onClick={() => router.push("/cadastro")}>Cadastro de Clientes</Button>
+            <div className="mt-8 flex flex-col gap-4">
+              <div className="flex flex-wrap gap-3">
+                {[
+                  { label: "Cadastro de Clientes", path: "/cadastro" },
+                  { label: "Cadastro de Funcionários", path: "/registro" },
+                  { label: "Ver Clientes", path: "/clientes" },
+                  { label: "Agenda", path: "/agenda" },
+                ].map(({ label, path }) => (
+                  <button
+                    key={path}
+                    onClick={() => router.push(path)}
+                    className="
+                        group px-7 py-4 text-base relative px-5 py-2.5 rounded-xl
+                        border border-amber-500/40 bg-amber-500/5
+                        text-amber-300 text-sm font-semibold tracking-wide
+                        hover:bg-amber-500 hover:text-black hover:border-amber-500
+                        transition-all duration-200
+                        shadow-[0_0_12px_rgba(245,158,11,0.08)]
+                        hover:shadow-[0_0_20px_rgba(245,158,11,0.3)]
+                        whitespace-nowrap cursor-pointer
+                      "
+                  >
+                    {label}
+                  </button>
+                ))}
 
-                <Button onClick={() => router.push("/registro")}>Cadastro de Funcionários</Button>
-
-                <Button onClick={() => router.push("/clientes")}>Ver Clientes</Button>
-              </div>
-
-              <div>
                 <button
                   onClick={handlerLogout}
-                  className="fixed top-6 right-6 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md cursor-pointer"
+                  className="
+                      fixed px-7 py-4 text-base cursor-pointer top-5 right-5 z-50
+                      px-4 py-2 rounded-xl text-sm font-semibold tracking-wide
+                      border border-red-500/40 bg-red-500/10 text-red-400
+                      hover:bg-red-500 hover:text-white hover:border-red-500
+                      transition-all duration-200
+                      shadow-[0_0_12px_rgba(239,68,68,0.1)]
+                      hover:shadow-[0_0_20px_rgba(239,68,68,0.3)]
+                    "
                 >
                   Sair
                 </button>

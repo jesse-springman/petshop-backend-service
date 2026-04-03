@@ -19,11 +19,11 @@ import { GetAgenda } from './use-cases/get-agenda';
 import { PatchAgendaDTO } from './dto/update-agenda.dto';
 import { UpdateAgenda } from './use-cases/patch-agenda';
 import { DeleteScheduling } from './use-cases/delete-agenda';
+import { JwtPayload } from '../auth/auth.guard';
+import { Request as ExpressRequest } from 'express';
 
 interface AuthRequest {
-  user: {
-    id: string;
-  };
+  user: JwtPayload;
 }
 
 @UseGuards(AuthGuard)
@@ -38,12 +38,18 @@ export class AgendaController {
 
   @Post()
   async create(@Request() req: AuthRequest, @Body() body: CreateAgendaDto) {
-    return this.createAgenda.execute(req.user.id, body);
+    console.log(req.user);
+
+    return this.createAgenda.execute(req.user.sub, body);
   }
 
   @Get()
-  async findAll(@Request() req: AuthRequest, @Query() query: GetAgendaDto) {
-    return this.getAgenda.execute(req.user.id, query);
+  async findAll(
+    @Request() req: AuthRequest,
+    @Query('start') start: string,
+    @Query('end') end: string,
+  ) {
+    return this.getAgenda.execute(req.user.sub, { start, end });
   }
 
   //Só o profissional dono do agendemente pode alterar
@@ -54,12 +60,12 @@ export class AgendaController {
     @Param('id') id: string,
     @Body() body: PatchAgendaDTO,
   ) {
-    return this.updateAgenda.execute(req.user.id, id, body);
+    return this.updateAgenda.execute(req.user.sub, id, body);
   }
 
   @Delete(':id')
   @HttpCode(204)
   async deleteAgenda(@Request() res: AuthRequest, @Param('id') id: string) {
-    return this.deleteScheduling.execute(res.user.id, id);
+    return this.deleteScheduling.execute(res.user.sub, id);
   }
 }

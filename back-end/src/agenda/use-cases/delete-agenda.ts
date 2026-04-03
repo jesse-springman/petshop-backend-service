@@ -14,8 +14,6 @@ export class DeleteScheduling {
       where: { id: schedulingId },
     });
 
-    console.log(scheduling);
-
     if (!scheduling) {
       throw new NotFoundException('Agendamento não encontrado');
     }

@@ -10,18 +10,7 @@ import { deleteCliente } from "@/services/customer/delete";
 import { UpdateClientDTO } from "@/services/customer/patch";
 import { patchClientList } from "@/services/customer/patch";
 import { getClients } from "@/services/customer/get";
-
-type Client = {
-  id: string;
-  customer_name: string;
-  pet_name: string;
-  created_at: string;
-  isAdmin: string;
-  address: string;
-  last_bath: string;
-  number_customer: string;
-  pet_breed: string;
-};
+import { Client } from "@/types/clients";
 
 const formatDate = (dateString: string | null | undefined) => {
   if (!dateString || isNaN(Date.parse(dateString))) {
@@ -58,8 +47,6 @@ export default function ClientsList() {
   });
 
   const hasFetched = useRef(false);
-
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
   async function handleLogout() {
     await logout();
@@ -173,7 +160,15 @@ export default function ClientsList() {
         <div className="flex justify-between items-center mb-6">
           <button
             onClick={handleLogout}
-            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md cursor-pointer"
+            className="
+                      fixed px-7 py-4 text-base cursor-pointer top-5 right-5 z-50
+                      px-4 py-2 rounded-xl text-sm font-semibold tracking-wide
+                      border border-red-500/40 bg-red-500/10 text-red-400
+                      hover:bg-red-500 hover:text-white hover:border-red-500
+                      transition-all duration-200
+                      shadow-[0_0_12px_rgba(239,68,68,0.1)]
+                      hover:shadow-[0_0_20px_rgba(239,68,68,0.3)]
+                    "
           >
             Sair
           </button>

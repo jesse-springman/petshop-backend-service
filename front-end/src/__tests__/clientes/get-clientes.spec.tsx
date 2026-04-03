@@ -1,9 +1,10 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import ClientsList from "../components/ClientList";
+import ClientsList from "../../components/ClientList";
 import userEvent from "@testing-library/user-event";
-import { getClients } from "../services/customer/get";
+import { getClients } from "../../services/customer/get";
+import { mockClients } from "../__mocks__/cliente/list-clientes";
 
-jest.mock("../context/UserContext", () => ({
+jest.mock("../../context/UserContext", () => ({
   useUser: () => ({
     userName: "jesse",
     isAdmin: true,
@@ -12,7 +13,7 @@ jest.mock("../context/UserContext", () => ({
   }),
 }));
 
-jest.mock("../services/customer/get", () => ({
+jest.mock("../../services/customer/get", () => ({
   getClients: jest.fn(),
 }));
 
@@ -21,39 +22,6 @@ jest.mock("next/navigation", () => ({
     push: jest.fn(),
   }),
 }));
-
-const mockClients = [
-  {
-    id: "1",
-    customer_name: "jesse",
-    pet_name: "cacau",
-    created_at: "2025-12-30T14:48:03.026Z",
-    address: "Rua mario azevedo n=14",
-    number_customer: "19983350238",
-    pet_beed: "vira-lata",
-    last_bath: "2026-02-02T21:31:18.551Z",
-  },
-  {
-    id: "2",
-    customer_name: "maria",
-    pet_name: "bolinha",
-    created_at: "2025-12-31T10:20:00.000Z",
-    address: "av luis-15 n=134",
-    number_customer: "19993451232",
-    pet_breed: "vira-lata",
-    last_bath: "2026-01-28T21:31:18.551Z",
-  },
-  {
-    id: "3",
-    customer_name: "carlos",
-    pet_name: "boli",
-    created_at: "2025-12-31T10:20:00.000Z",
-    address: "av luis-15 n=134",
-    number_customer: "19993451232",
-    pet_breed: "vira-lata",
-    last_bath: "2026-01-28T21:31:18.551Z",
-  },
-];
 
 describe("GET /clientes", () => {
   beforeEach(() => {
@@ -123,7 +91,7 @@ describe("GET /clientes", () => {
     });
   });
 
-  it("it should retorn a message not found", async () => {
+  it("it should return a message not found", async () => {
     const user = userEvent.setup();
     (getClients as jest.Mock).mockResolvedValue(mockClients);
 
@@ -172,7 +140,7 @@ it("it should retorn customer with words partial", async () => {
   });
 });
 
-it("it should retorn all customer when clear the input", async () => {
+it("it should return all customer when clear the input", async () => {
   const user = userEvent.setup();
 
   (getClients as jest.Mock).mockResolvedValue(mockClients);

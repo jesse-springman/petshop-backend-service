@@ -1,9 +1,9 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import FormCadastro from "../components/formCustomer";
-import { cadastroData } from "../services/cadastro";
+import FormCadastro from "../../components/formCustomer";
+import { cadastroData } from "../../services/cadastro";
 
-jest.mock("../services/cadastro", () => ({
+jest.mock("../../services/cadastro", () => ({
   cadastroData: jest.fn(),
 }));
 

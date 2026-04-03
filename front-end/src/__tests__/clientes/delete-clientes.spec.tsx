@@ -1,8 +1,8 @@
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import toast, { Toaster } from "react-hot-toast";
-import ClientsList from "../components/ClientList";
-import { deleteCliente } from "../services/customer/delete";
-import { getClients } from "../services/customer/get";
+import ClientsList from "../../components/ClientList";
+import { deleteCliente } from "../../services/customer/delete";
+import { getClients } from "../../services/customer/get";
 
 // Mock toast
 jest.mock("react-hot-toast", () => {
@@ -16,16 +16,16 @@ jest.mock("react-hot-toast", () => {
   };
 });
 
-jest.mock("../services/customer/delete", () => ({
+jest.mock("../../services/customer/delete", () => ({
   deleteCliente: jest.fn(),
 }));
 
-jest.mock("../services/customer/get", () => ({
+jest.mock("../../services/customer/get", () => ({
   getClients: jest.fn(),
 }));
 
 // Mock UserContext
-jest.mock("../context/UserContext", () => ({
+jest.mock("../../context/UserContext", () => ({
   UserProvider: ({ children }: { children: React.ReactNode }) => children,
   useUser: () => ({
     userName: "jesse",

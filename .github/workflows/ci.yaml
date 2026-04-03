@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses:: actions/setup-node@v3
+        with:
+          node_version: 'lst/hydrogen'
+
+      - name: backend
+        run: npm install
+        working-directory: ./back-end
+        env:
+          DATABASE_URL: ${{secrets.DATABASE_URL}}
+
+      - name: BackEnd Tests
+        run: npm run test
+        working-directory: ./back-end
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          ALLOWED_ORIGIN: ${{ secrets.ALLOWED_ORIGIN }}
+
+      - name: Build Backend
+        run: npm run build
+        working-directory: ./back-end
+
+      #======= FRONT-END ==========
+
+      - name: Front-end
+        run: npm install
+        working-directory: ./front-end
+
+      - name: FrontEnd Tests
+        run: npm run test
+        working-directory: ./front-end
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+
+      - name: Build FrontEnd
+        run: npm run build
+        working-directory: ./front-end
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}

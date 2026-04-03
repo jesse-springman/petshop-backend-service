@@ -13,7 +13,7 @@ describe('GET /agenda', () => {
     useCase = new GetAgenda(mockPrisma as any);
   });
 
-  it('it should throw BadRequestException whan format is invalid', async () => {
+  it('it should throw BadRequestException whan format DATE is invalid', async () => {
     const userId = '123';
     const query = { start: 'data-errada', end: '2026-02-12' };
 
@@ -25,7 +25,7 @@ describe('GET /agenda', () => {
     expect(mockPrisma.appointment.findMany).not.toHaveBeenCalled();
   });
 
-  it('it should retorn list empty if dont have scheduling', async () => {
+  it('it should return list empty if dont have scheduling', async () => {
     mockPrisma.appointment.findMany.mockResolvedValue([]);
 
     const result = await useCase.execute('user1', {
@@ -36,7 +36,7 @@ describe('GET /agenda', () => {
     expect(result.length).toBe(0);
   });
 
-  it('should seach scheduling', async () => {
+  it('should search scheduling', async () => {
     const userId = 'user2';
     const query: GetAgendaDto = { start: '2026-02-13', end: '2026-03-12' };
 

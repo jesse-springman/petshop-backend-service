@@ -6,10 +6,10 @@ const createJestConfig = nextJest({
 
 const customJestConfig = {
   testEnvironment: "jsdom",
-  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"], // remova se não tiver o arquivo
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
   moduleFileExtensions: ["ts", "tsx", "js", "jsx"],
   testMatch: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
-  // Isso força o transform do JSX usando o Babel do Next.js
+
   transform: {
     "^.+\\.(js|jsx|ts|tsx)$": ["babel-jest", { presets: ["next/babel"] }],
   },

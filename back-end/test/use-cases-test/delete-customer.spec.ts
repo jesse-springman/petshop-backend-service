@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DeleteCustomer } from '../../src/use-cases/delete-customer';
 import { PrismaService } from '../../src/prisma/database/prisma.service';
+import { NotFoundException } from '@nestjs/common';
 
 describe('DELETE client', () => {
   let service: DeleteCustomer;
@@ -43,7 +44,7 @@ describe('DELETE client', () => {
         customer_pet: 'lele',
       });
 
-      const result = await service.delete(id);
+      await service.delete(id);
 
       expect(mockPrisma.customer.findUnique).toHaveBeenCalledWith({
         where: { id },
@@ -52,31 +53,14 @@ describe('DELETE client', () => {
       expect(mockPrisma.customer.delete).toHaveBeenCalledWith({
         where: { id },
       });
-
-      expect(result).toBe(true);
     });
 
-    it('Must return false when o client not found', async () => {
+    it('Must throw ForbiddenException when  o client not found', async () => {
       mockPrisma.customer.findUnique.mockResolvedValue(null);
 
-      const result = await service.delete(id);
-
-      expect(mockPrisma.customer.findUnique).toHaveBeenCalledWith({
-        where: { id },
-      });
-
-      expect(mockPrisma.customer.delete).not.toHaveBeenCalled();
-
-      expect(result).toBe(false);
-    });
-
-    it('Controller must return false', async () => {
-      mockPrisma.customer.findUnique.mockResolvedValue(null);
-
-      const result = await service.delete(id);
-
-      expect(result).toBe(false);
-      expect(mockPrisma.customer.delete).not.toHaveBeenCalledWith();
+      await expect(service.delete('inexistente')).rejects.toBeInstanceOf(
+        NotFoundException,
+      );
     });
   });
 });

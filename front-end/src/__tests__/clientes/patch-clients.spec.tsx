@@ -1,11 +1,11 @@
 import { screen, render, fireEvent, waitFor } from "@testing-library/react";
 import ClientsList from "@/components/ClientList";
 import userEvent from "@testing-library/user-event";
-import { patchClientList } from "../services/customer/patch";
-import { getClients } from "../services/customer/get";
+import { patchClientList } from "../../services/customer/patch";
+import { getClients } from "../../services/customer/get";
 
 //mock do useUser simulando alguém logado
-jest.mock("../context/UserContext", () => ({
+jest.mock("../../context/UserContext", () => ({
   useUser: () => ({
     userName: "jesse",
     isAdmin: true,
@@ -20,11 +20,11 @@ jest.mock("next/navigation", () => ({
   }),
 }));
 
-jest.mock("../services/customer/patch", () => ({
+jest.mock("../../services/customer/patch", () => ({
   patchClientList: jest.fn(),
 }));
 
-jest.mock("../services/customer/get", () => ({
+jest.mock("../../services/customer/get", () => ({
   getClients: jest.fn(),
 }));
 

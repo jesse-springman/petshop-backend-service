@@ -14,7 +14,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: 'lts/hydrogen'
+          node-version: '20'
 
       - name: backend
         run: npm install
@@ -33,7 +33,7 @@ jobs:
       - name: Build Backend
         run: npm run build
         working-directory: ./back-end
-
+        env: DATABASE_URL:${{secrets.DATABASE_URL}}
       #======= FRONT-END ==========
 
       - name: Front-end

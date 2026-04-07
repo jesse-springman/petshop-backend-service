@@ -33,7 +33,8 @@ jobs:
       - name: Build Backend
         run: npm run build
         working-directory: ./back-end
-        env: DATABASE_URL:${{secrets.DATABASE_URL}}
+        env:
+          DATABASE_URL: ${{secrets.DATABASE_URL}}
       #======= FRONT-END ==========
 
       - name: Front-end

@@ -11,6 +11,7 @@ import { UpdateClientDTO } from "@/services/customer/patch";
 import { patchClientList } from "@/services/customer/patch";
 import { getClients } from "@/services/customer/get";
 import { Client } from "@/types/clients";
+import { log } from "console";
 
 const formatDate = (dateString: string | null | undefined) => {
   if (!dateString || isNaN(Date.parse(dateString))) {
@@ -135,6 +136,7 @@ export default function ClientsList() {
     const fecthClientes = async () => {
       try {
         const data = await getClients();
+        console.log(data);
         setClient([...data]);
       } catch (error) {
         setErro("Não foi possível localizar os clientes");

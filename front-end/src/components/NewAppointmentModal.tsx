@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getClients, Customer } from "../services/customer/get";
+import { getClients } from "../services/customer/get";
+import { Client } from "../types/clients";
 import toast from "react-hot-toast";
 import { postAgenda } from "../services/agenda/post";
 
@@ -13,7 +14,7 @@ interface Props {
 }
 
 export function NewAppointmentModal({ dateSelect, onClose, onSuccess, existingTimes }: Props) {
-  const [customers, setCustomer] = useState<Customer[]>([]);
+  const [customers, setCustomer] = useState<Client[]>([]);
   const [customerId, setCustomerId] = useState("");
   const [date, setDate] = useState("");
   const [notes, setNotes] = useState("");

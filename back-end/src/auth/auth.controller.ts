@@ -62,7 +62,12 @@ export class AuthController {
       maxAge: 1 * 24 * 60 * 60 * 1000,
     });
 
-    return { success: true, userName: user.name, role: user.role };
+    return {
+      access_token: token,
+      success: true,
+      userName: user.name,
+      role: user.role,
+    };
   }
 
   @UseGuards(AuthGuard)

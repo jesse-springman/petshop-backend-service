@@ -26,7 +26,17 @@ export class AuthGuard implements CanActivate {
 
     console.log('Cookies recebidos:', request.cookies);
 
-    const token = request.cookies?.access_token;
+    const authHeader = request.headers.authorization;
+
+    let bearerToken: string | undefined;
+
+    if (authHeader?.startsWith('Bearer ')) {
+      bearerToken = authHeader?.split(' ')[1];
+    }
+
+    const cookieToken = request.cookies?.access_token;
+
+    const token = bearerToken || cookieToken;
 
     if (!token) {
       throw new UnauthorizedException('Voce precisa estar logado');

@@ -17,7 +17,14 @@ import { GetCustomer } from '../use-cases/get-customer';
 import { PatchCustomer } from '../use-cases/patch-customer';
 import { DeleteCustomer } from '../use-cases/delete-customer';
 import { AuthGuard } from '../auth/auth.guard';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @UseGuards(AuthGuard)
 @Controller()
 export class AppController {
@@ -29,6 +36,10 @@ export class AppController {
     private readonly deleteCustomer: DeleteCustomer,
   ) {}
 
+  @ApiTags('Customers')
+  @ApiOperation({ summary: 'Criar um novo cliente' })
+  @ApiResponse({ status: 201, description: 'Cliente criado com sucesso' })
+  @ApiResponse({ status: 400, description: 'Erro de validação' })
   @HttpCode(201)
   @Post('cadastro')
   async insertCustomersData(@Body() body: CreateCustomerDto) {

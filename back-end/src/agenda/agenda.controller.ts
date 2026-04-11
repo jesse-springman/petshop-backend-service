@@ -16,7 +16,7 @@ import { CreateAgendaDto } from './dto/create-agenda.dto';
 import { GetAgendaDto } from './dto/get-agenda.dto';
 import { CreateAgenda } from './use-cases/post-agenda';
 import { GetAgenda } from './use-cases/get-agenda';
-import { PatchAgendaDTO } from './dto/update-agenda.dto';
+import { PatchAgendaDto } from './dto/update-agenda.dto';
 import { UpdateAgenda } from './use-cases/patch-agenda';
 import { DeleteScheduling } from './use-cases/delete-agenda';
 import { JwtPayload } from '../auth/auth.guard';
@@ -58,7 +58,7 @@ export class AgendaController {
   async updateStatus(
     @Request() req: AuthRequest,
     @Param('id') id: string,
-    @Body() body: PatchAgendaDTO,
+    @Body() body: PatchAgendaDto,
   ) {
     return this.updateAgenda.execute(req.user.sub, id, body);
   }

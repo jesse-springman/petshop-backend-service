@@ -1,6 +1,6 @@
 import { IsISO8601, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-export class CreateCustomerBody {
+export class CreateCustomerDto {
   @IsString({ message: 'O nome deve ser um texto' })
   @IsNotEmpty({ message: 'O nome do dono é obrigátorio' })
   customer_name!: string;

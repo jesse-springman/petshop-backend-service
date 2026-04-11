@@ -4,13 +4,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/database/prisma.service';
-import { PatchAgendaDTO } from '../dto/update-agenda.dto';
+import { PatchAgendaDto } from '../dto/update-agenda.dto';
 
 @Injectable()
 export class UpdateAgenda {
   constructor(private readonly prisma: PrismaService) {}
 
-  async execute(userId: string, agendaId: string, data: PatchAgendaDTO) {
+  async execute(userId: string, agendaId: string, data: PatchAgendaDto) {
     const agenda = await this.prisma.appointment.findUnique({
       where: { id: agendaId },
     });

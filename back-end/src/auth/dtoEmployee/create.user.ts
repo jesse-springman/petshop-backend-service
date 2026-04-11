@@ -1,7 +1,7 @@
 import { Role } from '@prisma/client';
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 
-export class PostEmployee {
+export class CreateEmployeeDto {
   @IsString()
   name!: string;
 

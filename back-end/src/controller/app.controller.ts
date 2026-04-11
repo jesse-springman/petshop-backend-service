@@ -10,7 +10,7 @@ import {
   Delete,
   UseGuards,
 } from '@nestjs/common';
-import { CreateCustomerBody } from '../dto/customer/create.customer';
+import { CreateCustomerDto } from '../dto/customer/create.customer';
 import { UpdateCustomerDto } from '../dto/customer/update-customer';
 import { PostCustomer } from '../use-cases/post-customer';
 import { GetCustomer } from '../use-cases/get-customer';
@@ -31,7 +31,7 @@ export class AppController {
 
   @HttpCode(201)
   @Post('cadastro')
-  async insertCustomersData(@Body() body: CreateCustomerBody) {
+  async insertCustomersData(@Body() body: CreateCustomerDto) {
     return await this.postCustomer.execute(body);
   }
 

@@ -20,7 +20,6 @@ import { PatchAgendaDto } from './dto/update-agenda.dto';
 import { UpdateAgenda } from './use-cases/patch-agenda';
 import { DeleteScheduling } from './use-cases/delete-agenda';
 import { JwtPayload } from '../auth/auth.guard';
-import { Request as ExpressRequest } from 'express';
 
 interface AuthRequest {
   user: JwtPayload;
@@ -38,16 +37,14 @@ export class AgendaController {
 
   @Post()
   async create(@Request() req: AuthRequest, @Body() body: CreateAgendaDto) {
-    console.log(req.user);
-
     return this.createAgenda.execute(req.user.sub, body);
   }
 
   @Get()
   async findAll(
     @Request() req: AuthRequest,
-    @Query('start') start: string,
-    @Query('end') end: string,
+    @Query('start') { start }: GetAgendaDto,
+    @Query('end') { end }: GetAgendaDto,
   ) {
     return this.getAgenda.execute(req.user.sub, { start, end });
   }

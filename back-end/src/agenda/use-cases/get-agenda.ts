@@ -1,16 +1,12 @@
+import { GetAgendaDto } from '../dto/get-agenda.dto';
 import { PrismaService } from '../../prisma/database/prisma.service';
 import { Injectable, BadRequestException } from '@nestjs/common';
-
-export interface dtoAppointments {
-  start: string;
-  end: string;
-}
 
 @Injectable()
 export class GetAgenda {
   constructor(private prisma: PrismaService) {}
 
-  async execute(userId: string, { start, end }: dtoAppointments) {
+  async execute(userId: string, { start, end }: GetAgendaDto) {
     const startDate = new Date(start);
     const endDate = new Date(end);
 

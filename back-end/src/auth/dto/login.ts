@@ -10,7 +10,6 @@ export class LoginDto {
   name!: string;
 
   @ApiProperty({
-    example: '123456',
     description: 'Senha definida pelo funcionário',
   })
   @IsString()

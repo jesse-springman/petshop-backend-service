@@ -6,11 +6,12 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import type { Request } from 'express';
+import { JwtPayload } from './type/jwtPayLoad';
 
-export interface JwtPayload {
-  username: string;
-  sub: string;
-}
+// export interface JwtPayload {
+//   username: string;
+//   sub: string;
+// }
 
 interface RequestWithCookies extends Request {
   cookies: Record<string, string | undefined>;

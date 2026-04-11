@@ -3,7 +3,7 @@ import {
   Controller,
   Get,
   HttpCode,
-  NotFoundException,
+  HttpStatus,
   Patch,
   Post,
   Param,
@@ -22,10 +22,12 @@ import {
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
+  ApiParam,
 } from '@nestjs/swagger';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard)
+@ApiTags('Customers')
 @Controller()
 export class AppController {
   constructor(
@@ -36,23 +38,63 @@ export class AppController {
     private readonly deleteCustomer: DeleteCustomer,
   ) {}
 
-  @ApiTags('Customers')
-  @ApiOperation({ summary: 'Criar um novo cliente' })
-  @ApiResponse({ status: 201, description: 'Cliente criado com sucesso' })
-  @ApiResponse({ status: 400, description: 'Erro de validação' })
-  @HttpCode(201)
   @Post('cadastro')
+  @ApiOperation({ summary: 'Criar um novo cliente' })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Um novo cliente foi criado com sucesso.',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Dados inválidos no corpo da requisição.',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Token de autenticação ausente ou inválido.',
+  })
+  @HttpCode(HttpStatus.CREATED)
   async insertCustomersData(@Body() body: CreateCustomerDto) {
     return await this.postCustomer.execute(body);
   }
 
   @Get('clientes')
+  @ApiOperation({ summary: 'Lista de todos os clientes cadastrados' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Lista de clientes retornado com sucesso.',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Token de autenticação ausente ou inválido.',
+  })
   async allCustomersData() {
     const allCustomers = await this.getCustomer.findAllClient();
     return allCustomers;
   }
 
   @Patch('clientes/:id')
+  @ApiOperation({ summary: 'Atualiza dados do cliente' })
+  @ApiParam({
+    name: 'id',
+    description: 'ID único do cliente',
+    example: 'c1a2b3d4-e5f6-7890-abcd-ef1234567890',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Dados do cliente atualizado com sucesso.',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Dados incorretos.',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Token de autenticação ausente ou inválido.',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Cliente não encontrado.',
+  })
   async updateData(
     @Param('id') id: string,
     @Body() updateCustomerDto: UpdateCustomerDto,
@@ -61,7 +103,29 @@ export class AppController {
   }
 
   @Delete('clientes/:id')
-  @HttpCode(204)
+  @ApiOperation({ summary: 'Remove um cliente pelo ID' })
+  @ApiParam({
+    name: 'id',
+    description: 'ID único do cliente',
+    example: 'c1a2b3d4-e5f6-7890-abcd-ef1234567890',
+  })
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: 'Cliente removido com sucesso',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Token de autenticação ausente ou inválido.',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Você não tem permissão para excluir este cliente.',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Cliente não encontrado',
+  })
+  @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id') id: string) {
     await this.deleteCustomer.delete(id);
 

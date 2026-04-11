@@ -14,10 +14,11 @@ import {
   UnauthorizedException,
   ForbiddenException,
 } from '@nestjs/common';
-import { CreateEmployeeDto } from './dtoEmployee/create.user';
+import { CreateEmployeeDto } from './dto/create.employee';
 import { Role } from '@prisma/client';
 import { Register } from '../use-cases/post-register';
 import { Request } from 'express';
+import { LoginDto } from './dto/login';
 
 interface JwtPayload {
   username: string;
@@ -40,7 +41,7 @@ export class AuthController {
   @Post('login')
   @HttpCode(200)
   async login(
-    @Body() body: CreateEmployeeDto,
+    @Body() body: LoginDto,
     @Res({ passthrough: true }) response: Response,
   ) {
     const user = await this.authService.validateUser(body.name, body.password);

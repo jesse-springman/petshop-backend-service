@@ -1,4 +1,4 @@
-import { CreateEmployeeDto } from '../auth/dtoEmployee/create.user';
+import { CreateEmployeeDto } from '../auth/dto/create.employee';
 import { PrismaService } from '../prisma/database/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { Injectable } from '@nestjs/common';

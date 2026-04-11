@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/database/prisma.service';
-import { UpdateCustomerDto } from '../dto/update-customer';
+import { UpdateCustomerDto } from '../dto/customer/update-customer';
 
 @Injectable()
 export class PatchCustomer {

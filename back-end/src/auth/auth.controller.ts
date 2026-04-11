@@ -14,7 +14,7 @@ import {
   UnauthorizedException,
   ForbiddenException,
 } from '@nestjs/common';
-import { RegisterDto } from './dto/create.user';
+import { PostEmployee } from './dtoEmployee/create.user';
 import { Role } from '@prisma/client';
 import { Register } from '../use-cases/post-register';
 import { Request } from 'express';
@@ -40,7 +40,7 @@ export class AuthController {
   @Post('login')
   @HttpCode(200)
   async login(
-    @Body() body: RegisterDto,
+    @Body() body: PostEmployee,
     @Res({ passthrough: true }) response: Response,
   ) {
     const user = await this.authService.validateUser(body.name, body.password);
@@ -69,7 +69,7 @@ export class AuthController {
   @Post('register')
   async registerUser(
     @Req() req: AutenticateRequest,
-    @Body() body: RegisterDto,
+    @Body() body: PostEmployee,
   ) {
     try {
       const { sub, role } = req.user;

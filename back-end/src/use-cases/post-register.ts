@@ -1,9 +1,8 @@
-import { Role } from '@prisma/client';
+import { PostEmployee } from '../auth/dtoEmployee/create.user';
 import { PrismaService } from '../prisma/database/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { Injectable } from '@nestjs/common';
 import { ForbiddenException } from '@nestjs/common';
-import { response } from 'express';
 
 @Injectable()
 export class Register {
@@ -11,7 +10,7 @@ export class Register {
 
   async execute(
     currentUser: { id: string; role: string },
-    dataBodyReq: { name: string; password: string; role?: Role },
+    dataBodyReq: PostEmployee,
   ) {
     if (!currentUser || currentUser.role !== 'ADMIN') {
       throw new ForbiddenException('Apenas ADMIN pode criar usuários');

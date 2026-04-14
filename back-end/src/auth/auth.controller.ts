@@ -19,7 +19,7 @@ import { CreateEmployeeDto } from './dto/create.employee';
 import { Register } from '../use-cases/post-register';
 import { Request } from 'express';
 import { LoginDto } from './dto/login';
-import { JwtPayload } from './type/jwtPayLoad';
+import { JwtPayload } from './type/jwtPayload';
 import {
   ApiTags,
   ApiBearerAuth,

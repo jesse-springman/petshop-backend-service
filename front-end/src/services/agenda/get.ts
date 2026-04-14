@@ -6,7 +6,7 @@ export async function getAppointment(start: string, end: string) {
       credentials: "include",
     });
     const data = await response.json();
-    return data;
+    return Array.isArray(data) ? data : (data.appointment ?? []);
   } catch (error) {
     console.log(error);
     throw new Error("Erro em buscar agenda");

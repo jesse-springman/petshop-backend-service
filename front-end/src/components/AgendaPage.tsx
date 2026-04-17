@@ -59,11 +59,11 @@ export function AgendaPage() {
   }
 
   async function fetchAppointments() {
-    const start = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
-    const startParsed = start.toISOString();
+    const year = currentMonth.getFullYear();
+    const month = currentMonth.getMonth();
 
-    const end = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1);
-    const endParsed = end.toISOString();
+    const startParsed = new Date(Date.UTC(year, month, 1)).toISOString();
+    const endParsed = new Date(Date.UTC(year, month + 1, 1)).toISOString();
 
     const data = await getAppointment(startParsed, endParsed);
 

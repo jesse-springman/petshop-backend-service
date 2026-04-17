@@ -62,8 +62,8 @@ export function AgendaPage() {
     const year = currentMonth.getFullYear();
     const month = currentMonth.getMonth();
 
-    const startParsed = new Date(Date.UTC(year, month, 1)).toISOString();
-    const endParsed = new Date(Date.UTC(year, month + 1, 1)).toISOString();
+    const startParsed = `${year}-${String(month + 1).padStart(2, "0")}-01`;
+    const endParsed = `${year}-${String(month + 2).padStart(2, "0")}-01`;
 
     const data = await getAppointment(startParsed, endParsed);
 

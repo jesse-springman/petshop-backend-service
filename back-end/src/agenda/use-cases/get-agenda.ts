@@ -6,9 +6,9 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 export class GetAgenda {
   constructor(private prisma: PrismaService) {}
 
-  async execute(userId: string, { start, end }: GetAgendaDto) {
-    const startDate = new Date(start);
-    const endDate = new Date(end);
+  async execute(userId: string, query: GetAgendaDto) {
+    const startDate = new Date(query.start);
+    const endDate = new Date(query.end);
 
     if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
       throw new BadRequestException('Intervalo de datas inválido');

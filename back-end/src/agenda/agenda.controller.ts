@@ -82,12 +82,8 @@ export class AgendaController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'Token de autenticação ausente ou inválido.',
   })
-  async findAll(
-    @Request() req: AuthRequest,
-    @Query('start') { start }: GetAgendaDto,
-    @Query('end') { end }: GetAgendaDto,
-  ) {
-    return this.getAgenda.execute(req.user.sub, { start, end });
+  async findAll(@Request() req: AuthRequest, @Query() query: GetAgendaDto) {
+    return this.getAgenda.execute(req.user.sub, query);
   }
 
   //Só o profissional dono do agendemente pode alterar

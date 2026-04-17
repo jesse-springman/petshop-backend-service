@@ -7,6 +7,8 @@ export async function getAppointment(start: string, end: string) {
     });
     const data = await response.json();
 
+    console.log("data:", data);
+
     return Array.isArray(data) ? data : (data.appointment ?? []);
   } catch (error) {
     console.log(error);

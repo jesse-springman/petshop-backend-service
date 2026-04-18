@@ -9,11 +9,13 @@ import { DeleteCustomer } from './use-cases/delete-customer';
 import { AuthModule } from './auth/auth.module';
 import { AgendaModule } from './agenda/agenda.module';
 import { ConfigModule } from '@nestjs/config';
+import { IAModule } from './messageAI/ai.module';
+
 @Module({
   imports: [
     AuthModule,
     AgendaModule,
-
+    IAModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env,',

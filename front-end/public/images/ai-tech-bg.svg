@@ -1,0 +1,155 @@
+<svg width="100%" viewBox="0 0 680 420" role="img" xmlns="http://www.w3.org/2000/svg">
+<title>Fundo tecnologia IA</title>
+<desc>Rede neural com nós conectados e partículas em tema escuro âmbar</desc>
+<style>
+  .bg{fill:#080A0C}
+  .n{fill:#F59E0B;opacity:.9}
+  .ns{fill:#FBBF24;opacity:.5}
+  .nxs{fill:#F59E0B;opacity:.3}
+  .e{stroke:#F59E0B;stroke-width:.6;fill:none;opacity:.18}
+  .ep{stroke:#F59E0B;stroke-width:1;fill:none;opacity:.35}
+  .scan{stroke:#F59E0B;stroke-width:.4;fill:none;opacity:.07}
+  .hex{fill:none;stroke:#F59E0B;stroke-width:.5;opacity:.1}
+  .pulse{fill:#F59E0B;opacity:.08}
+</style>
+<rect width="680" height="420" class="bg"/>
+<polygon points="100,60 124,47 148,60 148,86 124,99 100,86" class="hex"/>
+<polygon points="148,60 172,47 196,60 196,86 172,99 148,86" class="hex"/>
+<polygon points="196,60 220,47 244,60 244,86 220,99 196,86" class="hex"/>
+<polygon points="124,99 148,86 172,99 172,125 148,138 124,125" class="hex"/>
+<polygon points="172,99 196,86 220,99 220,125 196,138 172,125" class="hex"/>
+<polygon points="220,99 244,86 268,99 268,125 244,138 220,125" class="hex"/>
+<polygon points="100,138 124,125 148,138 148,164 124,177 100,164" class="hex"/>
+<polygon points="148,138 172,125 196,138 196,164 172,177 148,164" class="hex"/>
+<polygon points="76,99 100,86 124,99 124,125 100,138 76,125" class="hex"/>
+<polygon points="52,60 76,47 100,60 100,86 76,99 52,86" class="hex"/>
+<polygon points="480,300 504,287 528,300 528,326 504,339 480,326" class="hex"/>
+<polygon points="528,300 552,287 576,300 576,326 552,339 528,326" class="hex"/>
+<polygon points="576,300 600,287 624,300 624,326 600,339 576,326" class="hex"/>
+<polygon points="504,339 528,326 552,339 552,365 528,378 504,365" class="hex"/>
+<polygon points="552,339 576,326 600,339 600,365 576,378 552,365" class="hex"/>
+<polygon points="456,339 480,326 504,339 504,365 480,378 456,365" class="hex"/>
+<polygon points="480,261 504,248 528,261 528,287 504,300 480,287" class="hex"/>
+<polygon points="528,261 552,248 576,261 576,287 552,300 528,287" class="hex"/>
+<line x1="80" y1="40" x2="640" y2="40" class="scan"/>
+<line x1="80" y1="80" x2="640" y2="80" class="scan"/>
+<line x1="80" y1="120" x2="640" y2="120" class="scan"/>
+<line x1="80" y1="160" x2="640" y2="160" class="scan"/>
+<line x1="80" y1="200" x2="640" y2="200" class="scan"/>
+<line x1="80" y1="240" x2="640" y2="240" class="scan"/>
+<line x1="80" y1="280" x2="640" y2="280" class="scan"/>
+<line x1="80" y1="320" x2="640" y2="320" class="scan"/>
+<line x1="80" y1="360" x2="640" y2="360" class="scan"/>
+<line x1="80" y1="400" x2="640" y2="400" class="scan"/>
+<line x1="80" y1="40" x2="80" y2="400" class="scan"/>
+<line x1="160" y1="40" x2="160" y2="400" class="scan"/>
+<line x1="240" y1="40" x2="240" y2="400" class="scan"/>
+<line x1="320" y1="40" x2="320" y2="400" class="scan"/>
+<line x1="400" y1="40" x2="400" y2="400" class="scan"/>
+<line x1="480" y1="40" x2="480" y2="400" class="scan"/>
+<line x1="560" y1="40" x2="560" y2="400" class="scan"/>
+<line x1="640" y1="40" x2="640" y2="400" class="scan"/>
+<circle cx="340" cy="210" r="80" class="pulse"/>
+<circle cx="340" cy="210" r="55" class="pulse"/>
+<circle cx="340" cy="210" r="30" class="pulse"/>
+<line x1="90" y1="180" x2="200" y2="150" class="e"/>
+<line x1="90" y1="180" x2="200" y2="210" class="e"/>
+<line x1="90" y1="280" x2="200" y2="210" class="e"/>
+<line x1="90" y1="280" x2="200" y2="270" class="e"/>
+<line x1="160" y1="100" x2="200" y2="150" class="e"/>
+<line x1="160" y1="350" x2="200" y2="270" class="e"/>
+<line x1="200" y1="150" x2="280" y2="120" class="e"/>
+<line x1="200" y1="150" x2="280" y2="180" class="e"/>
+<line x1="200" y1="210" x2="280" y2="180" class="e"/>
+<line x1="200" y1="210" x2="280" y2="240" class="e"/>
+<line x1="200" y1="270" x2="280" y2="240" class="e"/>
+<line x1="200" y1="270" x2="280" y2="300" class="e"/>
+<line x1="280" y1="120" x2="340" y2="210" class="ep"/>
+<line x1="280" y1="180" x2="340" y2="210" class="ep"/>
+<line x1="280" y1="240" x2="340" y2="210" class="ep"/>
+<line x1="280" y1="300" x2="340" y2="210" class="ep"/>
+<line x1="340" y1="210" x2="400" y2="120" class="ep"/>
+<line x1="340" y1="210" x2="400" y2="180" class="ep"/>
+<line x1="340" y1="210" x2="400" y2="240" class="ep"/>
+<line x1="340" y1="210" x2="400" y2="300" class="ep"/>
+<line x1="400" y1="120" x2="480" y2="150" class="e"/>
+<line x1="400" y1="120" x2="480" y2="210" class="e"/>
+<line x1="400" y1="180" x2="480" y2="150" class="e"/>
+<line x1="400" y1="180" x2="480" y2="210" class="e"/>
+<line x1="400" y1="240" x2="480" y2="210" class="e"/>
+<line x1="400" y1="240" x2="480" y2="270" class="e"/>
+<line x1="400" y1="300" x2="480" y2="270" class="e"/>
+<line x1="400" y1="300" x2="480" y2="330" class="e"/>
+<line x1="480" y1="150" x2="590" y2="180" class="e"/>
+<line x1="480" y1="210" x2="590" y2="180" class="e"/>
+<line x1="480" y1="210" x2="590" y2="240" class="e"/>
+<line x1="480" y1="270" x2="590" y2="240" class="e"/>
+<line x1="480" y1="270" x2="590" y2="300" class="e"/>
+<line x1="480" y1="330" x2="590" y2="300" class="e"/>
+<line x1="520" y1="100" x2="590" y2="180" class="e"/>
+<line x1="520" y1="360" x2="590" y2="300" class="e"/>
+<circle cx="90" cy="180" r="5" class="n"/>
+<circle cx="90" cy="280" r="5" class="n"/>
+<circle cx="160" cy="100" r="4" class="ns"/>
+<circle cx="160" cy="350" r="4" class="ns"/>
+<circle cx="200" cy="150" r="5" class="n"/>
+<circle cx="200" cy="210" r="5" class="n"/>
+<circle cx="200" cy="270" r="5" class="n"/>
+<circle cx="280" cy="120" r="5" class="n"/>
+<circle cx="280" cy="180" r="5" class="n"/>
+<circle cx="280" cy="240" r="5" class="n"/>
+<circle cx="280" cy="300" r="5" class="n"/>
+<circle cx="340" cy="210" r="14" fill="#F59E0B" opacity=".25"/>
+<circle cx="340" cy="210" r="8" fill="#F59E0B" opacity=".6"/>
+<circle cx="340" cy="210" r="4" fill="#FBBF24" opacity="1"/>
+<circle cx="400" cy="120" r="5" class="n"/>
+<circle cx="400" cy="180" r="5" class="n"/>
+<circle cx="400" cy="240" r="5" class="n"/>
+<circle cx="400" cy="300" r="5" class="n"/>
+<circle cx="480" cy="150" r="5" class="n"/>
+<circle cx="480" cy="210" r="5" class="n"/>
+<circle cx="480" cy="270" r="5" class="n"/>
+<circle cx="480" cy="330" r="5" class="n"/>
+<circle cx="520" cy="100" r="4" class="ns"/>
+<circle cx="520" cy="360" r="4" class="ns"/>
+<circle cx="590" cy="180" r="5" class="n"/>
+<circle cx="590" cy="240" r="5" class="n"/>
+<circle cx="590" cy="300" r="5" class="n"/>
+<circle cx="30" cy="90" r="2" class="nxs"/>
+<circle cx="55" cy="150" r="1.5" class="nxs"/>
+<circle cx="40" cy="230" r="2" class="nxs"/>
+<circle cx="60" cy="310" r="1.5" class="nxs"/>
+<circle cx="35" cy="380" r="2" class="nxs"/>
+<circle cx="640" cy="90" r="2" class="nxs"/>
+<circle cx="650" cy="160" r="1.5" class="nxs"/>
+<circle cx="635" cy="240" r="2" class="nxs"/>
+<circle cx="648" cy="330" r="1.5" class="nxs"/>
+<circle cx="630" cy="390" r="2" class="nxs"/>
+<circle cx="220" cy="50" r="1.5" class="nxs"/>
+<circle cx="340" cy="30" r="2" class="nxs"/>
+<circle cx="460" cy="50" r="1.5" class="nxs"/>
+<circle cx="270" cy="390" r="1.5" class="nxs"/>
+<circle cx="410" cy="385" r="2" class="nxs"/>
+<defs>
+  <linearGradient id="fadeL" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#080A0C" stop-opacity="1"/>
+    <stop offset="100%" stop-color="#080A0C" stop-opacity="0"/>
+  </linearGradient>
+  <linearGradient id="fadeR" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#080A0C" stop-opacity="0"/>
+    <stop offset="100%" stop-color="#080A0C" stop-opacity="1"/>
+  </linearGradient>
+  <linearGradient id="fadeT" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#080A0C" stop-opacity="1"/>
+    <stop offset="100%" stop-color="#080A0C" stop-opacity="0"/>
+  </linearGradient>
+  <linearGradient id="fadeB" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#080A0C" stop-opacity="0"/>
+    <stop offset="100%" stop-color="#080A0C" stop-opacity="1"/>
+  </linearGradient>
+</defs>
+<rect width="120" height="420" fill="url(#fadeL)"/>
+<rect x="560" width="120" height="420" fill="url(#fadeR)"/>
+<rect width="680" height="60" fill="url(#fadeT)"/>
+<rect y="360" width="680" height="60" fill="url(#fadeB)"/>
+</svg>

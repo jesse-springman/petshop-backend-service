@@ -86,6 +86,7 @@ export default function HomePage() {
                   { label: "Cadastro de Funcionários", path: "/registro" },
                   { label: "Ver Clientes", path: "/clientes" },
                   { label: "Agenda", path: "/agenda" },
+                  { label: "Mensagem com IA", path: "/respostaIA" },
                 ].map(({ label, path }) => (
                   <button
                     key={path}

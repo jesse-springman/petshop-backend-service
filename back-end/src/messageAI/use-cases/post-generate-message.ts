@@ -20,7 +20,7 @@ export class GenerateMessage {
     });
 
     if (!customer) {
-      throw new NotFoundException('Cliente não encontrado');
+      throw new NotFoundException('Esse usuário não foi encontrado');
     }
 
     const daysWithoutBath = this.daysSinceWithoutBath(customer.last_bath);

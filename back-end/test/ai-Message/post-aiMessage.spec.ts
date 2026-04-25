@@ -22,7 +22,7 @@ const mockCustomers = [
   },
 
   {
-    id: '123',
+    id: '1234',
     customer_name: 'gabi',
     pet_name: 'preta',
     pet_breed: 'vira-lata',
@@ -47,7 +47,7 @@ describe('GET /respostaAI', () => {
       json: jest.fn().mockResolvedValue({
         choices: [
           {
-            messasge: { content: 'Mensagem gerada pela IA' },
+            message: { content: 'Mensagem gerada pela IA' },
           },
         ],
       }),
@@ -160,5 +160,63 @@ describe('GET /respostaAI', () => {
 
     expect(prompt).toContain('Jesse');
     expect(prompt).toContain('Rex');
+  });
+
+  it('Should generate prompt with appointment date of AGENDAMENTO', async () => {
+    const prompt = (useCase as any).assemblePrompt(
+      mockCustomers[0],
+      5,
+      TypeMessage.AGENDAMENTO,
+    );
+
+    expect(prompt).toContain('Jesse');
+    expect(prompt).toContain('Rex');
+  });
+
+  it('Should generate prompt for COBRANCA', async () => {
+    const prompt = (useCase as any).assemblePrompt(
+      mockCustomers[0],
+      5,
+      TypeMessage.COBRANCA,
+    );
+
+    expect(prompt).toContain('Jesse');
+    expect(prompt).toContain('Rex');
+  });
+
+  it('should return phone of customer', async () => {
+    mockPrisma.customer.findUnique.mockResolvedValue(mockCustomers[0]);
+
+    const result = await useCase.execute({
+      customerId: mockCustomers[0].id,
+      type: TypeMessage.LEMBRETE_BANHO,
+    });
+
+    expect(result.phone).toBe('19999999999');
+  });
+
+  it('should call fetch with correct GroqAPI', async () => {
+    mockPrisma.customer.findUnique.mockResolvedValue(mockCustomers[0]);
+
+    await useCase.execute({
+      customerId: mockCustomers[0].id,
+      type: TypeMessage.LEMBRETE_BANHO,
+    });
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      'https://api.groq.com/openai/v1/chat/completions',
+
+      expect.objectContaining({ method: 'POST' }),
+    );
+  });
+
+  it('should generate prompt with days without bath', async () => {
+    const prompt = (useCase as any).assemblePrompt(
+      mockCustomers[0],
+      5,
+      TypeMessage.LEMBRETE_BANHO,
+    );
+
+    expect(prompt).toContain('5');
   });
 });

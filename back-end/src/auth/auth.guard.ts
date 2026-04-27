@@ -8,11 +8,6 @@ import { JwtService } from '@nestjs/jwt';
 import type { Request } from 'express';
 import { JwtPayload } from './type/jwtPayload';
 
-// export interface JwtPayload {
-//   username: string;
-//   sub: string;
-// }
-
 interface RequestWithCookies extends Request {
   cookies: Record<string, string | undefined>;
   user?: JwtPayload;
@@ -24,6 +19,8 @@ export class AuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<RequestWithCookies>();
+
+    console.log('🔥 GUARD EXECUTADO');
 
     console.log('Cookies recebidos:', request.cookies);
 

@@ -7,9 +7,5 @@ export async function getClients(): Promise<Client[]> {
     credentials: "include",
   });
 
-  if (!response.ok) {
-    toast.error("Não foi possível localizar os clientes.");
-  }
-
   return response.json();
 }

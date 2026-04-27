@@ -44,13 +44,24 @@ export function NewAppointmentModal({ dateSelect, onClose, onSuccess, existingTi
   const services = ["Banho", "Tosa", "Banho e Tosa", "Hidratação", "Corte de unha"];
 
   useEffect(() => {
+    let cancelled = false;
+
     async function loadCustomers() {
       const data = await getClients();
-      setCustomer(data);
+
+      if (!cancelled) {
+        setCustomer(data);
+      }
     }
 
     loadCustomers();
 
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
     const formatDate = dateSelect.toLocaleDateString("en-CA");
     setDate(formatDate);
   }, [dateSelect]);
@@ -88,7 +99,6 @@ export function NewAppointmentModal({ dateSelect, onClose, onSuccess, existingTi
       setMessage("Agendamento realizado com sucesso");
       setTimeout(() => onClose(), 3000);
     } catch (error) {
-      console.log(error);
       toast.error("Erro ao criar agendamento, tente mais tarde");
       setMessage("Erro ao criar agendamento, tente mais tarde");
     }

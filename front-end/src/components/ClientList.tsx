@@ -11,7 +11,6 @@ import { UpdateClientDTO } from "@/services/customer/patch";
 import { patchClientList } from "@/services/customer/patch";
 import { getClients } from "@/services/customer/get";
 import { Client } from "@/types/clients";
-import { log } from "console";
 
 const formatDate = (dateString: string | null | undefined) => {
   if (!dateString || isNaN(Date.parse(dateString))) {
@@ -136,7 +135,6 @@ export default function ClientsList() {
     const fecthClientes = async () => {
       try {
         const data = await getClients();
-        console.log(data);
         setClient([...data]);
       } catch (error) {
         setErro("Não foi possível localizar os clientes");
@@ -157,24 +155,17 @@ export default function ClientsList() {
   }, [searchData, clients]);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#0B0E11] to-[#1A1D22] flex items-center justify-center p-6">
+    <main className="min-h-screen bg-gradient-to-b from-[#0B0E11] to-[#1A1D22] p-6">
+      <div className="max-w-6xl mx-auto flex justify-end mb-6">
+        <button
+          onClick={handleLogout}
+          className="px-4 py-2 rounded-xl text-sm font-semibold border border-red-500/40 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-all duration-200 cursor-pointer"
+        >
+          Sair
+        </button>
+      </div>
       <div className="bg-[#1A1D22] p-6 md:p-10 rounded-2xl border border-amber-500/20 shadow-2xl [box-shadow:_0_0_40px_rgba(251,191,36,0.1)] max-w-6xl w-full mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <button
-            onClick={handleLogout}
-            className="
-                      fixed px-7 py-4 text-base cursor-pointer top-5 right-5 z-50
-                      px-4 py-2 rounded-xl text-sm font-semibold tracking-wide
-                      border border-red-500/40 bg-red-500/10 text-red-400
-                      hover:bg-red-500 hover:text-white hover:border-red-500
-                      transition-all duration-200
-                      shadow-[0_0_12px_rgba(239,68,68,0.1)]
-                      hover:shadow-[0_0_20px_rgba(239,68,68,0.3)]
-                    "
-          >
-            Sair
-          </button>
-        </div>
+        <div className="flex justify-between items-center mb-6"></div>
 
         <h1 className="text-3xl font-bold text-amber-400 text-center mb-8">Clientes Cadastrados</h1>
 
@@ -363,7 +354,6 @@ export default function ClientsList() {
           <Button onClick={() => router.push("/")}>Voltar ao início</Button>
         </div>
       </div>
-
       <ConfirmModal
         isOpen={modelDeleteOpen}
         onClose={() => setModelDeleteOpen(false)}

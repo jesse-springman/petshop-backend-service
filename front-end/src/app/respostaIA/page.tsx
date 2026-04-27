@@ -34,15 +34,26 @@ export default function RespostaIAPage() {
   const [type, setType] = useState<MessageType>("LEMBRETE_BANHO");
   const [message, setMessage] = useState<string | null>(null);
   const [displayed, setDisplayed] = useState("");
+  const [erro, setErro] = useState(false);
+  const [withoutMessageAI, setWithoutMessageAI] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadingClients, setLoadingClients] = useState(true);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    getClients()
-      .then(setClients)
-      .finally(() => setLoadingClients(false));
+    const getAllCustomers = async () => {
+      try {
+        const response = await getClients();
+        setClients(response);
+      } catch (error) {
+        setErro(true);
+      } finally {
+        setLoadingClients(false);
+      }
+    };
+
+    getAllCustomers();
   }, []);
 
   // Efeito de digitação
@@ -76,6 +87,7 @@ export default function RespostaIAPage() {
     if (!selected) return;
     setLoading(true);
     setMessage(null);
+    setWithoutMessageAI(false);
 
     try {
       const response = await postGenerateMessageAI({
@@ -83,14 +95,9 @@ export default function RespostaIAPage() {
         type,
       });
 
-      const data = await response.json();
-
-      const messageMadeByIA = data.messageIA.choices[0].message.content;
-
-      if (!response.ok) throw new Error();
-      setMessage(messageMadeByIA);
+      setMessage(response);
     } catch {
-      toast.error("Erro ao gerar mensagem");
+      setWithoutMessageAI(true);
     } finally {
       setLoading(false);
     }
@@ -110,13 +117,11 @@ export default function RespostaIAPage() {
 
   return (
     <main className="relative min-h-screen bg-[#080A0C] overflow-hidden">
-      {/* Fundo */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none">
+      <div className="absolute inset-0 opacity-20 pointer-events-none">
         <img src="/images/ai-tech-bg.svg" alt="" className="w-full h-full object-cover" />
       </div>
       <div className="absolute inset-0 bg-gradient-to-b from-[#080A0C]/60 via-transparent to-[#080A0C] pointer-events-none" />
 
-      {/* Botão voltar */}
       <button
         onClick={() => router.push("/")}
         className="fixed top-5 left-5 z-50 px-4 py-2 rounded-xl text-sm font-semibold border border-zinc-700/60 bg-zinc-900/80 text-zinc-400 hover:text-zinc-200 hover:border-zinc-500 transition-all"
@@ -125,7 +130,6 @@ export default function RespostaIAPage() {
       </button>
 
       <div className="relative z-10 max-w-5xl mx-auto px-6 py-20 flex flex-col gap-10">
-        {/* Header */}
         <div className="text-center flex flex-col gap-2">
           <span className="text-4xl">🧠</span>
           <h1 className="text-4xl font-bold text-amber-400 tracking-tight">
@@ -136,7 +140,12 @@ export default function RespostaIAPage() {
           </p>
         </div>
 
-        {/* Seção 1 — Selecionar cliente */}
+        {erro && (
+          <p className="text-red-400 text-sm text-center py-4">
+            Não foi possível localizar os clientes.
+          </p>
+        )}
+
         <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 backdrop-blur-sm p-6 flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <h2 className="text-[16px] font-semibold text-zinc-400 uppercase tracking-widest">
@@ -155,7 +164,6 @@ export default function RespostaIAPage() {
             )}
           </div>
 
-          {/* Busca */}
           <input
             type="text"
             placeholder="Buscar por cliente ou pet..."
@@ -164,7 +172,6 @@ export default function RespostaIAPage() {
             className="w-full bg-zinc-800/60 border border-zinc-700/60 rounded-lg px-3 py-2.5 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-amber-500/60 transition-all"
           />
 
-          {/* Grid de clientes */}
           {loadingClients ? (
             <p className="text-zinc-600 text-xl text-center py-4">Carregando clientes...</p>
           ) : (
@@ -199,7 +206,7 @@ export default function RespostaIAPage() {
                 </button>
               ))}
 
-              {filtered.length === 0 && (
+              {erro === false && filtered.length === 0 && (
                 <p className="col-span-full text-zinc-600 text-sm text-center py-6">
                   Nenhum cliente encontrado
                 </p>
@@ -208,7 +215,6 @@ export default function RespostaIAPage() {
           )}
         </div>
 
-        {/* Seção 2 — Gerar mensagem */}
         <div
           className={`rounded-2xl border bg-zinc-900/80 backdrop-blur-sm p-6 flex flex-col gap-4 transition-all duration-300 ${
             selected
@@ -220,7 +226,7 @@ export default function RespostaIAPage() {
           <div className="absolute top-0 left-8 right-8 h-[1px] bg-gradient-to-r from-transparent via-amber-500/40 to-transparent" />
 
           <h2 className="text-[16px] font-semibold text-zinc-400 uppercase tracking-widest">
-            2. Gerar mensagem
+            2. Gerar mensagem personalizada
             {selected && (
               <span className="ml-2 text-xl text-amber-400 normal-case font-normal">
                 — {selected.pet_name} ({selected.customer_name})
@@ -228,7 +234,6 @@ export default function RespostaIAPage() {
             )}
           </h2>
 
-          {/* Select tipo */}
           <select
             value={type}
             onChange={(e) => {
@@ -244,7 +249,6 @@ export default function RespostaIAPage() {
             ))}
           </select>
 
-          {/* Botão gerar */}
           <button
             onClick={handleGenerate}
             disabled={loading || !selected}
@@ -260,7 +264,10 @@ export default function RespostaIAPage() {
             )}
           </button>
 
-          {/* Mensagem com efeito de digitação */}
+          {withoutMessageAI && (
+            <p className="text-red-400 text-sm text-center">Erro ao gerar mensagem</p>
+          )}
+
           {(displayed || loading) && (
             <div className="flex flex-col gap-3">
               <div className="border-t border-zinc-800" />
@@ -282,7 +289,6 @@ export default function RespostaIAPage() {
                 )}
               </div>
 
-              {/* Botões — só aparecem quando digitação terminou */}
               {displayed === message && (
                 <div className="grid grid-cols-2 gap-3">
                   <button

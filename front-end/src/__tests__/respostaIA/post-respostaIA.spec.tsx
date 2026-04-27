@@ -154,12 +154,9 @@ describe("/respostaIA", () => {
 
     await user.click(screen.getByRole("button", { name: /Gerar mensagem/i }));
 
-    await waitFor(
-      () => {
-        expect(screen.getByText(/Mensagem gerada pela IA/i)).toBeInTheDocument();
-      },
-      { timeout: 10000 },
-    );
+    await waitFor(() => {
+      expect(screen.getByText("Mensagem gerada pela IA")).toBeInTheDocument();
+    });
   });
 
   it("should show message error when API-AI without response", async () => {

@@ -13,5 +13,10 @@ export async function postGenerateMessageAI(data: generateMessage) {
     body: JSON.stringify(data),
   });
 
-  return response;
+  if (!response.ok) throw new Error();
+
+  const responseBody = await response.json();
+  const messageMadeByIA = responseBody.messageIA.choices[0].message.content;
+
+  return messageMadeByIA;
 }

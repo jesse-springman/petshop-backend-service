@@ -41,7 +41,19 @@ export function UserProvider({ children }: { children: ReactNode }) {
         setLoading(false);
       }
     };
+
     checkUser();
+  }, [URL_API]);
+
+  useEffect(() => {
+    const interval = setInterval(
+      () => {
+        fetch(`${URL_API}/auth/me`, { credentials: "include" }).catch(() => {});
+      },
+      10 * 60 * 1000,
+    );
+
+    return () => clearInterval(interval);
   }, [URL_API]);
 
   const login = (name: string) => {

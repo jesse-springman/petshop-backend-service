@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 
 type UserContextType = {
   userName: string | null;
-  login: (name: string) => void;
+  login: (name: string, isAdmin: boolean) => void;
   logout: () => void;
   isAdmin: boolean;
   loading: boolean;
@@ -59,6 +59,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
       });
     } catch {
     } finally {
+      document.cookie = "access_token=; path=/; max-age=0; SameSite=Lax; Secure";
       setUserName(null);
       setIsAdmin(false);
       toast.success("Sessão encerrada");

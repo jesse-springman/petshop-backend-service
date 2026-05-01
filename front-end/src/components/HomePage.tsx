@@ -3,6 +3,7 @@
 import { useUser } from "@/context/UserContext";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { loginUser } from "../services/login";
 import toast from "react-hot-toast";
 import { IAHighlight } from "../components/HightLigthIA";
 import { ActionCard } from "../components/ActionCard";
@@ -14,7 +15,6 @@ export default function HomePage() {
   const [errorAuth, setErrorAuth] = useState("");
   const router = useRouter();
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const isLoggedIn = !!userName;
 
   async function handlerLogout() {
@@ -24,28 +24,21 @@ export default function HomePage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+
     const nameUser = inputName.trim().toLowerCase();
     const passwordUser = password.trim();
+
     if (!nameUser) {
       setErrorAuth("Acesso negado");
       return;
     }
+
     try {
-      const response = await fetch(`${API_URL}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: nameUser, password: passwordUser }),
-        credentials: "include",
-      });
-      const data = await response.json();
-      if (response.ok) {
-        login(data.userName || nameUser);
-        setErrorAuth("");
-      } else {
-        toast.error("Acesso não autorizado");
-      }
+      const data = await loginUser(nameUser, passwordUser);
+      login(data.userName, data.role === "ADMIN");
+      setErrorAuth("");
     } catch {
-      toast.error("Erro na conexão com o servidor");
+      toast.error("Acesso não autorizado");
     }
   };
 

@@ -103,10 +103,25 @@ export default function RespostaIAPage() {
     }
   }
 
-  function handleCopy() {
+  async function handleCopy() {
     if (!message) return;
-    navigator.clipboard.writeText(message);
-    toast.success("Mensagem copiada!");
+
+    try {
+      await navigator.clipboard.writeText(message);
+      toast.success("Mensagem copiada!");
+    } catch {
+      // fallback para Safari e browsers sem suporte
+      const textarea = document.createElement("textarea");
+      textarea.value = message;
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+      toast.success("Mensagem copiada!");
+    }
   }
 
   function handleWhatsApp() {

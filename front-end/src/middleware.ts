@@ -7,6 +7,9 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get("access_token")?.value;
   const { pathname } = request.nextUrl;
 
+  console.log("token", request.cookies.getAll());
+  console.log("token acessado", !!token);
+
   const isPublic = publicRoutes.includes(pathname);
 
   if (!token && !isPublic) {

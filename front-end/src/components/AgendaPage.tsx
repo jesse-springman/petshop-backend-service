@@ -80,8 +80,7 @@ export function AgendaPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#080A0C] flex flex-col items-center pt-10 font-mono">
-      {/* Header */}
+    <div className="min-h-screen bg-[#080A0C] flex flex-col items-center pt-10 font-mono  w-full px-2">
       <div className="flex items-center gap-6 mb-10">
         <button
           onClick={prevMonth}
@@ -103,7 +102,7 @@ export function AgendaPage() {
       </div>
 
       <div
-        className={`transition-all duration-300 ${selectDate ? "blur-sm scale-[0.99] pointer-events-none" : ""}`}
+        className={`transition-all duration-300 w-full  ${selectDate ? "blur-sm scale-[0.99] pointer-events-none" : ""}`}
       >
         <Calendar
           appointmentsMap={appointmentsMap}

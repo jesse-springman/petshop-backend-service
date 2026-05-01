@@ -15,26 +15,22 @@ export function Calendar({ monthDate, appointmentsMap, onDayClick }: Props) {
   const days = getMonthDays(monthDate);
 
   return (
-    <div className="px-6 pb-10 w-full max-w-7xl">
-      <div className="grid grid-cols-7 mb-2 gap-5">
+    <div className="px-2 sm:px-4 pb-10 w-full">
+      <div className="grid grid-cols-7 mb-2 gap-1">
         {WEEKDAYS.map((d) => (
           <div
             key={d}
-            className="text-center text-base font-semibold tracking-widest uppercase text-zinc-600 py-2"
+            className="text-center text-[10px] sm:text-sm font-semibold tracking-widest uppercase text-zinc-600 py-2"
           >
             {d}
           </div>
         ))}
       </div>
-
-      <div className="grid grid-cols-7  gap-17 ">
+      <div className="grid grid-cols-7 gap-1 sm:gap-3">
         {days.map((day, index) => {
-          if (!day) {
-            return <div key={`empty-${index}`} />;
-          }
+          if (!day) return <div key={`empty-${index}`} />;
 
           const key = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, "0")}-${String(day.getDate()).padStart(2, "0")}`;
-
           const dayAppointments = appointmentsMap[key] || [];
 
           return (

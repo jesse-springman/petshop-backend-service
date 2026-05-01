@@ -71,7 +71,9 @@ export function UserProvider({ children }: { children: ReactNode }) {
       });
     } catch {
     } finally {
-      document.cookie = "access_token=; path=/; max-age=0; SameSite=Lax; Secure";
+      if (typeof window !== "undefined") {
+        document.cookie = "access_token=; path=/; max-age=0; SameSite=Lax; Secure";
+      }
       setUserName(null);
       setIsAdmin(false);
       toast.success("Sessão encerrada");

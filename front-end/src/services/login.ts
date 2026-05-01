@@ -14,7 +14,9 @@ export async function loginUser(name: string, password: string) {
 
   const data = await response.json();
 
-  document.cookie = `access_token=${data.access_token}; path=/; max-age=86400; SameSite=Lax`;
+  if (typeof window !== "undefined") {
+    document.cookie = `access_token=${data.access_token}; path=/; max-age=86400; SameSite=Lax`;
+  }
 
   return data;
 }

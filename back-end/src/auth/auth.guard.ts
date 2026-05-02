@@ -20,12 +20,7 @@ export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<RequestWithCookies>();
 
-    console.log('🔥 GUARD EXECUTADO');
-
-    console.log('Cookies recebidos:', request.cookies);
-
     const authHeader = request.headers.authorization;
-    console.log('Authorization header:', authHeader);
 
     let bearerToken: string | undefined;
 

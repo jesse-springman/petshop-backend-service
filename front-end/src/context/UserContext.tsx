@@ -24,7 +24,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
     const checkUser = async () => {
       try {
         const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
-        console.log("token no checkUser:", token);
 
         const response = await fetch(`${URL_API}/auth/me`, {
           credentials: "include",
@@ -40,7 +39,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
           setIsAdmin(false);
         }
       } catch (error) {
-        console.log("nao logado");
       } finally {
         setLoading(false);
       }

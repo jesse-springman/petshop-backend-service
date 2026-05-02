@@ -10,11 +10,14 @@ type cadastroDto = {
 export async function cadastroData(data: cadastroDto) {
   const apiBase = process.env.NEXT_PUBLIC_API_URL;
 
+  const token = localStorage.getItem("access_token");
+
   const response = await fetch(`${apiBase}/cadastro`, {
     method: "POST",
     credentials: "include",
     headers: {
       "Content-type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
 
     body: JSON.stringify(data),

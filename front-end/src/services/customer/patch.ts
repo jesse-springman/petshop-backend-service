@@ -12,10 +12,12 @@ export type UpdateClientDTO = {
 };
 
 export async function patchClientList(id: string, data: UpdateClientDTO) {
+  const token = localStorage.getItem("access_token");
+
   const response = await fetch(`${API_URL}/clientes/${id}`, {
     method: "PATCH",
     credentials: "include",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
     body: JSON.stringify(data),
   });
 

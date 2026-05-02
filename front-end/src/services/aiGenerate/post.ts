@@ -6,10 +6,12 @@ interface generateMessage {
 }
 
 export async function postGenerateMessageAI(data: generateMessage) {
+  const token = localStorage.getItem("access_token");
+
   const response = await fetch(`${API_URL}/ai/generate-message`, {
     method: "POST",
     credentials: "include",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
     body: JSON.stringify(data),
   });
 

@@ -20,6 +20,7 @@ export default function HomePage() {
   async function handlerLogout() {
     await logout();
     router.replace("/");
+    localStorage.removeItem("access_token");
   }
 
   const handleLogin = async (e: React.FormEvent) => {

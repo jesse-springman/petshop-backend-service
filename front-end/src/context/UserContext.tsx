@@ -23,8 +23,11 @@ export function UserProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const checkUser = async () => {
       try {
+        const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
+
         const response = await fetch(`${URL_API}/auth/me`, {
           credentials: "include",
+          headers: { Authorization: `Bearer ${token}` },
         });
 
         if (response.ok) {
@@ -48,7 +51,12 @@ export function UserProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const interval = setInterval(
       () => {
-        fetch(`${URL_API}/auth/me`, { credentials: "include" }).catch(() => {});
+        const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
+
+        fetch(`${URL_API}/auth/me`, {
+          credentials: "include",
+          headers: { Authorization: `Bearer ${token}` },
+        }).catch(() => {});
       },
       10 * 60 * 1000,
     );

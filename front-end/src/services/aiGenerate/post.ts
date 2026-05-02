@@ -6,7 +6,7 @@ interface generateMessage {
 }
 
 export async function postGenerateMessageAI(data: generateMessage) {
-  const token = localStorage.getItem("access_token");
+  const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
 
   const response = await fetch(`${API_URL}/ai/generate-message`, {
     method: "POST",

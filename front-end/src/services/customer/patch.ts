@@ -12,7 +12,7 @@ export type UpdateClientDTO = {
 };
 
 export async function patchClientList(id: string, data: UpdateClientDTO) {
-  const token = localStorage.getItem("access_token");
+  const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
 
   const response = await fetch(`${API_URL}/clientes/${id}`, {
     method: "PATCH",

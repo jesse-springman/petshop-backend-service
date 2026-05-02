@@ -25,6 +25,7 @@ export class AuthGuard implements CanActivate {
     console.log('Cookies recebidos:', request.cookies);
 
     const authHeader = request.headers.authorization;
+    console.log('Authorization header:', authHeader);
 
     let bearerToken: string | undefined;
 

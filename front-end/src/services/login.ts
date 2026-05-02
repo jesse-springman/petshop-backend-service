@@ -16,6 +16,8 @@ export async function loginUser(name: string, password: string) {
 
   if (typeof window !== "undefined") {
     localStorage.setItem("access_token", data.access_token);
+    const isProd = window.location.protocol === "https:";
+    document.cookie = `access_token=${data.access_token}; path=/; max-age=86400; SameSite=Lax${isProd ? "; Secure" : ""}`;
     console.log("token salvo:", localStorage.getItem("access_token"));
   }
 

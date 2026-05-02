@@ -28,7 +28,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
         const response = await fetch(`${URL_API}/auth/me`, {
           credentials: "include",
-          headers: { Authorization: `Bearer ${token}` },
+          headers: token && token !== "null" ? { Authorization: `Bearer ${token}` } : {},
         });
 
         if (response.ok) {

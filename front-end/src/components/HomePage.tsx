@@ -36,6 +36,7 @@ export default function HomePage() {
 
     try {
       const data = await loginUser(nameUser, passwordUser);
+      console.log("data retornado:", data);
       login(data.userName, data.role === "ADMIN");
       setErrorAuth("");
     } catch {

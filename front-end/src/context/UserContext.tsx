@@ -65,10 +65,10 @@ export function UserProvider({ children }: { children: ReactNode }) {
     return () => clearInterval(interval);
   }, [URL_API]);
 
-  const login = (name: string) => {
+  const login = (name: string, isAdmin: boolean) => {
     const nameAdmin = name.trim().toLowerCase();
     setUserName(nameAdmin);
-    setIsAdmin(true);
+    setIsAdmin(isAdmin);
     toast.success("Acesso Autorizado");
   };
 

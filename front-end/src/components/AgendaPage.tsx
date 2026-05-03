@@ -102,7 +102,7 @@ export function AgendaPage() {
       </div>
 
       <div
-        className={`transition-all duration-300 w-full  ${selectDate ? "blur-sm scale-[0.99] pointer-events-none" : ""}`}
+        className={`transition-all duration-300 w-full max-w-5xl  ${selectDate ? "blur-sm scale-[0.99] pointer-events-none" : ""}`}
       >
         <Calendar
           appointmentsMap={appointmentsMap}

@@ -13,6 +13,7 @@ jest.mock("next/navigation", () => ({
 describe("POST /registro", () => {
   beforeEach(() => {
     jest.resetAllMocks();
+    Storage.prototype.getItem = jest.fn().mockReturnValue("fake-token");
   });
 
   it("should call fetch with sucessful", async () => {
@@ -35,6 +36,7 @@ describe("POST /registro", () => {
         credentials: "include",
         headers: {
           "Content-type": "application/json",
+          Authorization: "Bearer fake-token",
         },
         body: JSON.stringify({
           name: "jesse",

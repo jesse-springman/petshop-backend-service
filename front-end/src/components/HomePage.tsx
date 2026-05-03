@@ -101,7 +101,7 @@ export default function HomePage() {
               isLoggedIn ? "opacity-0 pointer-events-none h-0 overflow-hidden p-0" : "opacity-100"
             }`}
           >
-            <h2 className="text-2xl font-bold text-amber-400 mb-5 text-center">Acesso Admin</h2>
+            <h2 className="text-2xl font-bold text-amber-400 mb-5 text-center">Login </h2>
             <form onSubmit={handleLogin} className="space-y-4">
               <input
                 type="text"

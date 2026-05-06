@@ -169,6 +169,10 @@ NEXT_PUBLIC_API_URL=http://localhost:3001
 
 ---
 
+> 🔐 Credenciais de demonstração: `usuário: recrutador` · `senha: demo123`
+
+---
+
 ## 📄 Documentação da API
 
 A API está documentada com Swagger e disponível em produção:

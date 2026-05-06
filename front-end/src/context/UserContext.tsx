@@ -52,6 +52,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
       () => {
         const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
 
+        console.log(token);
+
         fetch(`${URL_API}/auth/me`, {
           credentials: "include",
           headers: { Authorization: `Bearer ${token}` },

@@ -3,7 +3,7 @@ import { AppointmentStatus } from "../../utils/appointmentsStatus";
 
 export async function patchAppointments(idAppointment: string, status: AppointmentStatus) {
   try {
-    const token = typeof window !== "undefined" ? localStorage.getItem("acess_token") : null;
+    const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
     const response = await fetch(`${API_URL}/agenda/${idAppointment}/status`, {
       method: "PATCH",
       credentials: "include",

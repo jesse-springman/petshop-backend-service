@@ -29,7 +29,7 @@ export function CalendarDay({ day, appointments, onClick }: PropsDate) {
         {appointments.length > 0 && (
           <div>
             <h2 className="text-center text-sm sm:text-2xl">🐶</h2>
-            <p className="hidden sm:block text-center line-clamp-2 text-lg bg-amber-500/10 border border-amber-500/20 rounded-md px-1.5 py-1 text-amber-300/80">
+            <p className="hidden sm:block text-center line-clamp-2 text-lg bg-amber-500/10 border border-amber-500/20 rounded-md px-1.5 py-1 text-amber-300/80 font-sans">
               {appointments.length} Pets Agendados
             </p>
             {/* versão mobile — só o número */}

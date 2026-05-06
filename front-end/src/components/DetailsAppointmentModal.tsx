@@ -32,7 +32,7 @@ export function DetailsAppointmentModal({
   async function handleStatusChange(idAppointment: string, status: AppointmentStatus) {
     try {
       const response = await patchAppointments(idAppointment, status);
-
+      console.log(response);
       if (response.ok) {
         await onStatusChange();
         setEditingId(null);
@@ -63,7 +63,7 @@ export function DetailsAppointmentModal({
       <div className="fixed inset-0 z-50 flex items-center justify-center">
         <div className="absolute inset-0 bg-black/70 backdrop-blur-md" onClick={onClose} />
 
-        <div className="relative z-10 w-[560px] max-h-[80vh] flex flex-col rounded-2xl border border-zinc-700/60 bg-zinc-900/95 shadow-2xl shadow-black/60 backdrop-blur-sm">
+        <div className="relative z-10 w-[560px] max-h-[80vh] flex flex-col rounded-2xl border border-zinc-700/60 bg-zinc-900/95 shadow-2xl shadow-black/60 backdrop-blur-sm font-sans">
           <div className="absolute top-0 left-8 right-8 h-[1px] bg-gradient-to-r from-transparent via-amber-500/60 to-transparent" />
 
           {/* Header */}

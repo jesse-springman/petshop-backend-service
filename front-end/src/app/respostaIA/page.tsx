@@ -139,7 +139,7 @@ export default function RespostaIAPage() {
 
       <button
         onClick={() => router.push("/")}
-        className="fixed top-5 left-5 z-50 px-4 py-2 rounded-xl text-sm font-semibold border border-zinc-700/60 bg-zinc-900/80 text-zinc-400 hover:text-zinc-200 hover:border-zinc-500 transition-all"
+        className="fixed top-5 left-5 z-50 px-4 py-2 rounded-xl text-sm font-semibold border border-zinc-700/60 bg-zinc-900/80 text-zinc-400 hover:text-zinc-200 hover:border-zinc-500 transition-all cursor-pointer"
       >
         ← Voltar
       </button>

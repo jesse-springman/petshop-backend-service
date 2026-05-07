@@ -34,7 +34,7 @@
 
 ### Agenda
 
-<video src="./docs/agenda.mp4" autoplay loop muted width="100%"></video>
+<video src="./docs/agenda.gif" autoplay loop muted width="100%"></video>
 
 ### Clientes Cadastrados
 

@@ -11,6 +11,7 @@ export class Register {
   async execute(
     currentUser: { id: string; role: string },
     dataBodyReq: CreateEmployeeDto,
+    petshopId: string,
   ) {
     if (!currentUser || currentUser.role !== 'ADMIN') {
       throw new ForbiddenException('Apenas ADMIN pode criar usuários');
@@ -20,6 +21,7 @@ export class Register {
 
     const newUser = await this.prisma.user.create({
       data: {
+        petshopId,
         name: dataBodyReq.name.toLowerCase(),
         password: passwordHashed,
         role: dataBodyReq.role ?? 'USER',

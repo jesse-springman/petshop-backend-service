@@ -11,6 +11,7 @@ async function scriptAdmin() {
 
   const admin = await prisma.user.create({
     data: {
+      petshopId,
       name: 'jesse',
       password: hashed,
       role: 'ADMIN',

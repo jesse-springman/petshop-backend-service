@@ -10,9 +10,13 @@ import { UpdateCustomerDto } from '../dto/customer/update-customer';
 export class PatchCustomer {
   constructor(private readonly prisma: PrismaService) {}
 
-  async update(id: string, updateCustomerDto: UpdateCustomerDto) {
+  async update(
+    id: string,
+    updateCustomerDto: UpdateCustomerDto,
+    petshopId: string,
+  ) {
     const clientUpdate = await this.prisma.customer.findUnique({
-      where: { id },
+      where: { id, petshopId },
     });
 
     if (!clientUpdate) {

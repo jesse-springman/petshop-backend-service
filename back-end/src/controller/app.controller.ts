@@ -9,6 +9,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Request,
 } from '@nestjs/common';
 import { CreateCustomerDto } from '../dto/customer/create.customer';
 import { UpdateCustomerDto } from '../dto/customer/update-customer';
@@ -24,6 +25,7 @@ import {
   ApiBearerAuth,
   ApiParam,
 } from '@nestjs/swagger';
+import { AuthRequest } from '../auth/type/authRequest';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard)
@@ -53,8 +55,11 @@ export class AppController {
     description: 'Token de autenticação ausente ou inválido.',
   })
   @HttpCode(HttpStatus.CREATED)
-  async insertCustomersData(@Body() body: CreateCustomerDto) {
-    return await this.postCustomer.execute(body);
+  async insertCustomersData(
+    @Body() body: CreateCustomerDto,
+    @Request() req: AuthRequest,
+  ) {
+    return await this.postCustomer.execute(body, req.user.petshopId);
   }
 
   @Get('clientes')
@@ -67,8 +72,10 @@ export class AppController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'Token de autenticação ausente ou inválido.',
   })
-  async allCustomersData() {
-    const allCustomers = await this.getCustomer.findAllClient();
+  async allCustomersData(@Request() req: AuthRequest) {
+    const allCustomers = await this.getCustomer.findAllClient(
+      req.user.petshopId,
+    );
     return allCustomers;
   }
 
@@ -98,8 +105,9 @@ export class AppController {
   async updateData(
     @Param('id') id: string,
     @Body() updateCustomerDto: UpdateCustomerDto,
+    @Request() req: AuthRequest,
   ) {
-    await this.patchCustomer.update(id, updateCustomerDto);
+    await this.patchCustomer.update(id, updateCustomerDto, req.user.petshopId);
   }
 
   @Delete('clientes/:id')
@@ -126,8 +134,8 @@ export class AppController {
     description: 'Cliente não encontrado',
   })
   @HttpCode(HttpStatus.NO_CONTENT)
-  async delete(@Param('id') id: string) {
-    await this.deleteCustomer.delete(id);
+  async delete(@Param('id') id: string, @Request() req: AuthRequest) {
+    await this.deleteCustomer.delete(id, req.user.petshopId);
 
     return { message: 'Cliente deletado com sucesso' };
   }

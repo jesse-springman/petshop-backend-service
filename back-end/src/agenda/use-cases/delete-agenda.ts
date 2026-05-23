@@ -4,12 +4,13 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { getTenantId } from '../../common/tenant.helper';
 
 @Injectable()
 export class DeleteScheduling {
   constructor(private prisma: PrismaService) {}
 
-  async execute(userId: string, schedulingId: string) {
+  async execute(userId: string, schedulingId: string, petshopId: string) {
     const scheduling = await this.prisma.appointment.findUnique({
       where: { id: schedulingId },
     });
@@ -23,7 +24,7 @@ export class DeleteScheduling {
     }
 
     await this.prisma.appointment.delete({
-      where: { id: schedulingId },
+      where: { id: schedulingId, petshopId },
     });
 
     return { message: 'Agendamento deletado com sucesso' };

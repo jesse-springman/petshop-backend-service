@@ -5,9 +5,9 @@ import { PrismaService } from '../prisma/database/prisma.service';
 export class DeleteCustomer {
   constructor(private readonly prisma: PrismaService) {}
 
-  async delete(id: string): Promise<void> {
+  async delete(id: string, petshopId: string): Promise<void> {
     const clientDelete = await this.prisma.customer.findUnique({
-      where: { id },
+      where: { id, petshopId },
     });
 
     if (!clientDelete) {

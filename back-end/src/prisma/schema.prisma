@@ -8,6 +8,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
+model Petshop {
+  id String @id @default(uuid())
+  name String
+  plan Plan
+ active Boolean @default(true)
+ createdAt DateTime @default(now())
+
+ customer Customer[]
+  user User[]
+  appointment Appointment[]
+}
+
+
 model Customer {
   id              String        @id @default(uuid())
   customer_name   String
@@ -18,6 +32,8 @@ model Customer {
   number_customer String?
   pet_breed       String?
   appointments    Appointment[]
+  petshopId       String
+  petshop         Petshop @relation(fields: [petshopId], references: [id])
 }
 
 model User {
@@ -27,6 +43,8 @@ model User {
   role         Role
   created_at   DateTime      @default(now())
   appointments Appointment[]
+  petshopId String
+  petshop Petshop @relation(fields: [petshopId], references: [id])
 }
 
 model Appointment {
@@ -39,10 +57,17 @@ model Appointment {
   userId     String
   customer   Customer          @relation(fields: [customerId], references: [id], onDelete: Cascade)
   user       User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  petshopId String
+  petshop Petshop @relation(fields: [petshopId], references: [id])
 
   @@unique([date, userId])
   @@index([date])
   @@index([customerId])
+}
+
+enum Plan {
+  BASIC
+  GOLD
 }
 
 enum Role {

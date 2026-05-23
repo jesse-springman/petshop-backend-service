@@ -21,10 +21,16 @@ export class AuthService {
     if (!passwordMatch) {
       throw new UnauthorizedException('Acesso não autorizado');
     }
+
+    if (!user.petshopId) {
+      throw new UnauthorizedException('Usuário sem petshop vinculado');
+    }
+
     return {
       id: user.id,
       name: user.name,
       role: user.role,
+      petshopId: user.petshopId,
     };
   }
 }

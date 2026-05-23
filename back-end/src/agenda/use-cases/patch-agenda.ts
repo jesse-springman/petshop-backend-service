@@ -10,7 +10,12 @@ import { PatchAgendaDto } from '../dto/update-agenda.dto';
 export class UpdateAgenda {
   constructor(private readonly prisma: PrismaService) {}
 
-  async execute(userId: string, agendaId: string, data: PatchAgendaDto) {
+  async execute(
+    userId: string,
+    agendaId: string,
+    data: PatchAgendaDto,
+    petshopId: string,
+  ) {
     const agenda = await this.prisma.appointment.findUnique({
       where: { id: agendaId },
     });
@@ -25,7 +30,7 @@ export class UpdateAgenda {
     }
 
     return this.prisma.appointment.update({
-      where: { id: agendaId },
+      where: { id: agendaId, petshopId },
       data: {
         status: data.status,
       },

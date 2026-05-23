@@ -73,6 +73,7 @@ export class AuthController {
       sub: user.id,
       username: user.name,
       role: user.role,
+      petshopId: user.petshopId,
     };
 
     const token = this.jwtService.sign(payload);
@@ -91,6 +92,7 @@ export class AuthController {
       success: true,
       userName: user.name,
       role: user.role,
+      petshopId: user.petshopId,
     };
   }
 
@@ -120,7 +122,11 @@ export class AuthController {
   ) {
     try {
       const { sub, role } = req.user;
-      return await this.register.execute({ id: sub, role }, body);
+      return await this.register.execute(
+        { id: sub, role },
+        body,
+        req.user.petshopId,
+      );
     } catch (error: any) {
       if (error.message === 'Apenas ADMIN pode criar usuários') {
         throw new ForbiddenException(error.message);

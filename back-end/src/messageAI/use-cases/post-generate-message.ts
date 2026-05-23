@@ -11,9 +11,9 @@ type CustomerWithAppointments = Prisma.CustomerGetPayload<{
 export class GenerateMessage {
   constructor(private readonly prisma: PrismaService) {}
 
-  async execute(data: GenerarteMessageDto) {
+  async execute(data: GenerarteMessageDto, petshopId: string) {
     const customer = await this.prisma.customer.findUnique({
-      where: { id: data.customerId },
+      where: { id: data.customerId, petshopId },
       include: {
         appointments: true,
       },

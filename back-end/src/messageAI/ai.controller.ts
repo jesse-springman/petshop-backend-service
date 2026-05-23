@@ -1,4 +1,11 @@
-import { Body, Controller, HttpStatus, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpStatus,
+  Post,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { GenerateMessage } from './use-cases/post-generate-message';
 import { GenerarteMessageDto } from './dto/create-message.dto';
@@ -11,6 +18,7 @@ import {
   ApiParam,
   ApiBody,
 } from '@nestjs/swagger';
+import { AuthRequest } from '../auth/type/authRequest';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard)
@@ -38,8 +46,11 @@ export class aiController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'Token inválido ou não enviado',
   })
-  async responseIA(@Body() body: GenerarteMessageDto) {
-    const result = await this.generateMessage.execute(body);
+  async responseIA(
+    @Body() body: GenerarteMessageDto,
+    @Request() req: AuthRequest,
+  ) {
+    const result = await this.generateMessage.execute(body, req.user.petshopId);
     return result;
   }
 }

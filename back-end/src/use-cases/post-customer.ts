@@ -15,7 +15,7 @@ export interface DataCustomer {
 export class PostCustomer {
   constructor(private readonly prisma: PrismaService) {}
 
-  async execute(dataBody: DataCustomer) {
+  async execute(dataBody: DataCustomer, petshopId: string) {
     let lastBath: Date | undefined;
 
     if (dataBody.last_bath) {
@@ -30,6 +30,7 @@ export class PostCustomer {
 
     const client = await this.prisma.customer.create({
       data: {
+        petshopId,
         customer_name: dataBody.customer_name,
         pet_name: dataBody.pet_name,
         address: dataBody.address,

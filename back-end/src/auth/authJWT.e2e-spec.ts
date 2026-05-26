@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Server } from 'http';
 import request from 'supertest';
 import { AppModule } from '../app.module';
-import { JwtPayload } from './auth.guard';
+import { JwtPayload } from './type/jwtPayload';
 import { PrismaService } from '../prisma/database/prisma.service';
 import * as bcrypt from 'bcrypt';
 import cookieParser from 'cookie-parser';
@@ -32,6 +32,7 @@ describe('JWT Tests', () => {
         name: 'jesse',
         password: await bcrypt.hash('kkkk', 10),
         role: 'ADMIN',
+        petshopId: 'petshopID',
       },
     });
   });

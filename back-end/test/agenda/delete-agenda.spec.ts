@@ -10,9 +10,10 @@ describe('DELETE /agenda', () => {
     jest.clearAllMocks();
   });
 
-  it('should delete SCHEDULING', async () => {
+  it('should DELETE scheduling', async () => {
     const userId = 'user1';
     const agendaId = 'agenda1';
+    const petshopId = 'petshop-test-id';
 
     const agenda = {
       id: agendaId,
@@ -24,14 +25,18 @@ describe('DELETE /agenda', () => {
 
     mockPrisma.appointment.delete.mockResolvedValue({ id: agenda.id });
 
-    const result = await deleteScheduling.execute(agenda.userId, agenda.id);
+    const result = await deleteScheduling.execute(
+      agenda.userId,
+      agenda.id,
+      petshopId,
+    );
 
     expect(mockPrisma.appointment.findUnique).toHaveBeenCalledWith({
       where: { id: agenda.id },
     });
 
     expect(mockPrisma.appointment.delete).toHaveBeenCalledWith({
-      where: { id: agenda.id },
+      where: { id: agenda.id, petshopId: 'petshop-test-id' },
     });
 
     expect(result).toEqual({
@@ -43,11 +48,12 @@ describe('DELETE /agenda', () => {
     mockPrisma.appointment.findUnique.mockResolvedValue(null);
 
     await expect(
-      deleteScheduling.execute('user1', 'notExist'),
+      deleteScheduling.execute('user1', 'notExist', 'petshopId'),
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
   it('should throw ForbiddenException when a user try delete scheduling of other user', async () => {
+    const petshopId = 'petshop-test-id';
     const agendaObj = {
       userId: 'user1',
       agendaId: 'agenda1',
@@ -57,7 +63,7 @@ describe('DELETE /agenda', () => {
     mockPrisma.appointment.findUnique.mockResolvedValue(agendaObj);
 
     await expect(
-      deleteScheduling.execute('user2', agendaObj.agendaId),
+      deleteScheduling.execute('user2', agendaObj.agendaId, petshopId),
     ).rejects.toBeInstanceOf(ForbiddenException);
   });
 });

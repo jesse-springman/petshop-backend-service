@@ -15,7 +15,7 @@ export class DeleteCustomer {
     }
 
     await this.prisma.customer.delete({
-      where: { id },
+      where: { id, petshopId },
     });
   }
 }

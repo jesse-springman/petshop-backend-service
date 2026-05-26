@@ -14,6 +14,7 @@ describe('PATCH / agenda', () => {
   it('should update status sucessfully', async () => {
     const userId = 'user1';
     const agendaId = 'agenda1';
+    const petshopId = 'petshop-test-id';
 
     const extingAgenda = {
       id: agendaId,
@@ -28,16 +29,21 @@ describe('PATCH / agenda', () => {
       status: 'COMPLETED',
     });
 
-    const result = await updateAgenda.execute(userId, agendaId, {
-      status: 'COMPLETED',
-    });
+    const result = await updateAgenda.execute(
+      userId,
+      agendaId,
+      {
+        status: 'COMPLETED',
+      },
+      petshopId,
+    );
 
     expect(mockPrisma.appointment.findUnique).toHaveBeenCalledWith({
       where: { id: agendaId },
     });
 
     expect(mockPrisma.appointment.update).toHaveBeenCalledWith({
-      where: { id: agendaId },
+      where: { id: agendaId, petshopId: 'petshop-test-id' },
       data: {
         status: 'COMPLETED',
       },
@@ -50,23 +56,34 @@ describe('PATCH / agenda', () => {
     mockPrisma.appointment.findUnique.mockResolvedValue(null);
 
     await expect(
-      updateAgenda.execute('user1', 'agenda1', {
-        status: 'COMPLETED',
-      }),
+      updateAgenda.execute(
+        'user1',
+        'agenda1',
+        {
+          status: 'COMPLETED',
+        },
+        'petshop-test-id',
+      ),
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
   it('should throw ForbiddenExpection whan user try change another agenda', async () => {
     const user1 = 'user1';
     const agenda = 'agenda1';
+    const petshopId = 'petshop-test-id';
 
     mockPrisma.user.findUnique.mockResolvedValue(user1);
     mockPrisma.appointment.findUnique.mockResolvedValue(agenda);
 
     await expect(
-      updateAgenda.execute('userFalse', 'agenda1', {
-        status: 'COMPLETED',
-      }),
+      updateAgenda.execute(
+        'userFalse',
+        'agenda1',
+        {
+          status: 'COMPLETED',
+        },
+        petshopId,
+      ),
     ).rejects.toBeInstanceOf(ForbiddenException);
   });
 });

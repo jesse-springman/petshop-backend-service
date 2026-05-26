@@ -60,14 +60,19 @@ describe('GET /respostaAI', () => {
     mockPrisma.customer.findUnique.mockResolvedValue(null);
 
     await expect(
-      useCase.execute({
-        customerId: 'id-invalido',
-        type: TypeMessage.AGENDAMENTO,
-      }),
+      useCase.execute(
+        {
+          customerId: 'id-invalido',
+          type: TypeMessage.AGENDAMENTO,
+        },
+        'petshopId',
+      ),
     ).rejects.toThrow(NotFoundException);
   });
 
   it('should return message when customer exist', async () => {
+    const petshopId = 'petshop-test-id';
+
     mockPrisma.customer.findUnique.mockResolvedValue(mockCustomers[0]);
 
     (global.fetch as jest.Mock).mockResolvedValue({
@@ -82,10 +87,13 @@ describe('GET /respostaAI', () => {
       }),
     });
 
-    const result = await useCase.execute({
-      customerId: mockCustomers[0].id,
-      type: TypeMessage.COBRANCA,
-    });
+    const result = await useCase.execute(
+      {
+        customerId: mockCustomers[0].id,
+        type: TypeMessage.COBRANCA,
+      },
+      petshopId,
+    );
 
     expect(result).toHaveProperty('messageIA');
     expect(result).toHaveProperty('phone');
@@ -93,46 +101,61 @@ describe('GET /respostaAI', () => {
   });
 
   it('should generate message  for AGENDAMENTO', async () => {
+    const petshopId = 'petshop-test-id';
+
     mockPrisma.customer.findUnique.mockResolvedValue(mockCustomers[0]);
 
     (global.fetch as jest.Mock).mockResolvedValue({
       json: jest.fn().mockResolvedValue({ result: 'ok' }),
     });
 
-    const result = await useCase.execute({
-      customerId: mockCustomers[0].id,
-      type: TypeMessage.AGENDAMENTO,
-    });
+    const result = await useCase.execute(
+      {
+        customerId: mockCustomers[0].id,
+        type: TypeMessage.AGENDAMENTO,
+      },
+      petshopId,
+    );
 
     expect(result).toBeDefined();
   });
 
   it('Should generate message for LEMBRENTE_BANHO', async () => {
+    const petshopId = 'petshop-test-id';
+
     mockPrisma.customer.findUnique.mockResolvedValue(mockCustomers[0]);
 
     (global.fetch as jest.Mock).mockResolvedValue({
       json: jest.fn().mockResolvedValue({ result: 'ok' }),
     });
 
-    const result = await useCase.execute({
-      customerId: mockCustomers[0].id,
-      type: TypeMessage.LEMBRETE_BANHO,
-    });
+    const result = await useCase.execute(
+      {
+        customerId: mockCustomers[0].id,
+        type: TypeMessage.LEMBRETE_BANHO,
+      },
+      petshopId,
+    );
 
     expect(result).toBeDefined();
   });
 
   it('Shoud generate message for COBRANCA', async () => {
+    const petshopId = 'petshop-test-id';
+
     mockPrisma.customer.findUnique.mockResolvedValue(mockCustomers[0]);
 
     (global.fetch as jest.Mock).mockResolvedValue({
       json: jest.fn().mockResolvedValue({ result: 'ok' }),
     });
 
-    const result = await useCase.execute({
-      customerId: mockCustomers[0].id,
-      type: TypeMessage.COBRANCA,
-    });
+    const result = await useCase.execute(
+      {
+        customerId: mockCustomers[0].id,
+        type: TypeMessage.COBRANCA,
+      },
+      petshopId,
+    );
 
     expect(result).toBeDefined();
   });
@@ -185,23 +208,33 @@ describe('GET /respostaAI', () => {
   });
 
   it('should return phone of customer', async () => {
+    const petshopId = 'petshop-test-id';
+
     mockPrisma.customer.findUnique.mockResolvedValue(mockCustomers[0]);
 
-    const result = await useCase.execute({
-      customerId: mockCustomers[0].id,
-      type: TypeMessage.LEMBRETE_BANHO,
-    });
+    const result = await useCase.execute(
+      {
+        customerId: mockCustomers[0].id,
+        type: TypeMessage.LEMBRETE_BANHO,
+      },
+      petshopId,
+    );
 
     expect(result.phone).toBe('19999999999');
   });
 
   it('should call fetch with correct GroqAPI', async () => {
+    const petshopId = 'petshop-test-id';
+
     mockPrisma.customer.findUnique.mockResolvedValue(mockCustomers[0]);
 
-    await useCase.execute({
-      customerId: mockCustomers[0].id,
-      type: TypeMessage.LEMBRETE_BANHO,
-    });
+    await useCase.execute(
+      {
+        customerId: mockCustomers[0].id,
+        type: TypeMessage.LEMBRETE_BANHO,
+      },
+      petshopId,
+    );
 
     expect(global.fetch).toHaveBeenCalledWith(
       'https://api.groq.com/openai/v1/chat/completions',

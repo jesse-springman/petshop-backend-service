@@ -34,7 +34,7 @@ export class PatchCustomer {
     }
 
     return this.prisma.customer.update({
-      where: { id },
+      where: { id, petshopId },
       data: {
         ...updateCustomerDto,
         last_bath: lastBath,

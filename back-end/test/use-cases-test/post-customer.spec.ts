@@ -35,9 +35,10 @@ describe('PostCustomer', () => {
       address: 'av luku',
       number_customer: '199934569',
       pet_breed: 'Poodle',
+      petshopId: 'petshop-test-id',
     };
 
-    const result = await service.execute(input);
+    const result = await service.execute(input, 'petshop-test-id');
 
     expect(mockPrisma.customer.create).toHaveBeenCalledWith({
       data: input,

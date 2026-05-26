@@ -39,9 +39,19 @@ describe('AppController - GET /clientes', () => {
 
     mockGetCustomer.findAllClient.mockResolvedValue(mockData);
 
-    const result = await controller.allCustomersData();
+    const mockReq = {
+      user: {
+        sub: 'user-test-id',
+        petshopId: 'petshop-test-id',
+        role: 'ADMIN',
+      },
+    };
+
+    const result = await controller.allCustomersData(mockReq as any);
 
     expect(result).toEqual(mockData);
-    expect(mockGetCustomer.findAllClient).toHaveBeenCalled();
+    expect(mockGetCustomer.findAllClient).toHaveBeenCalledWith(
+      'petshop-test-id',
+    );
   });
 });

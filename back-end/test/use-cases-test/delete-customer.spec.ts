@@ -32,35 +32,39 @@ describe('DELETE client', () => {
     const id = '123';
 
     it('Must delete client when found', async () => {
+      const petshopId = 'petshop-test-id';
+
       mockPrisma.customer.findUnique.mockResolvedValue({
         id,
         customer_name: 'joao',
         customer_pet: 'lele',
+        petshopId: 'petshop-test-id',
       });
 
       mockPrisma.customer.delete.mockResolvedValue({
         id,
         customer_name: 'joao',
         customer_pet: 'lele',
+        petshopId: 'petshop-test-id',
       });
 
-      await service.delete(id);
+      await service.delete(id, petshopId);
 
       expect(mockPrisma.customer.findUnique).toHaveBeenCalledWith({
-        where: { id },
+        where: { id, petshopId: 'petshop-test-id' },
       });
 
       expect(mockPrisma.customer.delete).toHaveBeenCalledWith({
-        where: { id },
+        where: { id, petshopId: 'petshop-test-id' },
       });
     });
 
-    it('Must throw ForbiddenException when  o client not found', async () => {
+    it('Must throw ForbiddenException when client not found', async () => {
       mockPrisma.customer.findUnique.mockResolvedValue(null);
 
-      await expect(service.delete('inexistente')).rejects.toBeInstanceOf(
-        NotFoundException,
-      );
+      await expect(
+        service.delete('inexistente', 'petshopID'),
+      ).rejects.toBeInstanceOf(NotFoundException);
     });
   });
 });

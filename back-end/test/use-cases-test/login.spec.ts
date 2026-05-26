@@ -19,6 +19,7 @@ describe('Routine Authentication', () => {
       name: 'jesse',
       password: hash,
       role: 'ADMIN',
+      petshopId: 'petshop-test-id',
     });
 
     const result = await createUser.validateUser('jesse', '123456');

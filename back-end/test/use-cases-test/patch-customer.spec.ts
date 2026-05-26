@@ -37,6 +37,7 @@ describe('UpdateMock', () => {
       pet_breed: 'pastor',
       last_bath: '2026-03-30T21:31:18.551Z',
     };
+    const petshopId = 'petshop-test-id';
 
     it('shoud update customer when found', async () => {
       mockPrisma.customer.findUnique.mockResolvedValue({
@@ -51,15 +52,16 @@ describe('UpdateMock', () => {
 
       mockPrisma.customer.update.mockResolvedValue({ id, ...dto });
 
-      const result = await service.update(id, dto);
+      const result = await service.update(id, dto, petshopId);
 
       expect(mockPrisma.customer.findUnique).toHaveBeenCalledWith({
-        where: { id },
+        where: { id, petshopId: 'petshop-test-id' },
       });
 
       expect(mockPrisma.customer.update).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { id },
+          where: { id, petshopId: 'petshop-test-id' },
+
           data: {
             ...dto,
             last_bath: expect.any(Date) as unknown as Date,
@@ -73,7 +75,7 @@ describe('UpdateMock', () => {
     it('should return status 204', async () => {
       mockPrisma.customer.update.mockResolvedValue(undefined);
 
-      const result = await service.update(id, dto);
+      const result = await service.update(id, dto, petshopId);
       expect(result).toBeUndefined();
     });
 
@@ -95,12 +97,10 @@ describe('UpdateMock', () => {
         last_bath: '2026-03-30T21:31:18.551Z',
       });
 
-      const result = await service.update(id, partialDto);
-
-      console.log(result);
+      const result = await service.update(id, partialDto, petshopId);
 
       expect(mockPrisma.customer.update).toHaveBeenCalledWith({
-        where: { id },
+        where: { id, petshopId },
         data: partialDto,
       });
 

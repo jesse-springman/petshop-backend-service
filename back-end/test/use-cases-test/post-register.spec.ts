@@ -9,6 +9,7 @@ import * as bcrypt from 'bcrypt';
 
 describe('POST /register', () => {
   let register: Register;
+  const petshopId = 'petshop-Id';
 
   beforeEach(() => {
     register = new Register(mockPrisma as any);
@@ -20,6 +21,7 @@ describe('POST /register', () => {
       register.execute(
         { id: '1', role: 'USER' },
         { name: 'Joao', password: '123' },
+        petshopId,
       ),
     ).rejects.toBeInstanceOf(ForbiddenException);
   });
@@ -34,6 +36,7 @@ describe('POST /register', () => {
     const result = await register.execute(
       { id: '1', role: 'ADMIN' },
       { name: 'gabi', password: '123' },
+      petshopId,
     );
 
     expect(bcrypt.hash).toHaveBeenCalledWith('123', 10);

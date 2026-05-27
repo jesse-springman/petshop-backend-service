@@ -20,16 +20,21 @@ describe('Routine Authentication', () => {
       password: hash,
       role: 'ADMIN',
       petshopId: 'petshop-test-id',
+      petshop: {
+        status: 'ACTIVE',
+      },
     });
 
     const result = await createUser.validateUser('jesse', '123456');
 
     expect(mockPrisma.user.findUnique).toHaveBeenCalledWith({
       where: { name: 'jesse' },
+      include: { petshop: true },
     });
 
     expect(result).toHaveProperty('id', '1');
     expect(result).toHaveProperty('role', 'ADMIN');
+    expect(result).toHaveProperty('petshopId', 'petshop-test-id');
   });
 
   it('should throw UnauthorizedException when user not registred', async () => {
@@ -57,8 +62,27 @@ describe('Routine Authentication', () => {
       role: 'ADMIN',
     });
 
-    expect(createUser.validateUser('jefin', 'kkkk')).rejects.toBeInstanceOf(
-      UnauthorizedException,
-    );
+    await expect(
+      createUser.validateUser('jefin', 'kkkk'),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('should throw UnauthorizedException when status !== ACTIVE', async () => {
+    const hash = await bcrypt.hash('senha', 10);
+
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: '1',
+      name: 'jesse',
+      password: hash,
+      role: 'ADMIN',
+      petshopId: 'petshop-test-id',
+      petshop: {
+        status: 'PENDING',
+      },
+    });
+
+    await expect(
+      createUser.validateUser('jesse', 'senha'),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
   });
 });

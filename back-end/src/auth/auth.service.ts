@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/database/prisma.service';
 import { AuthUser } from './type/authType';
 import * as bcrypt from 'bcrypt';
+import { throwIfEmpty } from 'rxjs';
 
 @Injectable()
 export class AuthService {
@@ -10,6 +11,7 @@ export class AuthService {
   async validateUser(nameClient: string, password: string): Promise<AuthUser> {
     const user = await this.prisma.user.findUnique({
       where: { name: nameClient.toLowerCase() },
+      include: { petshop: true },
     });
 
     if (!user) {
@@ -24,6 +26,10 @@ export class AuthService {
 
     if (!user.petshopId) {
       throw new UnauthorizedException('Usuário sem petshop vinculado');
+    }
+
+    if (user.petshop.status !== 'ACTIVE') {
+      throw new UnauthorizedException('Petshop aguardando ativação');
     }
 
     return {

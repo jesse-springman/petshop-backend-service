@@ -13,6 +13,7 @@ model Petshop {
   id String @id @default(uuid())
   name String
   plan Plan
+  status Status @default(PENDING)
  active Boolean @default(true)
  createdAt DateTime @default(now())
 
@@ -63,6 +64,13 @@ model Appointment {
   @@unique([date, userId])
   @@index([date])
   @@index([customerId])
+}
+
+enum Status {
+  ACTIVE
+  PENDING
+  SUSPENDED
+  CANCELED
 }
 
 enum Plan {

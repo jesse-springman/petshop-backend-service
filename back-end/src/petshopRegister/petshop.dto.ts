@@ -21,4 +21,9 @@ export class PetshopDto {
   @ApiProperty({ enum: Plan, example: Plan.BASIC })
   @IsEnum(Plan)
   plan!: Plan;
+
+  @ApiProperty({ example: '11999999999' })
+  @IsString()
+  @IsNotEmpty()
+  whatsapp!: string;
 }

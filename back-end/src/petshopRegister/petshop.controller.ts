@@ -21,6 +21,7 @@ export class PetshopController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Cadastro de novo petshop' })
   async onboarding(@Body() dto: PetshopDto) {
+    console.log(dto);
     return this.petshopRegisterService.register(dto);
   }
 }

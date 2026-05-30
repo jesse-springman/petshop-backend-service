@@ -7,6 +7,7 @@ import { loginUser } from "../services/login";
 import toast from "react-hot-toast";
 import { IAHighlight } from "../components/HightLigthIA";
 import { ActionCard } from "../components/ActionCard";
+import Button from "./Button";
 
 export default function HomePage() {
   const { userName, login, logout } = useUser();
@@ -126,6 +127,21 @@ export default function HomePage() {
                 Entrar
               </button>
             </form>
+            <div className="mt-5 flex flex-col items-center gap-2">
+              <div className="flex items-center gap-3 w-full">
+                <div className="flex-1 h-px bg-amber-500/20" />
+                <span className="text-sm text-zinc-500">primeira vez aqui?</span>
+                <div className="flex-1 h-px bg-amber-500/20" />
+              </div>
+
+              <p className="text-sm text-zinc-400 text-center mb-4">
+                Registre seu petshop e comece a usar agora mesmo 🐾
+              </p>
+              <Button onClick={() => router.push("/registroPetShop")}>
+                Comece por aqui — Registro-PetShop
+              </Button>
+            </div>
+
             {errorAuth && (
               <p className="mt-3 text-center text-base font-bold text-red-400">{errorAuth}</p>
             )}

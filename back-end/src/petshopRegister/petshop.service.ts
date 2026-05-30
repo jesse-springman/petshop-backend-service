@@ -13,7 +13,7 @@ export class PetshopRegisterService {
       where: { name: dto.adiminName.toLocaleLowerCase() },
     });
 
-    if (!existingUser) {
+    if (existingUser) {
       throw new BadRequestException('Nome de usuário já existe');
     }
 

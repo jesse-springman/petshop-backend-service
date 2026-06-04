@@ -11,6 +11,7 @@ import { AgendaModule } from './agenda/agenda.module';
 import { ConfigModule } from '@nestjs/config';
 import { IAModule } from './messageAI/ai.module';
 import { PetshopModule } from './petshopRegister/petshop.module';
+import { SuperAdminModule } from './superAdmin/superAdmin.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { PetshopModule } from './petshopRegister/petshop.module';
     AgendaModule,
     IAModule,
     PetshopModule,
+    SuperAdminModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env,',

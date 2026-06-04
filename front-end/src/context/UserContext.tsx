@@ -8,6 +8,7 @@ type UserContextType = {
   login: (name: string, isAdmin: boolean) => void;
   logout: () => void;
   isAdmin: boolean;
+  isSuperAdmin: boolean;
   loading: boolean;
 };
 
@@ -15,6 +16,7 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
   const [userName, setUserName] = useState<string | null>(null);
+  const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
 
@@ -34,6 +36,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
           const data = await response.json();
           setUserName(data.userName);
           setIsAdmin(data.isAdmin);
+          setIsSuperAdmin(data.role === "SUPERADMIN");
         } else {
           setUserName(null);
           setIsAdmin(false);
@@ -52,8 +55,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
       () => {
         const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
 
-        console.log(token);
-
         fetch(`${URL_API}/auth/me`, {
           credentials: "include",
           headers: { Authorization: `Bearer ${token}` },
@@ -69,6 +70,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     const nameAdmin = name.trim().toLowerCase();
     setUserName(nameAdmin);
     setIsAdmin(isAdmin);
+    setIsSuperAdmin(isSuperAdmin);
     toast.success("Acesso Autorizado");
   };
 
@@ -90,7 +92,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <UserContext.Provider value={{ userName, login, logout, isAdmin, loading }}>
+    <UserContext.Provider value={{ userName, login, logout, isAdmin, isSuperAdmin, loading }}>
       {!loading ? children : <div className="min-h-screen bg-black" />}
     </UserContext.Provider>
   );

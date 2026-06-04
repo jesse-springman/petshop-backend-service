@@ -81,6 +81,7 @@ enum Plan {
 enum Role {
   ADMIN
   USER
+  SUPERADMIN
 }
 
 enum AppointmentStatus {

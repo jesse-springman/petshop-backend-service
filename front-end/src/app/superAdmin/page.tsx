@@ -129,7 +129,7 @@ export default function SuperAdminPage() {
                   <div className="flex items-center gap-3 text-xs text-zinc-500">
                     <span>{planLabel[p.plan] ?? p.plan}</span>
                     <span>·</span>
-                    <span>Admin: {p.users[0]?.name ?? "—"}</span>
+                    <span>Admin: {p.users?.[0]?.name ?? "—"}</span>
                     <span>·</span>
                     <span>📱 {p.whatsapp ?? "—"}</span>
                     <span>·</span>

@@ -10,7 +10,7 @@ import { getTenantId } from '../../common/tenant.helper';
 export class DeleteScheduling {
   constructor(private prisma: PrismaService) {}
 
-  async execute(userId: string, schedulingId: string, petshopId: string) {
+  async execute(userId: string, schedulingId: string, businessId: string) {
     const scheduling = await this.prisma.appointment.findUnique({
       where: { id: schedulingId },
     });
@@ -24,7 +24,7 @@ export class DeleteScheduling {
     }
 
     await this.prisma.appointment.delete({
-      where: { id: schedulingId, petshopId },
+      where: { id: schedulingId, businessId },
     });
 
     return { message: 'Agendamento deletado com sucesso' };

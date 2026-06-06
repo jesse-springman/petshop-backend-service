@@ -13,7 +13,7 @@ describe('POST at /agenda', () => {
 
   it('should create appointment sucessfully', async () => {
     const userId = 'userId1';
-    const petshopId = 'petshop-test-id';
+    const businessId = 'petshop-test-id';
 
     const dto = {
       customerId: 'customer1',
@@ -23,18 +23,18 @@ describe('POST at /agenda', () => {
 
     mockPrisma.customer.findUnique.mockResolvedValue({
       id: 'custoemer1',
-      petshopId: 'petshop-test-id',
+      businessId: 'petshop-test-id',
     });
 
     mockPrisma.appointment.create.mockResolvedValue({
-      petshopId: 'petshop-test-id',
+      businessId: 'petshop-test-id',
       id: 'appointment1',
       customerId: 'customer1',
       date: new Date(dto.date),
       userId,
     });
 
-    const result = await createAgenda.execute(userId, dto, petshopId);
+    const result = await createAgenda.execute(userId, dto, businessId);
 
     expect(mockPrisma.customer.findUnique).toHaveBeenCalledWith({
       where: { id: 'customer1' },
@@ -45,7 +45,7 @@ describe('POST at /agenda', () => {
   });
 
   it('should throw if customer does not exist', async () => {
-    const petshopId = 'petshop-test-id';
+    const businessId = 'petshop-test-id';
 
     mockPrisma.customer.findUnique.mockResolvedValue(null);
 
@@ -56,13 +56,13 @@ describe('POST at /agenda', () => {
           customerId: 'kkjjk',
           date: '2026-03-10T14:00:00.000Z',
         },
-        petshopId,
+        businessId,
       ),
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
   it('should throw if date already exist for same professional', async () => {
-    const petshopId = 'petshop-test-id';
+    const businessId = 'petshop-test-id';
 
     mockPrisma.customer.findUnique.mockRejectedValue({
       id: 'customer1',
@@ -78,14 +78,14 @@ describe('POST at /agenda', () => {
           customerId: 'customer1',
           date: '2çlçl',
         },
-        petshopId,
+        businessId,
       ),
     ).rejects.toThrow('Data inválida');
   });
 
   it('should throw conflict error if appointment already exist', async () => {
     const userId = 'user1';
-    const petshopId = 'petshop-test-id';
+    const businessId = 'petshop-test-id';
 
     const dto = {
       customerId: 'customer1',
@@ -104,13 +104,13 @@ describe('POST at /agenda', () => {
     mockPrisma.appointment.create.mockRejectedValue(prismaError);
 
     await expect(
-      createAgenda.execute(userId, dto, petshopId),
+      createAgenda.execute(userId, dto, businessId),
     ).rejects.toBeInstanceOf(ConflictException);
   });
 
   it('should throw unexpected error if prisma fails', async () => {
     const userId = 'user1';
-    const petshopId = 'petshop-test-id';
+    const businessId = 'petshop-test-id';
 
     const dto = {
       customerId: 'customer1',
@@ -125,7 +125,7 @@ describe('POST at /agenda', () => {
       new Error('Database crashed'),
     );
 
-    await expect(createAgenda.execute(userId, dto, petshopId)).rejects.toThrow(
+    await expect(createAgenda.execute(userId, dto, businessId)).rejects.toThrow(
       'Database crashed',
     );
   });

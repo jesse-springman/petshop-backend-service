@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { DeleteCustomer } from '../../src/use-cases/delete-customer';
+import { DeleteCustomer } from '../../src/customer/use-cases/delete-customer';
 import { PrismaService } from '../../src/prisma/database/prisma.service';
 import { NotFoundException } from '@nestjs/common';
 
@@ -32,30 +32,30 @@ describe('DELETE client', () => {
     const id = '123';
 
     it('Must delete client when found', async () => {
-      const petshopId = 'petshop-test-id';
+      const businessId = 'business-test-id';
 
       mockPrisma.customer.findUnique.mockResolvedValue({
         id,
         customer_name: 'joao',
         customer_pet: 'lele',
-        petshopId: 'petshop-test-id',
+        businessId: 'business-test-id',
       });
 
       mockPrisma.customer.delete.mockResolvedValue({
         id,
         customer_name: 'joao',
         customer_pet: 'lele',
-        petshopId: 'petshop-test-id',
+        businessId: 'business-test-id',
       });
 
-      await service.delete(id, petshopId);
+      await service.delete(id, businessId);
 
       expect(mockPrisma.customer.findUnique).toHaveBeenCalledWith({
-        where: { id, petshopId: 'petshop-test-id' },
+        where: { id, businessId: 'business-test-id' },
       });
 
       expect(mockPrisma.customer.delete).toHaveBeenCalledWith({
-        where: { id, petshopId: 'petshop-test-id' },
+        where: { id, businessId: 'business-test-id' },
       });
     });
 
@@ -63,7 +63,7 @@ describe('DELETE client', () => {
       mockPrisma.customer.findUnique.mockResolvedValue(null);
 
       await expect(
-        service.delete('inexistente', 'petshopID'),
+        service.delete('inexistente', 'businessID'),
       ).rejects.toBeInstanceOf(NotFoundException);
     });
   });

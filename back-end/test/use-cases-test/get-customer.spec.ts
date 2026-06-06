@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from '../../src/controller/app.controller';
-import { GetCustomer } from '../../src/use-cases/get-customer';
-import { PostCustomer } from '../../src/use-cases/post-customer';
-import { PatchCustomer } from '../../src/use-cases/patch-customer';
-import { DeleteCustomer } from '../../src/use-cases/delete-customer';
+import { GetCustomer } from '../../src/customer/use-cases/get-customer';
+import { PostCustomer } from '../../src/customer/use-cases/post-customer';
+import { PatchCustomer } from '../../src/customer/use-cases/patch-customer';
+import { DeleteCustomer } from '../../src/customer/use-cases/delete-customer';
 import { AuthGuard } from '../../src/auth/auth.guard';
 
 describe('AppController - GET /clientes', () => {
@@ -35,14 +35,14 @@ describe('AppController - GET /clientes', () => {
     controller = module.get<AppController>(AppController);
   });
   it('should return an array of customers', async () => {
-    const mockData = [{ id: 1, customer_name: 'Jesse', pet_name: 'Cacau' }];
+    const mockData = [{ id: 1, name: 'Jesse', phone: '1999939933' }];
 
     mockGetCustomer.findAllClient.mockResolvedValue(mockData);
 
     const mockReq = {
       user: {
         sub: 'user-test-id',
-        petshopId: 'petshop-test-id',
+        businessId: 'business-test-id',
         role: 'ADMIN',
       },
     };
@@ -51,7 +51,7 @@ describe('AppController - GET /clientes', () => {
 
     expect(result).toEqual(mockData);
     expect(mockGetCustomer.findAllClient).toHaveBeenCalledWith(
-      'petshop-test-id',
+      'business-test-id',
     );
   });
 });

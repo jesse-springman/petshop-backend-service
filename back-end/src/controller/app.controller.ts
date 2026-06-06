@@ -13,10 +13,10 @@ import {
 } from '@nestjs/common';
 import { CreateCustomerDto } from '../dto/customer/create.customer';
 import { UpdateCustomerDto } from '../dto/customer/update-customer';
-import { PostCustomer } from '../use-cases/post-customer';
-import { GetCustomer } from '../use-cases/get-customer';
-import { PatchCustomer } from '../use-cases/patch-customer';
-import { DeleteCustomer } from '../use-cases/delete-customer';
+import { PostCustomer } from '../customer/use-cases/post-customer';
+import { GetCustomer } from '../customer/use-cases/get-customer';
+import { PatchCustomer } from '../customer/use-cases/patch-customer';
+import { DeleteCustomer } from '../customer/use-cases/delete-customer';
 import { AuthGuard } from '../auth/auth.guard';
 import {
   ApiTags,
@@ -59,7 +59,7 @@ export class AppController {
     @Body() body: CreateCustomerDto,
     @Request() req: AuthRequest,
   ) {
-    return await this.postCustomer.execute(body, req.user.petshopId);
+    return await this.postCustomer.execute(body, req.user.businessId);
   }
 
   @Get('clientes')
@@ -74,7 +74,7 @@ export class AppController {
   })
   async allCustomersData(@Request() req: AuthRequest) {
     const allCustomers = await this.getCustomer.findAllClient(
-      req.user.petshopId,
+      req.user.businessId,
     );
     return allCustomers;
   }
@@ -107,7 +107,7 @@ export class AppController {
     @Body() updateCustomerDto: UpdateCustomerDto,
     @Request() req: AuthRequest,
   ) {
-    await this.patchCustomer.update(id, updateCustomerDto, req.user.petshopId);
+    await this.patchCustomer.update(id, updateCustomerDto, req.user.businessId);
   }
 
   @Delete('clientes/:id')
@@ -135,7 +135,7 @@ export class AppController {
   })
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id') id: string, @Request() req: AuthRequest) {
-    await this.deleteCustomer.delete(id, req.user.petshopId);
+    await this.deleteCustomer.delete(id, req.user.businessId);
 
     return { message: 'Cliente deletado com sucesso' };
   }

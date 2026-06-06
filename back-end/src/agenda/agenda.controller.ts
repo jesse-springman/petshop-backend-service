@@ -57,7 +57,7 @@ export class AgendaController {
     description: 'Token de autenticação ausente ou inválido.',
   })
   async create(@Request() req: AuthRequest, @Body() body: CreateAgendaDto) {
-    return this.createAgenda.execute(req.user.sub, body, req.user.petshopId);
+    return this.createAgenda.execute(req.user.sub, body, req.user.businessId);
   }
 
   @Get()
@@ -83,7 +83,7 @@ export class AgendaController {
     description: 'Token de autenticação ausente ou inválido.',
   })
   async findAll(@Request() req: AuthRequest, @Query() query: GetAgendaDto) {
-    return this.getAgenda.execute(req.user.sub, query, req.user.petshopId);
+    return this.getAgenda.execute(req.user.sub, query, req.user.businessId);
   }
 
   //Só o profissional dono do agendemente pode alterar
@@ -125,7 +125,7 @@ export class AgendaController {
       req.user.sub,
       id,
       body,
-      req.user.petshopId,
+      req.user.businessId,
     );
   }
 
@@ -155,6 +155,6 @@ export class AgendaController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteAgenda(@Request() res: AuthRequest, @Param('id') id: string) {
     console.log(res);
-    return this.deleteScheduling.execute(res.user.sub, id, res.user.petshopId);
+    return this.deleteScheduling.execute(res.user.sub, id, res.user.businessId);
   }
 }

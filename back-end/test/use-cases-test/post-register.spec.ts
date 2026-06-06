@@ -3,13 +3,13 @@ jest.mock('bcrypt', () => ({
 }));
 
 import { mockPrisma } from '../__mocks__/prisma.mock';
-import { Register } from '../../src/use-cases/post-register';
+import { Register } from '../../src/customer/use-cases/post-register';
 import { ForbiddenException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
 describe('POST /register', () => {
   let register: Register;
-  const petshopId = 'petshop-Id';
+  const businessId = 'business-Id';
 
   beforeEach(() => {
     register = new Register(mockPrisma as any);
@@ -21,7 +21,7 @@ describe('POST /register', () => {
       register.execute(
         { id: '1', role: 'USER' },
         { name: 'Joao', password: '123' },
-        petshopId,
+        businessId,
       ),
     ).rejects.toBeInstanceOf(ForbiddenException);
   });
@@ -36,7 +36,7 @@ describe('POST /register', () => {
     const result = await register.execute(
       { id: '1', role: 'ADMIN' },
       { name: 'gabi', password: '123' },
-      petshopId,
+      businessId,
     );
 
     expect(bcrypt.hash).toHaveBeenCalledWith('123', 10);

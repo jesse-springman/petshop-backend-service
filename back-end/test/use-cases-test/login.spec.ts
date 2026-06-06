@@ -19,8 +19,8 @@ describe('Routine Authentication', () => {
       name: 'jesse',
       password: hash,
       role: 'ADMIN',
-      petshopId: 'petshop-test-id',
-      petshop: {
+      businessId: 'business-test-id',
+      business: {
         status: 'ACTIVE',
       },
     });
@@ -29,12 +29,12 @@ describe('Routine Authentication', () => {
 
     expect(mockPrisma.user.findUnique).toHaveBeenCalledWith({
       where: { name: 'jesse' },
-      include: { petshop: true },
+      include: { business: true },
     });
 
     expect(result).toHaveProperty('id', '1');
     expect(result).toHaveProperty('role', 'ADMIN');
-    expect(result).toHaveProperty('petshopId', 'petshop-test-id');
+    expect(result).toHaveProperty('businessId', 'business-test-id');
   });
 
   it('should throw UnauthorizedException when user not registred', async () => {
@@ -75,8 +75,8 @@ describe('Routine Authentication', () => {
       name: 'jesse',
       password: hash,
       role: 'ADMIN',
-      petshopId: 'petshop-test-id',
-      petshop: {
+      businessId: 'business-test-id',
+      business: {
         status: 'PENDING',
       },
     });

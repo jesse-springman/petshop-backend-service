@@ -10,7 +10,7 @@ export class AuthService {
   async validateUser(nameClient: string, password: string): Promise<AuthUser> {
     const user = await this.prisma.user.findUnique({
       where: { name: nameClient.toLowerCase() },
-      include: { petshop: true },
+      include: { business: true },
     });
 
     if (!user) {
@@ -23,19 +23,19 @@ export class AuthService {
       throw new UnauthorizedException('Acesso não autorizado');
     }
 
-    if (!user.petshopId) {
+    if (!user.businessId) {
       throw new UnauthorizedException('Usuário sem petshop vinculado');
     }
 
-    if (user.petshop.status !== 'ACTIVE') {
-      throw new UnauthorizedException('Petshop aguardando ativação');
+    if (user.business.status === 'PENDING') {
+      throw new UnauthorizedException('Negócio aguardando atualização');
     }
 
     return {
       id: user.id,
       name: user.name,
       role: user.role,
-      petshopId: user.petshopId,
+      businessId: user.businessId,
     };
   }
 }

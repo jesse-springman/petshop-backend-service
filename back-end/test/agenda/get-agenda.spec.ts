@@ -16,9 +16,9 @@ describe('GET /agenda', () => {
   it('it should throw BadRequestException whan format DATE is invalid', async () => {
     const userId = '123';
     const query = { start: 'data-errada', end: '2026-02-12' };
-    const petshopId = 'petshop-test-id';
+    const businessId = 'business-test-id';
 
-    await expect(useCase.execute(userId, query, petshopId)).rejects.toThrow(
+    await expect(useCase.execute(userId, query, businessId)).rejects.toThrow(
       BadRequestException,
     );
 
@@ -35,7 +35,7 @@ describe('GET /agenda', () => {
         start: '2026-01-01',
         end: '2026-01-02',
       },
-      'petshop-test-id',
+      'business-test-id',
     );
 
     expect(result.length).toBe(0);
@@ -44,13 +44,13 @@ describe('GET /agenda', () => {
   it('should search scheduling', async () => {
     const userId = 'user2';
     const query: GetAgendaDto = { start: '2026-02-13', end: '2026-03-12' };
-    const petshopId = 'petshop-test-id';
+    const businessId = 'business-test-id';
 
     const appointments: Appointment[] = [];
 
     mockPrisma.appointment.findMany.mockResolvedValue(appointments);
 
-    await useCase.execute(userId, query, petshopId);
+    await useCase.execute(userId, query, businessId);
 
     const spy = mockPrisma.appointment.findMany;
 

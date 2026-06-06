@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PostCustomer } from '../../src/use-cases/post-customer';
+import { PostCustomer } from '../../src/customer/use-cases/post-customer';
 import { mockPrisma } from '../__mocks__/prisma.mock';
 import { PrismaService } from '../../src/prisma/database/prisma.service';
 
@@ -22,23 +22,20 @@ describe('PostCustomer', () => {
   it('should create a customer', async () => {
     const mockReturn = {
       id: 1,
-      customer_name: 'Jesse',
-      pet_name: 'Cacau',
+      name: 'Jesse',
+      phone: '199934449',
     };
 
     mockPrisma.customer.create.mockResolvedValue(mockReturn);
 
     const input = {
-      customer_name: 'Jesse',
-      pet_name: 'Cacau',
-      last_bath: new Date(),
+      name: 'Jesse',
+      phone: '19993449',
       address: 'av luku',
-      number_customer: '199934569',
-      pet_breed: 'Poodle',
-      petshopId: 'petshop-test-id',
+      businessId: 'business-test-id',
     };
 
-    const result = await service.execute(input, 'petshop-test-id');
+    const result = await service.execute(input, 'business-test-id');
 
     expect(mockPrisma.customer.create).toHaveBeenCalledWith({
       data: input,

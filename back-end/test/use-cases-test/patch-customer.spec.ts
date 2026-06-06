@@ -1,8 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PatchCustomer } from '../../src/use-cases/patch-customer';
+import { PatchCustomer } from '../../src/customer/use-cases/patch-customer';
 import { PrismaService } from '../../src/prisma/database/prisma.service';
+import { NotFoundException } from '@nestjs/common';
 
-describe('UpdateMock', () => {
+describe('PatchCustomer', () => {
   let service: PatchCustomer;
 
   const mockPrisma = {
@@ -27,92 +28,79 @@ describe('UpdateMock', () => {
     jest.clearAllMocks();
   });
 
-  describe('UpdatedCustomer', () => {
-    const id = '123';
-    const dto = {
-      customer_name: 'nomeNovo',
-      pet_name: 'petNovo',
-      address: 'lala',
-      number_customer: '1999900990',
-      pet_breed: 'pastor',
-      last_bath: '2026-03-30T21:31:18.551Z',
-    };
-    const petshopId = 'petshop-test-id';
+  const id = '123';
+  const businessId = 'business-test-id';
 
-    it('shoud update customer when found', async () => {
-      mockPrisma.customer.findUnique.mockResolvedValue({
-        id,
-        customer_name: 'antigo',
-        pet_name: 'antigo',
-        address: 'antigo',
-        number_customer: '111111111',
-        pet_breed: 'antigo',
-        last_bath: '2026-03-30T21:31:18.551Z',
+  const existingCustomer = {
+    id,
+    name: 'João',
+    phone: '11111111111',
+    address: 'Rua Antiga, 100',
+    businessId,
+    createdAt: new Date(),
+  };
+
+  const dto = {
+    name: 'Nome Novo',
+    phone: '19999900990',
+    address: 'Rua Nova, 345',
+  };
+
+  describe('update', () => {
+    it('should update customer when found', async () => {
+      mockPrisma.customer.findUnique.mockResolvedValue(existingCustomer);
+      mockPrisma.customer.update.mockResolvedValue({
+        ...existingCustomer,
+        ...dto,
       });
 
-      mockPrisma.customer.update.mockResolvedValue({ id, ...dto });
-
-      const result = await service.update(id, dto, petshopId);
+      const result = await service.update(id, dto, businessId);
 
       expect(mockPrisma.customer.findUnique).toHaveBeenCalledWith({
-        where: { id, petshopId: 'petshop-test-id' },
+        where: { id, businessId },
       });
-
-      expect(mockPrisma.customer.update).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: { id, petshopId: 'petshop-test-id' },
-
-          data: {
-            ...dto,
-            last_bath: expect.any(Date) as unknown as Date,
-          },
-        }),
-      );
-
-      expect(result).toEqual({ id, ...dto });
-    });
-
-    it('should return status 204', async () => {
-      mockPrisma.customer.update.mockResolvedValue(undefined);
-
-      const result = await service.update(id, dto, petshopId);
-      expect(result).toBeUndefined();
-    });
-
-    it('should update just fields send, partial update', async () => {
-      const partialDto = { pet_name: 'petAtualizado' };
-
-      mockPrisma.customer.findUnique.mockResolvedValue({
-        id,
-        customer_name: 'joao',
-        pet_name: 'toby',
-      });
-      mockPrisma.customer.update.mockResolvedValue({
-        id,
-        customer_name: 'joao',
-        pet_name: 'petAtualizado',
-        address: 'ze123',
-        number_customer: '22223321',
-        pet_breed: 'pit',
-        last_bath: '2026-03-30T21:31:18.551Z',
-      });
-
-      const result = await service.update(id, partialDto, petshopId);
 
       expect(mockPrisma.customer.update).toHaveBeenCalledWith({
-        where: { id, petshopId },
-        data: partialDto,
+        where: { id, businessId },
+        data: {
+          name: dto.name,
+          address: dto.address,
+          phone: dto.phone,
+        },
       });
 
-      expect(result).toEqual({
-        id: '123',
-        customer_name: 'joao',
-        pet_name: 'petAtualizado',
-        address: 'ze123',
-        number_customer: '22223321',
-        pet_breed: 'pit',
-        last_bath: '2026-03-30T21:31:18.551Z',
+      expect(result).toEqual({ ...existingCustomer, ...dto });
+    });
+
+    it('should throw NotFoundException when customer not found', async () => {
+      mockPrisma.customer.findUnique.mockResolvedValue(null);
+
+      await expect(service.update(id, dto, businessId)).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('should do partial update with only fields sent', async () => {
+      const partialDto = { name: 'Nome Atualizado' };
+
+      mockPrisma.customer.findUnique.mockResolvedValue(existingCustomer);
+      mockPrisma.customer.update.mockResolvedValue({
+        ...existingCustomer,
+        name: 'Nome Atualizado',
       });
+
+      const result = await service.update(id, partialDto, businessId);
+
+      expect(mockPrisma.customer.update).toHaveBeenCalledWith({
+        where: { id, businessId },
+        data: {
+          name: partialDto.name,
+          address: undefined,
+          phone: undefined,
+        },
+      });
+
+      expect(result).toEqual({ ...existingCustomer, name: 'Nome Atualizado' });
     });
   });
 });

@@ -2,27 +2,31 @@ import { Module } from '@nestjs/common';
 import { AppController } from './controller/app.controller';
 import { AppService } from './service/app.service';
 import { PrismaService } from './prisma/database/prisma.service';
-import { PostCustomer } from './use-cases/post-customer';
-import { GetCustomer } from './use-cases/get-customer';
-import { PatchCustomer } from './use-cases/patch-customer';
-import { DeleteCustomer } from './use-cases/delete-customer';
+import { PostCustomer } from './customer/use-cases/post-customer';
+import { GetCustomer } from './customer/use-cases/get-customer';
+import { PatchCustomer } from './customer/use-cases/patch-customer';
+import { DeleteCustomer } from './customer/use-cases/delete-customer';
 import { AuthModule } from './auth/auth.module';
 import { AgendaModule } from './agenda/agenda.module';
 import { ConfigModule } from '@nestjs/config';
 import { IAModule } from './messageAI/ai.module';
-import { PetshopModule } from './petshopRegister/petshop.module';
+import { BusinessModule } from './businessRegister/business.module';
 import { SuperAdminModule } from './superAdmin/superAdmin.module';
+import { PetModule } from './pet/pet.module';
+import { VehicleModule } from './vehicle/vehicle.module';
 
 @Module({
   imports: [
     AuthModule,
     AgendaModule,
     IAModule,
-    PetshopModule,
+    BusinessModule,
     SuperAdminModule,
+    PetModule,
+    VehicleModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env,',
+      envFilePath: '.env',
     }),
   ],
   controllers: [AppController],

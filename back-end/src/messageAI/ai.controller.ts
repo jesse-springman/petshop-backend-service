@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { GenerateMessage } from './use-cases/post-generate-message';
-import { GenerarteMessageDto } from './dto/create-message.dto';
+import { GenerateMessageDto } from './dto/create-message.dto';
 import {
   ApiTags,
   ApiBearerAuth,
@@ -33,7 +33,7 @@ export class aiController {
     description:
       'Gera uma mensagem automática para o cliente com base no tipo selecionado (lembrete, agendamento ou cobrança).',
   })
-  @ApiBody({ type: GenerarteMessageDto })
+  @ApiBody({ type: GenerateMessageDto })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Mensagem criada com sucesso',
@@ -47,10 +47,13 @@ export class aiController {
     description: 'Token inválido ou não enviado',
   })
   async responseIA(
-    @Body() body: GenerarteMessageDto,
+    @Body() body: GenerateMessageDto,
     @Request() req: AuthRequest,
   ) {
-    const result = await this.generateMessage.execute(body, req.user.petshopId);
+    const result = await this.generateMessage.execute(
+      body,
+      req.user.businessId,
+    );
     return result;
   }
 }

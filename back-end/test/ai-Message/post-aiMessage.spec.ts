@@ -1,43 +1,94 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { Prisma } from '@prisma/client';
 import { mockPrisma } from '../__mocks__/prisma.mock';
 import { GenerateMessage } from '../../src/messageAI/use-cases/post-generate-message';
-import { ForbiddenException, NotFoundException } from '@nestjs/common';
-import { TypeMessage } from '../../src/messageAI/dto/create-message.dto';
+import { NotFoundException } from '@nestjs/common';
+import {
+  TypeMessage,
+  GenerateMessageDto,
+} from '../../src/messageAI/dto/create-message.dto';
+import { Commerce } from '@prisma/client';
 
 const mockCustomers = [
   {
     id: '123',
-    customer_name: 'Jesse',
-    pet_name: 'Rex',
-    pet_breed: 'Labrador',
-    last_bath: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 dias atrás
-    number_customer: '19999999999',
+    name: 'Jesse',
+    phone: '19999999999',
+    address: null,
+    createdAt: new Date(),
+    businessId: 'business-test-id',
+    pets: [
+      {
+        id: 'pet-1',
+        name: 'Rex',
+        breed: 'Labrador',
+        lastBath: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+        customerId: '123',
+        businessId: 'business-test-id',
+        createdAt: new Date(),
+      },
+    ],
+    vehicles: [],
     appointments: [
       {
-        date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // futuro
+        id: 'apt-1',
+        date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
         notes: 'Banho completo',
+        status: 'SCHEDULED',
+        customerId: '123',
+        userId: 'user-1',
+        businessId: 'business-test-id',
+        createdAt: new Date(),
+        petId: 'pet-1',
+        vehicleId: null,
       },
     ],
   },
-
   {
     id: '1234',
-    customer_name: 'gabi',
-    pet_name: 'preta',
-    pet_breed: 'vira-lata',
-    last_bath: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 dias atrás
-    number_customer: '19999999999',
+    name: 'Gabi',
+    phone: '19999999998',
+    address: null,
+    createdAt: new Date(),
+    businessId: 'business-test-id',
+    pets: [
+      {
+        id: 'pet-2',
+        name: 'Preta',
+        breed: 'Vira-lata',
+        lastBath: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+        customerId: '1234',
+        businessId: 'business-test-id',
+        createdAt: new Date(),
+      },
+    ],
+    vehicles: [],
     appointments: [
       {
-        date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // futuro
+        id: 'apt-2',
+        date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
         notes: 'Banho completo',
+        status: 'SCHEDULED',
+        customerId: '1234',
+        userId: 'user-1',
+        businessId: 'business-test-id',
+        createdAt: new Date(),
+        petId: 'pet-2',
+        vehicleId: null,
       },
     ],
   },
 ];
 
-describe('GET /respostaAI', () => {
+const baseDto = (type: TypeMessage): GenerateMessageDto => ({
+  customerId: mockCustomers[0].id,
+  type,
+  commerce: Commerce.PETSHOP,
+  petId: 'pet-1',
+});
+
+const businessId = 'business-test-id';
+
+describe('GenerateMessage', () => {
   let useCase: GenerateMessage;
 
   beforeEach(() => {
@@ -45,162 +96,115 @@ describe('GET /respostaAI', () => {
 
     jest.spyOn(global, 'fetch').mockResolvedValue({
       json: jest.fn().mockResolvedValue({
-        choices: [
-          {
-            message: { content: 'Mensagem gerada pela IA' },
-          },
-        ],
+        choices: [{ message: { content: 'Mensagem gerada pela IA' } }],
       }),
-    } as unknown as Response); //fecth espera um obj do tipo Response,
+    } as unknown as Response);
 
     useCase = new GenerateMessage(mockPrisma as any);
   });
 
-  it('should throw NotFoundException, when customer does not exist', async () => {
+  it('should throw NotFoundException when customer does not exist', async () => {
     mockPrisma.customer.findUnique.mockResolvedValue(null);
 
     await expect(
-      useCase.execute(
-        {
-          customerId: 'id-invalido',
-          type: TypeMessage.AGENDAMENTO,
-        },
-        'petshopId',
-      ),
+      useCase.execute(baseDto(TypeMessage.AGENDAMENTO), businessId),
     ).rejects.toThrow(NotFoundException);
   });
 
-  it('should return message when customer exist', async () => {
-    const petshopId = 'petshop-test-id';
-
+  it('should return messageIA and phone when customer exists', async () => {
     mockPrisma.customer.findUnique.mockResolvedValue(mockCustomers[0]);
 
-    (global.fetch as jest.Mock).mockResolvedValue({
-      json: jest.fn().mockResolvedValue({
-        choices: [
-          {
-            message: {
-              content: 'Mensagem gerada pela IA',
-            },
-          },
-        ],
-      }),
-    });
-
     const result = await useCase.execute(
-      {
-        customerId: mockCustomers[0].id,
-        type: TypeMessage.COBRANCA,
-      },
-      petshopId,
+      baseDto(TypeMessage.COBRANCA),
+      businessId,
     );
 
     expect(result).toHaveProperty('messageIA');
     expect(result).toHaveProperty('phone');
-    expect(result.phone).toBe(mockCustomers[0].number_customer);
+    expect(result.phone).toBe(mockCustomers[0].phone);
   });
 
-  it('should generate message  for AGENDAMENTO', async () => {
-    const petshopId = 'petshop-test-id';
-
+  it('should generate message for AGENDAMENTO', async () => {
     mockPrisma.customer.findUnique.mockResolvedValue(mockCustomers[0]);
 
-    (global.fetch as jest.Mock).mockResolvedValue({
-      json: jest.fn().mockResolvedValue({ result: 'ok' }),
-    });
-
     const result = await useCase.execute(
-      {
-        customerId: mockCustomers[0].id,
-        type: TypeMessage.AGENDAMENTO,
-      },
-      petshopId,
+      baseDto(TypeMessage.AGENDAMENTO),
+      businessId,
     );
 
     expect(result).toBeDefined();
   });
 
-  it('Should generate message for LEMBRENTE_BANHO', async () => {
-    const petshopId = 'petshop-test-id';
-
+  it('should generate message for LEMBRETE_BANHO', async () => {
     mockPrisma.customer.findUnique.mockResolvedValue(mockCustomers[0]);
 
-    (global.fetch as jest.Mock).mockResolvedValue({
-      json: jest.fn().mockResolvedValue({ result: 'ok' }),
-    });
-
     const result = await useCase.execute(
-      {
-        customerId: mockCustomers[0].id,
-        type: TypeMessage.LEMBRETE_BANHO,
-      },
-      petshopId,
+      baseDto(TypeMessage.LEMBRETE_BANHO),
+      businessId,
     );
 
     expect(result).toBeDefined();
   });
 
-  it('Shoud generate message for COBRANCA', async () => {
-    const petshopId = 'petshop-test-id';
-
+  it('should generate message for COBRANCA', async () => {
     mockPrisma.customer.findUnique.mockResolvedValue(mockCustomers[0]);
 
-    (global.fetch as jest.Mock).mockResolvedValue({
-      json: jest.fn().mockResolvedValue({ result: 'ok' }),
-    });
-
     const result = await useCase.execute(
-      {
-        customerId: mockCustomers[0].id,
-        type: TypeMessage.COBRANCA,
-      },
-      petshopId,
+      baseDto(TypeMessage.COBRANCA),
+      businessId,
     );
 
     expect(result).toBeDefined();
   });
 
-  it('Should return 0 when last_bath is null', async () => {
-    const result = (useCase as any).daysSinceWithoutBath(null);
-
+  it('should return 0 when lastBath is null', () => {
+    const result = (useCase as any).daysSinceLastBath(null);
     expect(result).toBe(0);
   });
 
-  it('Should calculte days correct without bath', async () => {
-    const dateWithoutBath = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
-
-    const result = (useCase as any).daysSinceWithoutBath(dateWithoutBath);
-
+  it('should calculate days correctly since last bath', () => {
+    const date = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
+    const result = (useCase as any).daysSinceLastBath(date);
     expect(result).toBe(3);
   });
 
-  it('should generate prompt with customer data', async () => {
+  it('should generate prompt containing customer and pet name for LEMBRETE_BANHO', () => {
+    const pet = mockCustomers[0].pets[0];
     const prompt = (useCase as any).assemblePrompt(
       mockCustomers[0],
-      5,
       TypeMessage.LEMBRETE_BANHO,
+      Commerce.PETSHOP,
+      pet,
+      undefined,
     );
 
     expect(prompt).toContain('Jesse');
     expect(prompt).toContain('Rex');
+    expect(prompt).toContain('5');
   });
 
-  it('Should generate prompt with appointment date of AGENDAMENTO', async () => {
+  it('should generate prompt containing customer and pet name for AGENDAMENTO', () => {
+    const pet = mockCustomers[0].pets[0];
     const prompt = (useCase as any).assemblePrompt(
       mockCustomers[0],
-      5,
       TypeMessage.AGENDAMENTO,
+      Commerce.PETSHOP,
+      pet,
+      undefined,
     );
 
     expect(prompt).toContain('Jesse');
     expect(prompt).toContain('Rex');
   });
 
-  it('Should generate prompt for COBRANCA', async () => {
+  it('should generate prompt for COBRANCA', () => {
+    const pet = mockCustomers[0].pets[0];
     const prompt = (useCase as any).assemblePrompt(
       mockCustomers[0],
-      5,
       TypeMessage.COBRANCA,
+      Commerce.PETSHOP,
+      pet,
+      undefined,
     );
 
     expect(prompt).toContain('Jesse');
@@ -208,48 +212,66 @@ describe('GET /respostaAI', () => {
   });
 
   it('should return phone of customer', async () => {
-    const petshopId = 'petshop-test-id';
-
     mockPrisma.customer.findUnique.mockResolvedValue(mockCustomers[0]);
 
     const result = await useCase.execute(
-      {
-        customerId: mockCustomers[0].id,
-        type: TypeMessage.LEMBRETE_BANHO,
-      },
-      petshopId,
+      baseDto(TypeMessage.LEMBRETE_BANHO),
+      businessId,
     );
 
     expect(result.phone).toBe('19999999999');
   });
 
-  it('should call fetch with correct GroqAPI', async () => {
-    const petshopId = 'petshop-test-id';
-
+  it('should call fetch with correct Groq API URL', async () => {
     mockPrisma.customer.findUnique.mockResolvedValue(mockCustomers[0]);
 
-    await useCase.execute(
-      {
-        customerId: mockCustomers[0].id,
-        type: TypeMessage.LEMBRETE_BANHO,
-      },
-      petshopId,
-    );
+    await useCase.execute(baseDto(TypeMessage.LEMBRETE_BANHO), businessId);
 
     expect(global.fetch).toHaveBeenCalledWith(
       'https://api.groq.com/openai/v1/chat/completions',
-
       expect.objectContaining({ method: 'POST' }),
     );
   });
 
-  it('should generate prompt with days without bath', async () => {
+  it('should generate prompt with vehicle data for AUTOMOTIVE', () => {
+    const mockVehicleCustomer = {
+      ...mockCustomers[0],
+      pets: [],
+      vehicles: [
+        {
+          id: 'vehicle-1',
+          brand: 'Toyota',
+          model: 'Corolla',
+          plate: 'ABC1D23',
+          customerId: '123',
+          businessId: 'business-test-id',
+          createdAt: new Date(),
+        },
+      ],
+    };
+
     const prompt = (useCase as any).assemblePrompt(
-      mockCustomers[0],
-      5,
-      TypeMessage.LEMBRETE_BANHO,
+      mockVehicleCustomer,
+      TypeMessage.VEICULO_PRONTO,
+      Commerce.AUTOMOTIVE,
+      undefined,
+      mockVehicleCustomer.vehicles[0],
     );
 
-    expect(prompt).toContain('5');
+    expect(prompt).toContain('Jesse');
+    expect(prompt).toContain('Toyota');
+    expect(prompt).toContain('Corolla');
+  });
+
+  it('should generate prompt for FEMININE_AESTHETIC', () => {
+    const prompt = (useCase as any).assemblePrompt(
+      mockCustomers[0],
+      TypeMessage.LEMBRETE_PROCEDIMENTO,
+      Commerce.FEMININE_AESTHETIC,
+      undefined,
+      undefined,
+    );
+
+    expect(prompt).toContain('Jesse');
   });
 });

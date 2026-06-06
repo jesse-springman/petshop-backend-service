@@ -14,7 +14,7 @@ export class UpdateAgenda {
     userId: string,
     agendaId: string,
     data: PatchAgendaDto,
-    petshopId: string,
+    businessId: string,
   ) {
     const agenda = await this.prisma.appointment.findUnique({
       where: { id: agendaId },
@@ -24,13 +24,13 @@ export class UpdateAgenda {
       throw new NotFoundException('Agendamento não encontrado');
     }
 
-    //u, user não pode fazer alteração de outro user
+    //user não pode fazer alteração de outro user
     if (agenda.userId !== userId) {
       throw new ForbiddenException('Você não pode alterar esse agendamento');
     }
 
     return this.prisma.appointment.update({
-      where: { id: agendaId, petshopId },
+      where: { id: agendaId, businessId },
       data: {
         status: data.status,
       },

@@ -14,7 +14,7 @@ describe('PATCH / agenda', () => {
   it('should update status sucessfully', async () => {
     const userId = 'user1';
     const agendaId = 'agenda1';
-    const petshopId = 'petshop-test-id';
+    const businessId = 'business-test-id';
 
     const extingAgenda = {
       id: agendaId,
@@ -35,7 +35,7 @@ describe('PATCH / agenda', () => {
       {
         status: 'COMPLETED',
       },
-      petshopId,
+      businessId,
     );
 
     expect(mockPrisma.appointment.findUnique).toHaveBeenCalledWith({
@@ -43,7 +43,7 @@ describe('PATCH / agenda', () => {
     });
 
     expect(mockPrisma.appointment.update).toHaveBeenCalledWith({
-      where: { id: agendaId, petshopId: 'petshop-test-id' },
+      where: { id: agendaId, businessId: 'business-test-id' },
       data: {
         status: 'COMPLETED',
       },
@@ -62,7 +62,7 @@ describe('PATCH / agenda', () => {
         {
           status: 'COMPLETED',
         },
-        'petshop-test-id',
+        'business-test-id',
       ),
     ).rejects.toBeInstanceOf(NotFoundException);
   });
@@ -70,7 +70,7 @@ describe('PATCH / agenda', () => {
   it('should throw ForbiddenExpection whan user try change another agenda', async () => {
     const user1 = 'user1';
     const agenda = 'agenda1';
-    const petshopId = 'petshop-test-id';
+    const businessId = 'business-test-id';
 
     mockPrisma.user.findUnique.mockResolvedValue(user1);
     mockPrisma.appointment.findUnique.mockResolvedValue(agenda);
@@ -82,7 +82,7 @@ describe('PATCH / agenda', () => {
         {
           status: 'COMPLETED',
         },
-        petshopId,
+        businessId,
       ),
     ).rejects.toBeInstanceOf(ForbiddenException);
   });

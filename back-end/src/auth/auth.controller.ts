@@ -16,7 +16,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { CreateEmployeeDto } from './dto/create.employee';
-import { Register } from '../use-cases/post-register';
+import { Register } from '../customer/use-cases/post-register';
 import { Request } from 'express';
 import { LoginDto } from './dto/login';
 import { JwtPayload } from './type/jwtPayload';
@@ -73,7 +73,7 @@ export class AuthController {
       sub: user.id,
       username: user.name,
       role: user.role,
-      petshopId: user.petshopId,
+      businessId: user.businessId,
     };
 
     const token = this.jwtService.sign(payload);
@@ -92,7 +92,7 @@ export class AuthController {
       success: true,
       userName: user.name,
       role: user.role,
-      petshopId: user.petshopId,
+      businessId: user.businessId,
     };
   }
 
@@ -125,7 +125,7 @@ export class AuthController {
       return await this.register.execute(
         { id: sub, role },
         body,
-        req.user.petshopId,
+        req.user.businessId,
       );
     } catch (error: any) {
       if (error.message === 'Apenas ADMIN pode criar usuários') {

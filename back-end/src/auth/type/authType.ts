@@ -4,5 +4,5 @@ export type AuthUser = {
   id: string;
   name: string;
   role: Role;
-  petshopId: string;
+  businessId: string;
 };

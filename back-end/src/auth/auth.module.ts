@@ -4,7 +4,7 @@ import { AuthGuard } from './auth.guard';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { PrismaService } from '../prisma/database/prisma.service';
-import { Register } from '../use-cases/post-register';
+import { Register } from '../customer/use-cases/post-register';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({

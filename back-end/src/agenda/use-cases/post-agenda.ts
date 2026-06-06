@@ -18,7 +18,7 @@ interface CreateDto {
 export class CreateAgenda {
   constructor(private prisma: PrismaService) {}
 
-  async execute(userId: string, data: CreateDto, petshopId: string) {
+  async execute(userId: string, data: CreateDto, businessId: string) {
     const parsedDate = new Date(data.date);
 
     if (isNaN(parsedDate.getTime())) {
@@ -36,7 +36,7 @@ export class CreateAgenda {
     try {
       const appointment = await this.prisma.appointment.create({
         data: {
-          petshopId,
+          businessId,
           customerId: data.customerId,
           date: parsedDate,
           userId: userId,

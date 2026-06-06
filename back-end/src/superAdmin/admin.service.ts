@@ -7,10 +7,10 @@ export class ServicesBusiness {
   constructor(private readonly prisma: PrismaService) {}
 
   async findAllBusiness() {
-    return this.prisma.petshop.findMany({
+    return this.prisma.business.findMany({
       orderBy: { createdAt: 'desc' },
       include: {
-        user: {
+        users: {
           where: { role: 'ADMIN' },
           select: { name: true },
         },
@@ -19,7 +19,7 @@ export class ServicesBusiness {
   }
 
   async updateStatus(id: string, dto: UpdateStatusDto) {
-    const business = await this.prisma.petshop.findUnique({
+    const business = await this.prisma.business.findUnique({
       where: { id },
     });
 
@@ -27,7 +27,7 @@ export class ServicesBusiness {
       throw new NotFoundException('Comercio não encontrado');
     }
 
-    return this.prisma.petshop.update({
+    return this.prisma.business.update({
       where: { id },
       data: { status: dto.status },
     });

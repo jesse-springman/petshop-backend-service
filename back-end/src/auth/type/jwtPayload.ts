@@ -4,5 +4,5 @@ export interface JwtPayload {
   username: string;
   sub: string;
   role: Role;
-  petshopId: string;
+  businessId: string;
 }

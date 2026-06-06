@@ -32,7 +32,7 @@ describe('JWT Tests', () => {
         name: 'jesse',
         password: await bcrypt.hash('kkkk', 10),
         role: 'ADMIN',
-        petshopId: 'petshopID',
+        businessId: 'businessId',
       },
     });
   });

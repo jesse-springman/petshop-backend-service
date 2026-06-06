@@ -6,7 +6,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 export class GetAgenda {
   constructor(private prisma: PrismaService) {}
 
-  async execute(userId: string, query: GetAgendaDto, petshopId: string) {
+  async execute(userId: string, query: GetAgendaDto, businessId: string) {
     const startDate = new Date(query.start);
     const endDate = new Date(query.end);
 
@@ -17,7 +17,8 @@ export class GetAgenda {
     const appointments = await this.prisma.appointment.findMany({
       where: {
         userId,
-        petshopId,
+
+        businessId,
         date: {
           gte: startDate,
           lt: endDate,
@@ -27,9 +28,9 @@ export class GetAgenda {
         customer: {
           select: {
             id: true,
-            customer_name: true,
-            pet_name: true,
-            pet_breed: true,
+            name: true,
+            phone: true,
+            address: true,
           },
         },
       },

@@ -36,6 +36,7 @@ export class AuthService {
       name: user.name,
       role: user.role,
       businessId: user.businessId,
+      commerce: user.business.commerce,
     };
   }
 }

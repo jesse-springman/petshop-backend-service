@@ -74,6 +74,8 @@ export class AuthController {
       username: user.name,
       role: user.role,
       businessId: user.businessId,
+      businessName: user.businessName,
+      commerce: user.commerce,
     };
 
     const token = this.jwtService.sign(payload);
@@ -93,6 +95,8 @@ export class AuthController {
       userName: user.name,
       role: user.role,
       businessId: user.businessId,
+      businessName: user.businessName,
+      commerce: user.commerce,
     };
   }
 
@@ -164,6 +168,8 @@ export class AuthController {
       userName: req.user.username,
       role: req.user.role,
       isAdmin: req.user.role === 'ADMIN',
+      businessName: req.user.businessName,
+      commerce: req.user.commerce,
     };
   }
 

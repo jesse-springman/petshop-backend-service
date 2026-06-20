@@ -30,4 +30,9 @@ export class BusinessDto {
   })
   @IsEnum(Commerce, { message: 'Tipo de comércio inválido' })
   commerce!: Commerce;
+
+  @ApiProperty({ example: '11999999999' })
+  @IsString()
+  @IsNotEmpty()
+  whatsapp!: string;
 }

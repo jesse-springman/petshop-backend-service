@@ -33,6 +33,8 @@ export class GetAgenda {
             address: true,
           },
         },
+        pet: true,
+        vehicle: true,
       },
       orderBy: {
         date: 'asc',

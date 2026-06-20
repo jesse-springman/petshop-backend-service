@@ -17,12 +17,12 @@ model Business{
   status Status @default(PENDING)
  active Boolean @default(true)
  createdAt DateTime @default(now())
-
  customers Customer[]
   users User[]
   appointments Appointment[]
   pets Pet[]
   vehicles Vehicle[]
+  transactions Transaction[]
 }
 
 
@@ -98,12 +98,32 @@ model Appointment {
   pet Pet? @relation(fields: [petId], references: [id])
   vehicleId String?
   vehicle Vehicle? @relation(fields: [vehicleId], references: [id])
-
+  transaction Transaction?
 
 
   @@unique([date, userId])
   @@index([date])
   @@index([customerId])
+}
+
+
+model Transaction {
+  id String @id @default(uuid())
+  type TransactionType
+  amount Decimal @db.Decimal(10,2)
+  description String?
+  createdAt DateTime @default(now())
+ category    String?  
+  businessId String
+  business Business @relation(fields: [businessId], references: [id])
+
+  appointmentId String? @unique
+  appointment Appointment? @relation(fields: [appointmentId], references: [id])
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
 }
 
 enum Commerce {

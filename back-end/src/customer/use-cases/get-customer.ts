@@ -8,6 +8,10 @@ export class GetCustomer {
   async findAllClient(businessId: string) {
     const customers = await this.prisma.customer.findMany({
       where: { businessId },
+      include: {
+        pets: true,
+        vehicles: true,
+      },
     });
 
     return customers;

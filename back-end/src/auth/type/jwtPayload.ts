@@ -5,5 +5,6 @@ export interface JwtPayload {
   sub: string;
   role: Role;
   businessId: string;
+  businessName: string;
   commerce: Commerce;
 }

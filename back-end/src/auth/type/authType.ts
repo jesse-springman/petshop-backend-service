@@ -5,5 +5,6 @@ export type AuthUser = {
   name: string;
   role: Role;
   businessId: string;
+  businessName: string;
   commerce: Commerce;
 };

@@ -21,6 +21,7 @@ export class BusinessController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Cadastro de novo Business' })
   async onboarding(@Body() dto: BusinessDto) {
+    console.log('AQUUUIIIIIIII');
     console.log(dto);
     return this.businessRegisterService.register(dto);
   }

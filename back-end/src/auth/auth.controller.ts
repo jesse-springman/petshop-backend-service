@@ -75,6 +75,7 @@ export class AuthController {
       username: user.name,
       role: user.role,
       businessId: user.businessId,
+      businessName: user.businessName,
       commerce: user.commerce,
     };
 
@@ -96,6 +97,8 @@ export class AuthController {
       role: user.role,
       businessId: user.businessId,
       Commerce: user.commerce,
+      businessName: user.businessName,
+      commerce: user.commerce,
     };
   }
 
@@ -168,6 +171,8 @@ export class AuthController {
       role: req.user.role,
       isAdmin: req.user.role === 'ADMIN',
       Commerce: req.user.commerce,
+      businessName: req.user.businessName,
+      commerce: req.user.commerce,
     };
   }
 

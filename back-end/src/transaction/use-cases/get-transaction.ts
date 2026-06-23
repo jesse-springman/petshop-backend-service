@@ -19,7 +19,16 @@ export class GetTransaction {
       ) {
         throw new BadRequestException('Intervalo de datas inválido');
       }
+
+      where.createdAt = {
+        ...(startDate && {gte: startDate}),
+        ...(endDate && {lte: endDate})
+      }
+
     }
+
+
+
 
     const transaction = await this.prisma.transaction.findMany({
       where,

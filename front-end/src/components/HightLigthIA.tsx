@@ -1,73 +1,130 @@
 "use client";
 import { Sparkles, ArrowRight, Eye } from "lucide-react";
 import toast from "react-hot-toast";
+import { CommerceTheme } from "../utils/Commercetheme";
 
 type Props = {
   onNavigate: () => void;
   isLoggedIn: boolean;
+  theme: CommerceTheme;
+  businessName?: string | null;
 };
 
-export function IAHighlight({ onNavigate, isLoggedIn }: Props) {
+const previewMessages: Record<string, { greeting: string; body: string; signature: string }> = {
+  PETSHOP: {
+    greeting: "Olá João! 🐾",
+    body: "O Thor está há 12 dias sem banho. Que tal agendarmos um banho e tosa para deixá-lo sempre limpinho e cheiroso? 🐶✨",
+    signature: "Equipe do Petshop",
+  },
+  AUTOMOTIVE: {
+    greeting: "Olá Carlos! 🚗",
+    body: "Seu veículo está há 30 dias sem higienização. Que tal agendar uma limpeza completa e deixar seu carro impecável? ✨",
+    signature: "Equipe de Estética Automotiva",
+  },
+  FEMININE_AESTHETIC: {
+    greeting: "Olá Linda! 💅",
+    body: "Seu horário de alongamento de cílios está confirmado para amanhã às 14h. Cuide-se, você merece se sentir ainda mais incrível! ✨",
+    signature: "Equipe de Estética",
+  },
+};
+
+export function IAHighlight({ onNavigate, isLoggedIn, theme, businessName }: Props) {
+  // Detecta o commerce pelo primaryHex
+  const commerce =
+    theme.primaryHex === "#fbbf24"
+      ? "PETSHOP"
+      : theme.primaryHex === "#60a5fa"
+        ? "AUTOMOTIVE"
+        : "FEMININE_AESTHETIC";
+
+  const preview = previewMessages[commerce];
+
   function handleBtnIA() {
     if (!isLoggedIn) {
       toast.error("Você não tem acesso a esse recurso");
       return;
     }
-
     onNavigate();
   }
 
   return (
-    <section className="w-full border border-amber-500/30 rounded-2xl p-5 bg-gradient-to-br from-zinc-900 to-black">
-      <div className="flex flex-col lg:flex-row gap-5 items-start">
-        <div className="flex-1 flex flex-col gap-6">
-          <div className="w-16 h-16 bg-amber-500/15 border border-amber-500/30 rounded-full flex items-center justify-center">
-            <Sparkles className="text-amber-400 w-7 h-7" />
+    <section
+      className="w-full rounded-2xl p-6 lg:p-8"
+      style={{
+        border: `1px solid ${theme.primaryHex}25`,
+        background: "linear-gradient(135deg, #0D1117 0%, #0A0E14 100%)",
+      }}
+    >
+      <div className="flex flex-col lg:flex-row gap-8 items-start">
+        {/* Lado esquerdo */}
+        <div className="flex-1 flex flex-col gap-5">
+          <div
+            className="w-12 h-12 rounded-2xl flex items-center justify-center"
+            style={{ background: `${theme.primaryHex}15`, border: `1px solid ${theme.primaryHex}30` }}
+          >
+            <Sparkles size={20} style={{ color: theme.primaryHex }} />
           </div>
 
           <div>
-            <h2 className="text-3xl font-bold text--400 leading-tight">
+            <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: theme.primaryHex }}>
+              Inteligência Artificial
+            </p>
+            <h2 className="text-2xl lg:text-3xl font-black text-white leading-tight">
               Gerar mensagem automática
               <br />
-              por meio de <span className="italic text-amber-400">IA</span>
+              por meio de{" "}
+              <span className="italic" style={{ color: theme.primaryHex }}>
+                IA
+              </span>
             </h2>
-            <p className="text-gray-400 text-lg mt-3 max-w-sm leading-relaxed">
-              Economize tempo enviando mensagens personalizadas automaticamente para seus clientes.
+            <p className="text-zinc-400 text-sm mt-3 max-w-sm leading-relaxed">
+              Economize tempo enviando mensagens personalizadas automaticamente para seus clientes inativos.
             </p>
           </div>
 
           <button
             onClick={handleBtnIA}
-            className="relative flex items-center gap-3 px-6 py-4 rounded-xl w-full sm:w-auto text-base font-bold cursor-pointer
-             bg-gradient-to-br from-amber-400 to-amber-600 text-black
-             shadow-[0_4px_20px_rgba(245,158,11,0.3)]
-             hover:text-amber-400 hover:shadow-[0_4px_20px_rgba(245,158,11,0.15)]
-             hover:ring-1 hover:ring-amber-500/60
-             transition-all duration-300
-             before:absolute before:inset-0 before:rounded-xl before:bg-black
-             before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-300"
+            className="relative flex items-center gap-3 px-6 py-3.5 rounded-xl w-full sm:w-auto text-sm font-bold cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group"
+            style={{
+              background: theme.primaryHex,
+              color: "#000",
+              boxShadow: `0 4px 20px ${theme.primaryHex}40`,
+            }}
           >
-            <span className="relative z-10 flex items-center gap-3">
-              <Sparkles size={18} />
-              Gerar mensagem com IA
-              <ArrowRight size={18} />
-            </span>
+            <Sparkles size={16} />
+            Gerar mensagem com IA
+            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
 
-        <div className="flex-1 w-full border border-amber-500/20 rounded-xl p-5 bg-zinc-900/60">
-          <p className="text-amber-400 text-lg font-semibold flex items-center gap-2 mb-4">
-            <Eye size={14} /> Preview da mensagem
+        {/* Preview */}
+        <div
+          className="flex-1 w-full rounded-2xl p-5"
+          style={{
+            border: `1px solid ${theme.primaryHex}15`,
+            background: "rgba(255,255,255,0.02)",
+          }}
+        >
+          <p
+            className="text-sm font-semibold flex items-center gap-2 mb-4"
+            style={{ color: theme.primaryHex }}
+          >
+            <Eye size={13} /> Preview da mensagem
           </p>
 
-          <div className="bg-zinc-800 rounded-xl p-5 text-sm text-gray-200 leading-relaxed">
-            <p>Olá João! O Thor está há 12 dias sem banho.</p>
-            <p className="mt-2">
-              Que tal agendarmos um banho e tosa para deixá-lo sempre limpinho e cheiroso? 🐶✨
+          <div className="bg-[#0D1117] rounded-xl p-4 text-sm text-zinc-300 leading-relaxed border border-white/5">
+            <p className="font-semibold text-white">{preview.greeting}</p>
+            <p className="mt-2 text-zinc-400">{preview.body}</p>
+            <p className="mt-3 text-zinc-400">Estamos à disposição!</p>
+            <p className="mt-3 font-medium text-white">
+              — {businessName ?? preview.signature}
             </p>
-            <p className="mt-3">Estamos à disposição!</p>
-            <p className="mt-4 font-medium">Equipe New-Pettz 🐾</p>
-            <div className="text-xs text-gray-500 text-right mt-3">10:30 ✓✓</div>
+            <div
+              className="text-xs text-right mt-3"
+              style={{ color: `${theme.primaryHex}60` }}
+            >
+              10:30 ✓✓
+            </div>
           </div>
         </div>
       </div>

@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { getClients } from "../services/customer/get";
-import { Client } from "../types/clients";
+import { Client, Pet, Vehicle } from "../types/clients";
+import { useUser } from "@/context/UserContext";
+import { commerceThemes } from "@/utils/Commercetheme";
+import { Commerce } from "@/types/commerce";
 import toast from "react-hot-toast";
 import { postAgenda } from "../services/agenda/post";
 
@@ -13,13 +16,39 @@ interface Props {
   existingTimes?: string[];
 }
 
+const servicesByCommerce: Record<Commerce, string[]> = {
+  PETSHOP: ["Banho", "Tosa", "Banho e Tosa", "Hidratação", "Corte de unha"],
+  AUTOMOTIVE: [
+    "Higienização Interna",
+    "Higienização Externa",
+    "Polimento",
+    "Lavagem Completa",
+    "Cristalização",
+  ],
+  FEMININE_AESTHETIC: [
+    "Alongamento de Cílios",
+    "Manutenção de Cílios",
+    "Design de Sobrancelha",
+    "Manicure",
+    "Pedicure",
+  ],
+};
+
 export function NewAppointmentModal({ dateSelect, onClose, onSuccess, existingTimes }: Props) {
-  const [customers, setCustomer] = useState<Client[]>([]);
+  const [customers, setCustomers] = useState<Client[]>([]);
   const [customerId, setCustomerId] = useState("");
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
+  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [date, setDate] = useState("");
   const [notes, setNotes] = useState("");
   const [time, setTime] = useState("");
   const [message, setMessage] = useState("");
+
+  const { commerce } = useUser();
+  const currentCommerce = (commerce as Commerce) ?? "PETSHOP";
+  const theme = commerceThemes[currentCommerce];
+  const services = servicesByCommerce[currentCommerce];
 
   const generateHours = () => {
     const hours = [];
@@ -29,60 +58,55 @@ export function NewAppointmentModal({ dateSelect, onClose, onSuccess, existingTi
 
     for (let h = 8; h <= 18; h++) {
       if (isToday && h < currentHours) continue;
-
       const hour = `${String(h).padStart(2, "0")}:00`;
-
-      const isOccupied = existingTimes?.includes(hour);
-
-      hours.push({ value: hour, occupied: isOccupied });
+      hours.push({ value: hour, occupied: existingTimes?.includes(hour) });
     }
 
     return hours;
   };
 
   const hours = generateHours();
-  const services = ["Banho", "Tosa", "Banho e Tosa", "Hidratação", "Corte de unha"];
 
   useEffect(() => {
     let cancelled = false;
-
     async function loadCustomers() {
       const data = await getClients();
-
-      if (!cancelled) {
-        setCustomer(data);
-      }
+      if (!cancelled) setCustomers(data);
     }
-
     loadCustomers();
-
     return () => {
       cancelled = true;
     };
   }, []);
 
   useEffect(() => {
-    const formatDate = dateSelect.toLocaleDateString("en-CA");
-    setDate(formatDate);
+    setDate(dateSelect.toLocaleDateString("en-CA"));
   }, [dateSelect]);
+
+  function handleSelectCustomer(id: string) {
+    setCustomerId(id);
+    setSelectedPet(null);
+    setSelectedVehicle(null);
+    const client = customers.find((c) => c.id === id) ?? null;
+    setSelectedClient(client);
+  }
 
   async function handlerSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     const dateTime = new Date(`${date}T${time}`);
 
-    const now = new Date();
-    if (dateTime <= now) {
+    if (dateTime <= new Date()) {
       setMessage("Não é possível agendar em um horário que já passou");
       return;
     }
 
     if (existingTimes?.includes(time)) {
-      setMessage("Esse horário já esta ocupado");
+      setMessage("Esse horário já está ocupado");
       return;
     }
 
-    if (!customerId || !dateTime || !notes) {
+    if (!customerId || !time || !notes) {
       setMessage("Preencha todos os campos");
       return;
     }
@@ -92,37 +116,45 @@ export function NewAppointmentModal({ dateSelect, onClose, onSuccess, existingTi
         customerId,
         date: dateTime.toISOString(),
         notes,
+        petId: selectedPet?.id,
+        vehicleId: selectedVehicle?.id,
       });
 
       toast.success("Agendamento criado");
       onSuccess();
       setMessage("Agendamento realizado com sucesso");
-      setTimeout(() => onClose(), 3000);
-    } catch (error) {
+      setTimeout(() => onClose(), 2000);
+    } catch {
       toast.error("Erro ao criar agendamento, tente mais tarde");
       setMessage("Erro ao criar agendamento, tente mais tarde");
     }
   }
 
-  if (!open) return null;
+  const selectClass = `cursor-pointer w-full bg-zinc-800/60 border border-zinc-700/60 rounded-lg px-3 py-3 text-base text-zinc-200 focus:outline-none transition-all appearance-none`;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-md" onClick={onClose} />
 
+      <div
+        className="absolute top-0 left-8 right-8 h-[1px]"
+        style={{
+          background: `linear-gradient(to right, transparent, ${theme.primaryHex}60, transparent)`,
+        }}
+      />
+
       <div className="relative z-10 w-[570px] rounded-2xl border border-zinc-700/60 bg-zinc-900/95 shadow-2xl shadow-black/60 p-8 backdrop-blur-sm">
         <div className="absolute top-0 left-8 right-8 h-[1px] bg-gradient-to-r from-transparent via-amber-500/60 to-transparent" />
-
         <button
           onClick={onClose}
           className="cursor-pointer absolute top-4 right-4 w-7 h-7 flex items-center justify-center rounded-lg text-zinc-600 hover:text-zinc-200 hover:bg-zinc-800 transition-all text-sm"
         >
           ✕
         </button>
-
-        <h2 className="text-2xl font-bold text-amber-400 tracking-tight mb-1">Novo Agendamento</h2>
-
-        <p className="text-sm  text-zinc-500 uppercase tracking-widest mb-6">
+        <h2 className="text-2xl font-bold tracking-tight mb-1" style={{ color: theme.primaryHex }}>
+          Novo Agendamento
+        </h2>
+        <p className="text-sm text-zinc-500 uppercase tracking-widest mb-6">
           {dateSelect.toLocaleDateString("pt-BR", {
             weekday: "long",
             day: "2-digit",
@@ -130,72 +162,127 @@ export function NewAppointmentModal({ dateSelect, onClose, onSuccess, existingTi
             year: "numeric",
           })}
         </p>
-
         <div className="border-t border-zinc-800 mb-5" />
 
         <form noValidate onSubmit={handlerSubmit} className="flex flex-col gap-3">
-          <label htmlFor="select-pet" className="sr-only">
-            Selecione o pet
+          <label htmlFor="select-client" className="sr-only">
+            Selecione o cliente
           </label>
           <select
-            id="select-pet"
+            id="select-client"
             value={customerId}
-            onChange={(e) => setCustomerId(e.target.value)}
-            className="cursor-pointer w-full bg-zinc-800/60 border border-zinc-700/60 rounded-lg px-3 py-3 
-             font-[family-name:var(--font-sans)] text-base text-zinc-200 
-             focus:outline-none focus:border-amber-500/60 focus:bg-zinc-800 transition-all appearance-none"
+            onChange={(e) => handleSelectCustomer(e.target.value)}
+            className={selectClass}
+            onFocus={(e) => (e.currentTarget.style.borderColor = `${theme.primaryHex}60`)}
+            onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(63,63,70,0.6)")}
             required
           >
-            <option
-              value=""
-              className="font-[family-name:var(--font-sans)] text-zinc-400 bg-zinc-900"
-            >
-              🐾 Selecione o pet
+            <option value="" className="text-zinc-400 bg-zinc-900">
+              {currentCommerce === "PETSHOP"
+                ? "🐾 Selecione o cliente"
+                : currentCommerce === "AUTOMOTIVE"
+                  ? "🚗 Selecione o cliente"
+                  : "💅 Selecione a cliente"}
             </option>
             {customers.map((c) => (
-              <option
-                key={c.id}
-                value={c.id}
-                className="font-[family-name:var(--font-sans)] bg-zinc-900 text-zinc-200"
-              >
-                🐶 {c.pet_name} ({c.pet_breed}) — {c.customer_name}
+              <option key={c.id} value={c.id} className="bg-zinc-900 text-zinc-200">
+                {c.name}
               </option>
             ))}
           </select>
+
+          {currentCommerce === "PETSHOP" &&
+            selectedClient &&
+            (selectedClient.pets?.length ?? 0) > 0 && (
+              <>
+                <label htmlFor="select-pet" className="sr-only">
+                  Selecione o pet
+                </label>
+                <select
+                  id="select-pet"
+                  onFocus={(e) => (e.currentTarget.style.borderColor = `${theme.primaryHex}60`)}
+                  onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(63,63,70,0.6)")}
+                  value={selectedPet?.id ?? ""}
+                  onChange={(e) => {
+                    const pet = selectedClient.pets.find((p) => p.id === e.target.value) ?? null;
+                    setSelectedPet(pet);
+                  }}
+                  className={selectClass}
+                >
+                  <option value="" className="text-zinc-400 bg-zinc-900">
+                    🐶 Selecione o pet
+                  </option>
+                  {selectedClient.pets.map((p) => (
+                    <option key={p.id} value={p.id} className="bg-zinc-900 text-zinc-200">
+                      {p.name} {p.breed ? `(${p.breed})` : ""}
+                    </option>
+                  ))}
+                </select>
+              </>
+            )}
+
+          {currentCommerce === "AUTOMOTIVE" &&
+            selectedClient &&
+            (selectedClient.vehicles?.length ?? 0) > 0 && (
+              <>
+                <label htmlFor="select-vehicle" className="sr-only">
+                  Selecione o veículo
+                </label>
+                <select
+                  id="select-vehicle"
+                  onFocus={(e) => (e.currentTarget.style.borderColor = `${theme.primaryHex}60`)}
+                  onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(63,63,70,0.6)")}
+                  value={selectedVehicle?.id ?? ""}
+                  onChange={(e) => {
+                    const vehicle =
+                      selectedClient.vehicles.find((v) => v.id === e.target.value) ?? null;
+                    setSelectedVehicle(vehicle);
+                  }}
+                  className={selectClass}
+                >
+                  <option value="" className="text-zinc-400 bg-zinc-900">
+                    🚗 Selecione o veículo
+                  </option>
+                  {selectedClient.vehicles.map((v) => (
+                    <option key={v.id} value={v.id} className="bg-zinc-900 text-zinc-200">
+                      {v.brand} {v.model} {v.plate ? `— ${v.plate}` : ""}
+                    </option>
+                  ))}
+                </select>
+              </>
+            )}
 
           <div className="grid grid-cols-2 gap-3">
             <input
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="cursor-pointer w-full bg-zinc-800/60 border border-zinc-700/60 rounded-lg px-3 py-3 text-base text-zinc-300 focus:outline-none focus:border-amber-500/60 transition-all"
+              className="cursor-pointer w-full bg-zinc-800/60 border border-zinc-700/60 rounded-lg px-3 py-3 text-base text-zinc-300 focus:outline-none transition-all"
+              onFocus={(e) => (e.currentTarget.style.borderColor = `${theme.primaryHex}60`)}
+              onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(63,63,70,0.6)")}
               required
             />
-
             <label htmlFor="select-horario" className="sr-only">
               Selecione o Horário
             </label>
             <select
               id="select-horario"
+              onFocus={(e) => (e.currentTarget.style.borderColor = `${theme.primaryHex}60`)}
+              onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(63,63,70,0.6)")}
               value={time}
               onChange={(e) => setTime(e.target.value)}
-              className="cursor-pointer w-full bg-zinc-800/60 border border-zinc-700/60 rounded-lg px-3 py-3 
-             font-[family-name:var(--font-sans)] text-base text-zinc-200 
-             focus:outline-none focus:border-amber-500/60 focus:bg-zinc-800 transition-all appearance-none"
+              className={selectClass}
               required
             >
-              <option
-                value=""
-                className="font-[family-name:var(--font-sans)] bg-zinc-900 text-zinc-400"
-              >
-                Selecione o Horário:
+              <option value="" className="bg-zinc-900 text-zinc-400">
+                Selecione o Horário
               </option>
               {hours.map(({ value, occupied }) => (
                 <option
                   key={value}
                   value={value}
                   disabled={occupied}
-                  className="font-[family-name:var(--font-mono)] bg-zinc-900 text-zinc-200"
+                  className="bg-zinc-900 text-zinc-200"
                 >
                   {value} {occupied ? "- ocupado" : ""}
                 </option>
@@ -209,21 +296,21 @@ export function NewAppointmentModal({ dateSelect, onClose, onSuccess, existingTi
           <select
             id="select-servico"
             value={notes}
+            onFocus={(e) => (e.currentTarget.style.borderColor = `${theme.primaryHex}60`)}
+            onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(63,63,70,0.6)")}
             onChange={(e) => setNotes(e.target.value)}
-            className="cursor-pointer w-full bg-zinc-800/60 border border-zinc-700/60 rounded-lg px-3 py-3 
-             font-[family-name:var(--font-sans)] text-base text-zinc-200 
-             focus:outline-none focus:border-amber-500/60 focus:bg-zinc-800 transition-all appearance-none"
+            className={selectClass}
             required
           >
-            <option value="">🐾 Selecione o Serviço</option>
+            <option value="">
+              {currentCommerce === "PETSHOP"
+                ? "🐾 Selecione o Serviço"
+                : currentCommerce === "AUTOMOTIVE"
+                  ? "🚗 Selecione o Serviço"
+                  : "💅 Selecione o Serviço"}
+            </option>
             {services.map((service) => (
-              <option
-                key={service}
-                value={service}
-                className="cursor-pointer w-full bg-zinc-800/60 border border-zinc-700/60 rounded-lg px-3 py-3 
-             font-[family-name:var(--font-sans)] text-base text-zinc-200 
-             focus:outline-none focus:border-amber-500/60 focus:bg-zinc-800 transition-all appearance-none"
-              >
+              <option key={service} value={service} className="bg-zinc-900 text-zinc-200">
                 {service}
               </option>
             ))}
@@ -231,9 +318,7 @@ export function NewAppointmentModal({ dateSelect, onClose, onSuccess, existingTi
 
           {message && (
             <p
-              className={`text-center text-lg ${
-                message.includes("sucesso") ? "text-green-400" : "text-red-400"
-              }`}
+              className={`text-center text-lg ${message.includes("sucesso") ? "text-green-400" : "text-red-400"}`}
             >
               {message}
             </p>
@@ -241,7 +326,8 @@ export function NewAppointmentModal({ dateSelect, onClose, onSuccess, existingTi
 
           <button
             type="submit"
-            className="cursor-pointer mt-1 w-full bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-black font-bold text-sm py-2.5 rounded-lg transition-all duration-200 tracking-wide"
+            className="cursor-pointer mt-1 w-full font-bold text-sm py-2.5 rounded-lg transition-all duration-200 tracking-wide"
+            style={{ background: theme.primaryHex, color: "#000" }}
           >
             Salvar agendamento
           </button>

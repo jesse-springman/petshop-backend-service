@@ -2,8 +2,17 @@ import { AgendaPage } from "../../components/AgendaPage";
 import { render, screen, waitFor } from "@testing-library/react";
 import { getAppointment } from "../../services/agenda/get";
 import { getClients } from "../../services/customer/get";
-import { mockAppointment } from "../__mocks__/agenda/get-appointments";
+import {
+  mockAppointment,
+  mockAppointmentAutomotive,
+  mockAppointmentFeminine,
+} from "../__mocks__/agenda/get-appointments";
 import userEvent from "@testing-library/user-event";
+import { mockUserContext } from "../__mocks__/userContext";
+
+jest.mock("@/context/UserContext", () => ({
+  useUser: () => mockUserContext,
+}));
 
 jest.mock("../../services/agenda/get", () => ({
   getAppointment: jest.fn(),
@@ -14,115 +23,140 @@ jest.mock("../../services/customer/get", () => ({
 }));
 
 jest.mock("next/navigation", () => ({
-  useRouter: () => ({
-    push: jest.fn(),
-  }),
+  useRouter: () => ({ push: jest.fn() }),
 }));
 
-describe(" GET / agenda", () => {
+function setCommerce(commerce: "PETSHOP" | "AUTOMOTIVE" | "FEMININE_AESTHETIC") {
+  mockUserContext.commerce = commerce;
+}
+
+describe("GET / agenda", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    setCommerce("PETSHOP");
   });
 
-  it("should show the Calendar", async () => {
+  it("should render the calendar", async () => {
     (getAppointment as jest.Mock).mockReturnValue(new Promise(() => {}));
-
     render(<AgendaPage />);
-
-    //mes esta dentro de um elemento h1, verifica se esta em tela
     await waitFor(() => {
       expect(screen.getByRole("heading")).toBeInTheDocument();
     });
   });
 
-  it("Should show scheduling correct day", async () => {
-    (getAppointment as jest.Mock).mockResolvedValue([mockAppointment]);
-
-    render(<AgendaPage />);
-
-    await waitFor(() => {
-      expect(screen.getByText("1 Pets Agendados")).toBeInTheDocument();
-    });
-  });
-
-  it("should show more details about scheduling, when clicking", async () => {
-    (getAppointment as jest.Mock).mockResolvedValue([mockAppointment]);
-
-    render(<AgendaPage />);
-
-    const user = userEvent.setup();
-
-    const detailsAppointments = await screen.findByText("1 Pets Agendados");
-
-    await user.click(detailsAppointments);
-
-    const petName = await screen.findByText("Rex");
-
-    expect(petName).toBeInTheDocument();
-  });
-
   it("should render the seven days of week", async () => {
     (getAppointment as jest.Mock).mockResolvedValue([]);
-
     render(<AgendaPage />);
-
     await waitFor(() => {
-      expect(screen.getByText("Dom")).toBeInTheDocument();
-      expect(screen.getByText("Seg")).toBeInTheDocument();
-      expect(screen.getByText("Ter")).toBeInTheDocument();
-      expect(screen.getByText("Qua")).toBeInTheDocument();
-      expect(screen.getByText("Qui")).toBeInTheDocument();
-      expect(screen.getByText("Sex")).toBeInTheDocument();
-      expect(screen.getByText("Sáb")).toBeInTheDocument();
+      ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"].forEach((day) => {
+        expect(screen.getByText(day)).toBeInTheDocument();
+      });
     });
   });
 
-  it("should show calendar empty,when it doesn't have scheduling", async () => {
+  it("should show calendar empty when no appointments", async () => {
     (getAppointment as jest.Mock).mockResolvedValue([]);
-
     render(<AgendaPage />);
-
     await waitFor(() => {
-      expect(screen.queryByText("Pets Agendados")).not.toBeInTheDocument();
+      expect(screen.queryByText(/agend\./i)).not.toBeInTheDocument();
     });
   });
 
-  it('should show button "Novo Agendamento" ', async () => {
-    (getAppointment as jest.Mock).mockResolvedValue([mockAppointment]);
-    (getClients as jest.Mock).mockResolvedValue([]);
+  // ── PETSHOP ──
+  describe("PETSHOP", () => {
+    beforeEach(() => setCommerce("PETSHOP"));
 
-    render(<AgendaPage />);
-
-    await waitFor(() => {
-      expect(getAppointment).toHaveBeenCalled();
+    it("should show appointment on correct day", async () => {
+      (getAppointment as jest.Mock).mockResolvedValue([mockAppointment]);
+      render(<AgendaPage />);
+      await waitFor(() => {
+        expect(screen.getByText("1 agend.")).toBeInTheDocument();
+      });
     });
 
-    console.log("mock date:", mockAppointment.date);
-    console.log("parsed date:", new Date(mockAppointment.date).toString());
-    console.log(
-      "key gerada:",
-      (() => {
-        const d = new Date(mockAppointment.date);
-        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-      })(),
-    );
+    it("should show customer details when clicking on day", async () => {
+      (getAppointment as jest.Mock).mockResolvedValue([mockAppointmentFeminine]);
+      (getClients as jest.Mock).mockResolvedValue([]);
+      render(<AgendaPage />);
+      const user = userEvent.setup();
+      const day = await screen.findByText("1 agend.");
+      await user.click(day);
 
-    const day = await screen.findByText("1 Pets Agendados");
+      const anaLimaElements = await screen.findAllByText("Ana Lima");
+      expect(anaLimaElements.length).toBeGreaterThan(0);
+    });
 
-    expect(day).toBeInTheDocument();
+    it("should show Novo Agendamento button and pet select", async () => {
+      (getAppointment as jest.Mock).mockResolvedValue([mockAppointment]);
+      (getClients as jest.Mock).mockResolvedValue([]);
+      render(<AgendaPage />);
+      const user = userEvent.setup();
+      const day = await screen.findByText("1 agend.");
+      await user.click(day);
+      await user.click(await screen.findByText(/Novo Agendamento/i));
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Selecione o cliente/i)).toBeInTheDocument();
+      });
+    });
+  });
 
-    const user = userEvent.setup();
+  // ── AUTOMOTIVE ──
+  describe("AUTOMOTIVE", () => {
+    beforeEach(() => setCommerce("AUTOMOTIVE"));
 
-    await user.click(day);
+    it("should show appointment on correct day", async () => {
+      (getAppointment as jest.Mock).mockResolvedValue([mockAppointmentAutomotive]);
+      render(<AgendaPage />);
+      await waitFor(() => {
+        expect(screen.getByText("1 agend.")).toBeInTheDocument();
+      });
+    });
 
-    const btnNovoAgendamento = await screen.findByText(/ Novo Agendamento/i);
+    it("should show vehicle details when clicking on day", async () => {
+      (getAppointment as jest.Mock).mockResolvedValue([mockAppointmentAutomotive]);
+      (getClients as jest.Mock).mockResolvedValue([]);
+      render(<AgendaPage />);
+      const user = userEvent.setup();
+      const day = await screen.findByText("1 agend.");
+      await user.click(day);
+      expect(await screen.findByText(/Toyota/i)).toBeInTheDocument();
+    });
 
-    expect(btnNovoAgendamento).toBeInTheDocument();
+    it("should show Novo Agendamento button and vehicle select", async () => {
+      (getAppointment as jest.Mock).mockResolvedValue([mockAppointmentAutomotive]);
+      (getClients as jest.Mock).mockResolvedValue([]);
+      render(<AgendaPage />);
+      const user = userEvent.setup();
+      const day = await screen.findByText("1 agend.");
+      await user.click(day);
+      await user.click(await screen.findByText(/Novo Agendamento/i));
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Selecione o serviço/i)).toBeInTheDocument();
+      });
+    });
+  });
 
-    await user.click(btnNovoAgendamento);
+  // ── FEMININE_AESTHETIC ──
+  describe("FEMININE_AESTHETIC", () => {
+    beforeEach(() => setCommerce("FEMININE_AESTHETIC"));
 
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Selecione o pet/i)).toBeInTheDocument();
+    it("should show appointment on correct day", async () => {
+      (getAppointment as jest.Mock).mockResolvedValue([mockAppointmentFeminine]);
+      render(<AgendaPage />);
+      await waitFor(() => {
+        expect(screen.getByText("1 agend.")).toBeInTheDocument();
+      });
+    });
+
+    it("should show customer details when clicking on day", async () => {
+      (getAppointment as jest.Mock).mockResolvedValue([mockAppointmentFeminine]);
+      (getClients as jest.Mock).mockResolvedValue([]);
+      render(<AgendaPage />);
+      const user = userEvent.setup();
+      const day = await screen.findByText("1 agend.");
+      await user.click(day);
+      const anaLimaElements = await screen.findAllByText("Ana Lima");
+      expect(anaLimaElements.length).toBeGreaterThan(0);
     });
   });
 });

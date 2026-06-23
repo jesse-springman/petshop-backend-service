@@ -3,6 +3,11 @@ import ClientsList from "@/components/ClientList";
 import userEvent from "@testing-library/user-event";
 import { patchClientList } from "../../services/customer/patch";
 import { getClients } from "../../services/customer/get";
+import { mockUserContext } from "../__mocks__/userContext";
+
+jest.mock("@/context/UserContext", () => ({
+  useUser: () => mockUserContext,
+}));
 
 //mock do useUser simulando alguém logado
 jest.mock("../../context/UserContext", () => ({
@@ -31,23 +36,18 @@ jest.mock("../../services/customer/get", () => ({
 const mockClients = [
   {
     id: "1",
-    customer_name: "Jesse",
-    pet_name: "Cacau",
+    name: "Jesse",
+
     created_at: "2025-08-30T14:48:03.026Z",
     address: "av luis-15 n=134",
-    number_customer: "19993451232",
-    pet_breed: "vira-lata",
-    last_bath: "2026-01-28T21:30:18.551Z",
+    phone: "19993451232",
   },
   {
     id: "2",
-    customer_name: "Gabi",
-    pet_name: "sky",
+    name: "Gabi",
     created_at: "2025-08-30T10:20:00.000Z",
     address: "Rua mario azevedo n=14",
-    number_customer: "19983350238",
-    pet_breed: "vira-lata",
-    last_bath: "2026-02-02T21:31:18.551Z",
+    phone: "19983350238",
   },
 ];
 
@@ -58,7 +58,6 @@ describe("Edit Inline in table Customers", () => {
     (getClients as jest.Mock).mockResolvedValue(mockClients);
 
     (patchClientList as jest.Mock).mockImplementation((url, options) => {
-      // 🔹 Se for PATCH
       if (options?.method === "PATCH") {
         return Promise.resolve({
           ok: true,
@@ -67,7 +66,6 @@ describe("Edit Inline in table Customers", () => {
         });
       }
 
-      // 🔹 Qualquer outro caso = GET
       return Promise.resolve({
         ok: true,
         json: async () => mockClients,
@@ -80,6 +78,7 @@ describe("Edit Inline in table Customers", () => {
   });
 
   it('Must show button "Editar" in each line', async () => {
+    mockUserContext.commerce = "PETSHOP";
     render(<ClientsList />);
 
     await screen.findByText("Jesse"); //espera a tabela carregar
@@ -90,24 +89,20 @@ describe("Edit Inline in table Customers", () => {
   });
 
   it('Must go into mode edition when click in "Editar', async () => {
+    mockUserContext.commerce = "PETSHOP";
     render(<ClientsList />);
     await screen.findByText("Jesse");
     screen.debug();
     const editBtn = screen.getAllByRole("button", { name: /editar/i });
-    const user = userEvent.setup();
+
     fireEvent.click(editBtn[0]);
 
-    //verifica se os campos habilitaram
     expect(screen.getByDisplayValue("Jesse")).toBeInTheDocument();
-    expect(screen.getByDisplayValue("Cacau")).toBeInTheDocument();
     expect(screen.getByDisplayValue("av luis-15 n=134")).toBeInTheDocument();
     expect(screen.getByDisplayValue("19993451232")).toBeInTheDocument();
-    expect(screen.getByDisplayValue("vira-lata")).toBeInTheDocument();
-    expect(screen.getByLabelText(/último banho/i)).toBeInTheDocument();
 
-    //verifica se os botões Salvar e Cancelar apareceram
-    expect(screen.getByLabelText("Salvar")).toBeInTheDocument();
-    expect(screen.getByLabelText("Cancelar")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Salvar" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /cancelar edição/i })).toBeInTheDocument();
   });
 
   it("should allow edit in fields and save data", async () => {
@@ -116,6 +111,7 @@ describe("Edit Inline in table Customers", () => {
       status: 200,
     });
 
+    mockUserContext.commerce = "PETSHOP";
     render(<ClientsList />);
 
     await screen.findByText("Jesse");
@@ -124,32 +120,22 @@ describe("Edit Inline in table Customers", () => {
     fireEvent.click(editBtns[0]);
 
     const inputName = screen.getByDisplayValue("Jesse");
-    const inputPet = screen.getByDisplayValue("Cacau");
     const inputAddress = screen.getByDisplayValue("av luis-15 n=134");
     const inputNumberCustomer = screen.getByDisplayValue("19993451232");
-    const inputPetBreed = screen.getByDisplayValue("vira-lata");
-    const inputLastBath = screen.getByLabelText(/último banho/i);
 
-    //Valores novos
     fireEvent.change(inputName, { target: { value: "New-Jesse" } });
-    fireEvent.change(inputPet, { target: { value: "New-Cacau" } });
     fireEvent.change(inputAddress, { target: { value: "New Address" } });
     fireEvent.change(inputNumberCustomer, { target: { value: "19988888888" } });
-    fireEvent.change(inputPetBreed, { target: { value: "pitbull" } });
-    fireEvent.change(inputLastBath, {
-      target: { value: "2025-01-01" },
-    });
 
-    fireEvent.click(screen.getByLabelText("Salvar"));
+    fireEvent.click(screen.getByText("Salvar"));
 
     expect(await screen.findByText("New-Jesse")).toBeInTheDocument();
-    expect(await screen.findByText("New-Cacau")).toBeInTheDocument();
 
-    //verifica se depois que salvou voltou o normal
     expect(screen.getAllByRole("button", { name: /editar/i })).toHaveLength(2);
   });
 
   it("Must cancel the edtion and back original state", async () => {
+    mockUserContext.commerce = "PETSHOP";
     render(<ClientsList />);
 
     await screen.findByText("Jesse");
@@ -159,9 +145,7 @@ describe("Edit Inline in table Customers", () => {
 
     const inputName = screen.getByDisplayValue("Jesse");
     fireEvent.change(inputName, { target: { value: "nome que vai salvar" } });
-
-    fireEvent.click(screen.getByLabelText("Cancelar"));
-
+    fireEvent.click(screen.getByLabelText(/cancelar edição/i));
     await waitFor(() => {
       expect(screen.getByText("Jesse")).toBeInTheDocument();
       expect(screen.queryByDisplayValue("nome que vai salvar")).not.toBeInTheDocument();

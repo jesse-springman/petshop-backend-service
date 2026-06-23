@@ -4,7 +4,9 @@ import React, { useState } from "react";
 import { forbidden, useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import { registerData } from "@/services/register";
-import { log } from "console";
+import { useUser } from "@/context/UserContext";
+import { commerceThemes } from "@/utils/Commercetheme";
+import { Commerce } from "@/types/commerce";
 
 export default function FormRegister() {
   const [nameUser, setNameUser] = useState("");
@@ -14,6 +16,9 @@ export default function FormRegister() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const router = useRouter();
+
+  const { commerce } = useUser();
+  const theme = commerceThemes[(commerce ?? "PETSHOP") as Commerce];
 
   const handleSubimit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,8 +58,14 @@ export default function FormRegister() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#0B0E11] to-[#1A1D22] flex items-center justify-center p-4">
-      <div className="bg-[#1A1D22] p-6 md:p-10 rounded-2xl shadow-2xl [box-shadow:_0_0_40px_rgba(251,191,36,0.2)] border-amber-500/20  max-w-lg w-auto">
-        <h1 className="text-4xl font-bold text-amber-400 text-center mb-8">
+      <div
+        className="bg-[#1A1D22] p-6 md:p-10 rounded-2xl shadow-2xl max-w-lg w-auto"
+        style={{
+          border: `1px solid ${theme.primaryHex}20`,
+          boxShadow: `0 0 40px ${theme.primaryHex}20`,
+        }}
+      >
+        <h1 className="text-4xl font-bold text-center mb-8" style={{ color: theme.primaryHex }}>
           Cadastro de Funcionários
         </h1>
 
@@ -69,7 +80,9 @@ export default function FormRegister() {
               id="nameUser"
               value={nameUser}
               onChange={(e) => setNameUser(e.target.value)}
-              className="w-full px-4 py-3  bg-[#0B0E11]  border border-gray-700 rounded-lg tetx-white focus:outline-none focus:border-amber-500 transtion mb-4"
+              className="w-full px-4 py-3 bg-[#0B0E11] border border-gray-700 rounded-lg text-white focus:outline-none transition mb-4"
+              onFocus={(e) => (e.currentTarget.style.borderColor = theme.primaryHex)}
+              onBlur={(e) => (e.currentTarget.style.borderColor = "rgb(55,65,81)")}
               placeholder="Ex: Pedro"
               disabled={loading}
             />
@@ -80,7 +93,9 @@ export default function FormRegister() {
 
             <input
               id="password"
-              className="w-full px-4 py-3 mb-5 bg-[#0B0E11] border border-gray-700 rounded-lg text-white focus:outline-none focus:border-amber-500 transition"
+              className="w-full px-4 py-3 bg-[#0B0E11] border border-gray-700 rounded-lg text-white focus:outline-none transition mb-4"
+              onFocus={(e) => (e.currentTarget.style.borderColor = theme.primaryHex)}
+              onBlur={(e) => (e.currentTarget.style.borderColor = "rgb(55,65,81)")}
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -93,7 +108,9 @@ export default function FormRegister() {
 
             <input
               id="confirmPassword"
-              className="w-full px-4 py-3 bg-[#0B0E11] border border-gray-700 rounded-lg text-white focus:outline-none focus:border-amber-500 transition"
+              className="w-full px-4 py-3 bg-[#0B0E11] border border-gray-700 rounded-lg text-white focus:outline-none transition mb-4"
+              onFocus={(e) => (e.currentTarget.style.borderColor = theme.primaryHex)}
+              onBlur={(e) => (e.currentTarget.style.borderColor = "rgb(55,65,81)")}
               type="password"
               value={confirmPassword}
               onChange={(e) => setconfirmPassword(e.target.value)}
@@ -108,8 +125,8 @@ export default function FormRegister() {
                 className={`px-6 py-3 rounded-xl border cursor-pointer transition
       ${
         role === "USER"
-          ? "bg-amber-500 text-black border-amber-500"
-          : "bg-[#0B0E11] text-white border-gray-700 hover:border-amber-500"
+          ? { background: theme.primaryHex, color: "#000", borderColor: theme.primaryHex }
+          : { background: "#0B0E11", color: "#fff", borderColor: "rgb(55,65,81)" }
       }`}
               >
                 <input
@@ -129,8 +146,8 @@ export default function FormRegister() {
                 className={`px-6 py-3 rounded-xl border cursor-pointer transition
       ${
         role === "ADMIN"
-          ? "bg-amber-500 text-black border-amber-500"
-          : "bg-[#0B0E11] text-white border-gray-700 hover:border-amber-500"
+          ? { background: theme.primaryHex, color: "#000", borderColor: theme.primaryHex }
+          : { background: "#0B0E11", color: "#fff", borderColor: "rgb(55,65,81)" }
       }`}
               >
                 <input
@@ -157,12 +174,14 @@ export default function FormRegister() {
             </p>
           )}
 
-          <Button type="submit" disabled={loading}>
+          <Button type="submit" disabled={loading} primaryHex={theme.primaryHex}>
             {loading ? "Cadastrando" : "Cadastrar"}
           </Button>
         </form>
 
-        <Button onClick={() => router.push("/")}>← Voltar para início</Button>
+        <Button onClick={() => router.push("/")} primaryHex={theme.primaryHex}>
+          ← Voltar para início
+        </Button>
       </div>
     </main>
   );

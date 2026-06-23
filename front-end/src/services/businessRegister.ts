@@ -1,15 +1,10 @@
-import { Plan } from "@/types/plan";
+import { BusinessDto } from "@/types/businessDto";
 
-type dtoPetshop = {
-  petshopName: string;
-  adiminName: string;
-  password: string;
-  plan: Plan;
-  whatsapp: string;
-};
-
-export async function registerPetshop(dto: dtoPetshop) {
+export async function registerBusiness(dto: BusinessDto) {
   const apiBase = process.env.NEXT_PUBLIC_API_URL;
+  console.log("apiBase:", apiBase);
+  console.log("url completa:", `${apiBase}/Onboarding`);
+  console.log("dto:", dto);
 
   const response = await fetch(`${apiBase}/Onboarding`, {
     method: "POST",

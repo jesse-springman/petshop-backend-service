@@ -1,11 +1,13 @@
 "use client";
 
-import dynamic from "next/dynamic";
-
-const HomePage = dynamic(() => import("./HomePage"), {
-  ssr: false,
-});
+import { useUser } from "@/context/UserContext";
+import { Commerce } from "@/types/commerce";
+import HomePage from "./HomePage";
 
 export default function HomeWrapper() {
-  return <HomePage />;
+  const { commerce, loading } = useUser();
+
+  if (loading) return <div className="min-h-screen bg-[#080B0E]" />;
+
+  return <HomePage commerce={(commerce as Commerce) ?? "PETSHOP"} />;
 }

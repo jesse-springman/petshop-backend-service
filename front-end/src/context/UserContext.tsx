@@ -2,10 +2,14 @@
 
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import toast from "react-hot-toast";
+import { Commerce } from "@/types/commerce";
 
 type UserContextType = {
   userName: string | null;
-  login: (name: string, isAdmin: boolean) => void;
+  businessId: string | null;
+  businessName: string | null;
+  commerce: Commerce | null;
+  login: (name: string, isAdmin: boolean, commerce?: Commerce, businessName?: string) => void;
   logout: () => void;
   isAdmin: boolean;
   isSuperAdmin: boolean;
@@ -17,6 +21,9 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export function UserProvider({ children }: { children: ReactNode }) {
   const [userName, setUserName] = useState<string | null>(null);
   const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
+  const [businessId, setBusinessId] = useState<string | null>(null);
+  const [businessName, setBusinessName] = useState<string | null>(null);
+  const [commerce, setCommerce] = useState<Commerce | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
 
@@ -37,9 +44,15 @@ export function UserProvider({ children }: { children: ReactNode }) {
           setUserName(data.userName);
           setIsAdmin(data.isAdmin);
           setIsSuperAdmin(data.role === "SUPERADMIN");
+          setBusinessId(data.businessId);
+          setCommerce(data.commerce);
+          setBusinessName(data.businessName);
         } else {
           setUserName(null);
           setIsAdmin(false);
+          setBusinessId(null);
+          setCommerce(null);
+          setBusinessName(null);
         }
       } catch (error) {
       } finally {
@@ -66,11 +79,13 @@ export function UserProvider({ children }: { children: ReactNode }) {
     return () => clearInterval(interval);
   }, [URL_API]);
 
-  const login = (name: string, isAdmin: boolean) => {
+  const login = (name: string, isAdmin: boolean, commerce?: Commerce, businessName?: string) => {
     const nameAdmin = name.trim().toLowerCase();
     setUserName(nameAdmin);
     setIsAdmin(isAdmin);
-    setIsSuperAdmin(isSuperAdmin);
+    setIsSuperAdmin(false);
+    if (commerce) setCommerce(commerce);
+    if (businessName) setBusinessName(businessName);
     toast.success("Acesso Autorizado");
   };
 
@@ -92,7 +107,19 @@ export function UserProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <UserContext.Provider value={{ userName, login, logout, isAdmin, isSuperAdmin, loading }}>
+    <UserContext.Provider
+      value={{
+        userName,
+        login,
+        logout,
+        businessId,
+        businessName,
+        commerce,
+        isAdmin,
+        isSuperAdmin,
+        loading,
+      }}
+    >
       {!loading ? children : <div className="min-h-screen bg-black" />}
     </UserContext.Provider>
   );

@@ -3,6 +3,7 @@
 type BtProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   children: React.ReactNode;
   onNavigate?: () => void;
+  primaryHex?: string;
 };
 
 export default function Button({
@@ -11,6 +12,7 @@ export default function Button({
   disabled = false,
   onClick,
   onNavigate,
+  primaryHex = "#fbbf24", // amber como fallback
   ...rest
 }: BtProps) {
   return (
@@ -19,14 +21,23 @@ export default function Button({
       type={type}
       disabled={disabled}
       onClick={onClick}
-      className="group mb-5 px-7 py-4 text-base relative px-5 py-2.5 rounded-xl
-                border border-amber-500/40 bg-amber-500/5
-                text-amber-300 text-sm font-semibold tracking-wide
-                hover:bg-amber-500 hover:text-black hover:border-amber-500
-                transition-all duration-200
-                shadow-[0_0_12px_rgba(245,158,11,0.08)]
-                hover:shadow-[0_0_20px_rgba(245,158,11,0.3)]
-                whitespace-nowrap cursor-pointer"
+      className="group mb-5 px-5 py-2.5 rounded-xl text-sm font-semibold tracking-wide transition-all duration-200 whitespace-nowrap cursor-pointer"
+      style={{
+        border: `1px solid ${primaryHex}40`,
+        background: `${primaryHex}08`,
+        color: primaryHex,
+        boxShadow: `0 0 12px ${primaryHex}10`,
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = primaryHex;
+        e.currentTarget.style.color = "#000";
+        e.currentTarget.style.boxShadow = `0 0 20px ${primaryHex}40`;
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = `${primaryHex}08`;
+        e.currentTarget.style.color = primaryHex;
+        e.currentTarget.style.boxShadow = `0 0 12px ${primaryHex}10`;
+      }}
     >
       {children}
     </button>

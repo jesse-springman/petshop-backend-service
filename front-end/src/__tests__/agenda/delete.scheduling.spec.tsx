@@ -4,6 +4,11 @@ import { propsDetailsModal } from "../__mocks__/agenda/propsDetailsAppointments"
 import { screen, render, waitFor } from "@testing-library/react";
 import { DetailsAppointmentModal } from "../../components/DetailsAppointmentModal";
 import userEvent from "@testing-library/user-event";
+import { mockUserContext } from "../__mocks__/userContext";
+
+jest.mock("@/context/UserContext", () => ({
+  useUser: () => mockUserContext,
+}));
 
 jest.mock("../../services/agenda/delete", () => ({
   deleteAppointment: jest.fn(),
@@ -15,6 +20,7 @@ describe("DELETE scheduling", () => {
   });
 
   it("should open Modal confirm Delete Scheduling", async () => {
+    mockUserContext.commerce = "PETSHOP";
     render(<DetailsAppointmentModal {...propsDetailsModal} />);
 
     expect(screen.getByText("Rex")).toBeInTheDocument();
@@ -30,17 +36,20 @@ describe("DELETE scheduling", () => {
   });
 
   it("Should show customer name in Modal", async () => {
+    mockUserContext.commerce = "PETSHOP";
     render(<DetailsAppointmentModal {...propsDetailsModal} />);
 
     const user = userEvent.setup();
     await user.click(screen.getByText("🗑️"));
 
     await waitFor(() => {
-      expect(screen.getByText("Joao Silva")).toBeInTheDocument();
+      const matches = screen.getAllByText((content) => content.includes("João Silva"));
+      expect(matches.length).toBeGreaterThan(0);
     });
   });
 
   it("Should closed Modal when click in cancelar without DELETE", async () => {
+    mockUserContext.commerce = "PETSHOP";
     render(<DetailsAppointmentModal {...propsDetailsModal} />);
 
     const user = userEvent.setup();
@@ -64,7 +73,7 @@ describe("DELETE scheduling", () => {
     (deleteAppointment as jest.Mock).mockResolvedValue({
       ok: true,
     });
-
+    mockUserContext.commerce = "PETSHOP";
     render(<DetailsAppointmentModal {...propsDetailsModal} />);
 
     const user = userEvent.setup();
@@ -78,7 +87,7 @@ describe("DELETE scheduling", () => {
 
   it("Should call onStatusChange after delete successfully", async () => {
     (deleteAppointment as jest.Mock).mockResolvedValue({ ok: true });
-
+    mockUserContext.commerce = "PETSHOP";
     render(<DetailsAppointmentModal {...propsDetailsModal} />);
 
     const user = userEvent.setup();
@@ -91,7 +100,7 @@ describe("DELETE scheduling", () => {
 
   it("Should closed modalDetails after confirm delete", async () => {
     (deleteAppointment as jest.Mock).mockResolvedValue({ ok: true });
-
+    mockUserContext.commerce = "PETSHOP";
     render(<DetailsAppointmentModal {...propsDetailsModal} />);
 
     const user = userEvent.setup();

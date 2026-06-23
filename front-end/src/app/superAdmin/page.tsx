@@ -21,6 +21,12 @@ const planLabel: Record<string, string> = {
   GOLD: "⭐ Gold",
 };
 
+const commerceLabel: Record<string, string> = {
+  PETSHOP: "🐾 Petshop",
+  AUTOMOTIVE: "🚗 Automotivo",
+  FEMININE_AESTHETIC: "💅 Estética Feminina",
+};
+
 export default function SuperAdminPage() {
   const { isSuperAdmin, loading } = useUser();
   const router = useRouter();
@@ -72,7 +78,6 @@ export default function SuperAdminPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#0B0E11] to-[#1A1D22] px-4 py-10">
       <div className="max-w-5xl mx-auto flex flex-col gap-8">
-        {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-amber-400">Painel Admin</h1>
@@ -86,7 +91,6 @@ export default function SuperAdminPage() {
           </button>
         </div>
 
-        {/* Resumo */}
         <div className="grid grid-cols-3 gap-3">
           {[
             { label: "Total", value: counts.total, color: "text-white" },
@@ -103,10 +107,9 @@ export default function SuperAdminPage() {
           ))}
         </div>
 
-        {/* Lista */}
         <div className="flex flex-col gap-3">
           {business.length === 0 && (
-            <div className="text-center text-zinc-500 py-16">Nenhum petshop cadastrado ainda.</div>
+            <div className="text-center text-zinc-500 py-16">Nenhum cadastrado ainda.</div>
           )}
 
           {business.map((p) => {
@@ -118,7 +121,6 @@ export default function SuperAdminPage() {
                 key={p.id}
                 className="bg-[#1A1D22]/90 border border-amber-500/20 rounded-2xl px-6 py-5 flex flex-col sm:flex-row sm:items-center gap-4"
               >
-                {/* Info */}
                 <div className="flex-1 flex flex-col gap-1">
                   <div className="flex items-center gap-2">
                     <span className="text-white font-semibold">{p.name}</span>
@@ -127,9 +129,9 @@ export default function SuperAdminPage() {
                     </span>
                   </div>
                   <div className="flex items-center gap-3 text-xs text-zinc-500">
-                    <span>{planLabel[p.plan] ?? p.plan}</span>
+                    <span>{commerceLabel[p.commerce] ?? p.commerce}</span>
                     <span>·</span>
-                    <span>Admin: {p.users?.[0]?.name ?? "—"}</span>
+                    <span>{planLabel[p.plan] ?? p.plan}</span>
                     <span>·</span>
                     <span>📱 {p.whatsapp ?? "—"}</span>
                     <span>·</span>
@@ -137,7 +139,6 @@ export default function SuperAdminPage() {
                   </div>
                 </div>
 
-                {/* Ações */}
                 <div className="flex gap-2 flex-wrap">
                   {p.status !== "ACTIVE" && (
                     <button

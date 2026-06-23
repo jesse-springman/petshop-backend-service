@@ -1,5 +1,6 @@
 export interface Customer {
   id: string;
   name: string;
-  pet_name: string;
+  phone: string;
+  address: string;
 }

@@ -6,6 +6,9 @@ import { NewAppointmentModal } from "./NewAppointmentModal";
 import { getAppointment } from "../services/agenda/get";
 import { AppointmentType } from "../types/appointments";
 import { DetailsAppointmentModal } from "./DetailsAppointmentModal";
+import { useUser } from "@/context/UserContext";
+import { commerceThemes } from "@/utils/Commercetheme";
+import { Commerce } from "@/types/commerce";
 
 export function AgendaPage() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -13,6 +16,8 @@ export function AgendaPage() {
   const [appointments, setAppointment] = useState<AppointmentType[]>([]);
   const [selectedDay, setSelectDay] = useState<Date | null>(null);
   const [showNewAppointment, setShowNewAppointment] = useState(false);
+  const { commerce } = useUser();
+  const theme = commerceThemes[(commerce ?? "PETSHOP") as Commerce];
 
   const selectedDayAppointments = selectedDay
     ? appointments.filter((a) => {
@@ -84,7 +89,15 @@ export function AgendaPage() {
       <div className="flex items-center gap-6 mb-10">
         <button
           onClick={prevMonth}
-          className="cursor-pointer w-9 h-9 flex items-center justify-center rounded-lg bg-zinc-800/60 border border-zinc-700/50 hover:border-amber-500/50 hover:bg-zinc-700/60 text-zinc-400 hover:text-amber-400 transition-all duration-200"
+          className="cursor-pointer w-9 h-9 flex items-center justify-center rounded-lg bg-zinc-800/60 border border-zinc-700/50 text-zinc-400 transition-all duration-200"
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = `${theme.primaryHex}50`;
+            e.currentTarget.style.color = theme.primaryHex;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = "rgba(63,63,70,0.5)";
+            e.currentTarget.style.color = "#a1a1aa";
+          }}
         >
           ◀
         </button>
@@ -95,7 +108,15 @@ export function AgendaPage() {
 
         <button
           onClick={nextMonth}
-          className="cursor-pointer w-9 h-9 flex items-center justify-center rounded-lg bg-zinc-800/60 border border-zinc-700/50 hover:border-amber-500/50 hover:bg-zinc-700/60 text-zinc-400 hover:text-amber-400 transition-all duration-200"
+          className="cursor-pointer w-9 h-9 flex items-center justify-center rounded-lg bg-zinc-800/60 border border-zinc-700/50 text-zinc-400 transition-all duration-200"
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = `${theme.primaryHex}50`;
+            e.currentTarget.style.color = theme.primaryHex;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = "rgba(63,63,70,0.5)";
+            e.currentTarget.style.color = "#a1a1aa";
+          }}
         >
           ▶
         </button>
@@ -108,6 +129,7 @@ export function AgendaPage() {
           appointmentsMap={appointmentsMap}
           monthDate={currentMonth}
           onDayClick={handleInfoDay}
+          primaryHex={theme.primaryHex}
         />
       </div>
 

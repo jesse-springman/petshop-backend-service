@@ -1,6 +1,16 @@
 import { PropsDate } from "../types/propDate";
+import { Commerce } from "@/types/commerce";
+import { useUser } from "@/context/UserContext";
 
-export function CalendarDay({ day, appointments, onClick }: PropsDate) {
+const commerceEmoji: Record<Commerce, string> = {
+  PETSHOP: "🐾",
+  AUTOMOTIVE: "🚗",
+  FEMININE_AESTHETIC: "💅",
+};
+
+export function CalendarDay({ day, appointments, onClick, primaryHex }: PropsDate) {
+  const { commerce } = useUser();
+  const emoji = commerceEmoji[(commerce ?? "PETSHOP") as Commerce];
   const isToday = day.toDateString() === new Date().toDateString();
 
   return (
@@ -8,19 +18,23 @@ export function CalendarDay({ day, appointments, onClick }: PropsDate) {
       onClick={onClick}
       className={`
         group relative min-h-[80px] sm:min-h-[110px] rounded-xl p-1 sm:p-2.5 cursor-pointer
-        border transition-all duration-200 flex flex-col w-full
-        ${
-          isToday
-            ? "border-amber-500/60 bg-amber-500/5 shadow-[0_0_12px_rgba(245,158,11,0.1)]"
-            : "border-zinc-800/80 bg-zinc-900/50 hover:border-zinc-600/60 hover:bg-zinc-800/40"
-        }
+        border transition-all duration-200 flex flex-col w-full overflow-hidden
       `}
+      style={{
+        borderColor: isToday ? `${primaryHex}60` : "rgba(39,39,42,0.8)",
+        background: isToday ? `${primaryHex}08` : "rgba(24,24,27,0.5)",
+        boxShadow: isToday ? `0 0 12px ${primaryHex}15` : "none",
+      }}
+      onMouseEnter={(e) => {
+        if (!isToday) e.currentTarget.style.borderColor = "rgba(82,82,91,0.6)";
+      }}
+      onMouseLeave={(e) => {
+        if (!isToday) e.currentTarget.style.borderColor = "rgba(39,39,42,0.8)";
+      }}
     >
       <div
-        className={`
-          text-[10px] sm:text-xs font-bold mb-1 sm:mb-2 self-start px-1 py-0.5 rounded-md
-          ${isToday ? "bg-amber-500 text-black" : "text-zinc-500 group-hover:text-zinc-300"}
-        `}
+        className="text-[10px] sm:text-xs font-bold mb-1 sm:mb-2 self-start px-1 py-0.5 rounded-md transition-colors"
+        style={isToday ? { background: primaryHex, color: "#000" } : { color: "rgb(113,113,122)" }}
       >
         {day.getDate()}
       </div>
@@ -28,12 +42,25 @@ export function CalendarDay({ day, appointments, onClick }: PropsDate) {
       <div className="flex flex-col gap-1 flex-1">
         {appointments.length > 0 && (
           <div>
-            <h2 className="text-center text-sm sm:text-2xl">🐶</h2>
-            <p className="hidden sm:block text-center line-clamp-2 text-lg bg-amber-500/10 border border-amber-500/20 rounded-md px-1.5 py-1 text-amber-300/80 font-sans">
-              {appointments.length} Pets Agendados
+            <h2 className="text-center text-sm sm:text-lg">{emoji}</h2>
+            <p
+              className="hidden sm:block text-center line-clamp-2 text-lg rounded-md px-1.5 py-1 font-sans"
+              style={{
+                background: `${primaryHex}10`,
+                border: `1px solid ${primaryHex}20`,
+                color: `${primaryHex}cc`,
+              }}
+            >
+              {appointments.length} agend.
             </p>
-            {/* versão mobile — só o número */}
-            <p className="sm:hidden text-center text-[10px] bg-amber-500/10 border border-amber-500/20 rounded-md px-1 py-0.5 text-amber-300/80">
+            <p
+              className="sm:hidden text-center text-[10px] rounded-md px-1 py-0.5"
+              style={{
+                background: `${primaryHex}10`,
+                border: `1px solid ${primaryHex}20`,
+                color: `${primaryHex}cc`,
+              }}
+            >
               {appointments.length}
             </p>
           </div>

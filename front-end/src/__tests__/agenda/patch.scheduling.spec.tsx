@@ -1,3 +1,7 @@
+jest.mock("@/context/UserContext", () => ({
+  useUser: () => mockUserContext,
+}));
+
 jest.mock("../../services/agenda/patch", () => ({
   patchAppointments: jest.fn(),
 }));
@@ -7,6 +11,7 @@ import userEvent from "@testing-library/user-event";
 import { render, screen, waitFor } from "@testing-library/react";
 import { mockAppointment } from "../__mocks__/agenda/get-appointments";
 import { patchAppointments } from "../../services/agenda/patch";
+import { mockUserContext } from "../__mocks__/userContext";
 
 beforeEach(() => {
   (patchAppointments as jest.Mock).mockResolvedValue({ ok: true });
@@ -14,6 +19,7 @@ beforeEach(() => {
 
 describe("PATCH status", () => {
   it("should show status", () => {
+    mockUserContext.commerce = "PETSHOP";
     render(
       <DetailsAppointmentModal
         date={new Date("2026-03-21")}
@@ -29,6 +35,8 @@ describe("PATCH status", () => {
 
   it("should change the status when happen click and select another status", async () => {
     const mockStatusChange = jest.fn().mockResolvedValue(undefined);
+
+    mockUserContext.commerce = "PETSHOP";
 
     render(
       <DetailsAppointmentModal
@@ -59,7 +67,7 @@ describe("PATCH status", () => {
 
   it("should keep same Status when click cancelar", async () => {
     const mockStatusChange = jest.fn().mockResolvedValue(undefined);
-
+    mockUserContext.commerce = "PETSHOP";
     render(
       <DetailsAppointmentModal
         date={new Date("2026-03-21")}

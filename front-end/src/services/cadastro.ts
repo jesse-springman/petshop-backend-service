@@ -1,9 +1,6 @@
 type cadastroDto = {
-  customer_name: string;
-  pet_name: string;
-  pet_breed: string;
-  number_customer: string;
-  last_bath: Date;
+  name: string;
+  phone: string;
   address: string;
 };
 

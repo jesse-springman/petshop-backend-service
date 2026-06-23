@@ -5,4 +5,5 @@ export interface PropsDate {
   appointments: AppointmentType[];
   monthDate?: Date;
   onClick: () => void;
+  primaryHex: string;
 }

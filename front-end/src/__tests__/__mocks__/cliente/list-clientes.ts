@@ -1,37 +1,61 @@
-export const mockClients = [
+import { Client } from "../../../types/clients";
+
+export const mockClients: Client[] = [
   {
     id: "1",
-    customer_name: "jesse",
-    pet_name: "cacau",
-    created_at: "2025-12-30T14:48:03.026Z",
-    address: "Rua mario azevedo n=14",
-    number_customer: "19983350238",
-    pet_beed: "vira-lata",
-    last_bath: "2026-02-02T21:31:18.551Z",
+    name: "Jesse",
+    phone: "19983350238",
+    address: "Rua Mario Azevedo n=14",
+    createdAt: "2025-12-30T14:48:03.026Z",
+    businessId: "business-uuid-1",
+    pets: [
+      {
+        id: "pet-uuid-1",
+        name: "Cacau",
+        breed: "Vira-lata",
+        lastBath: "2026-02-02T21:31:18.551Z",
+        customerId: "1",
+        createdAt: "2025-12-30T14:48:03.026Z",
+      },
+    ],
+    vehicles: [],
   },
   {
     id: "2",
-    customer_name: "maria",
-    pet_name: "bolinha",
-    created_at: "2025-12-31T10:20:00.000Z",
-    address: "av luis-15 n=134",
-    number_customer: "19993451232",
-    pet_breed: "vira-lata",
-    last_bath: "2026-01-28T21:31:18.551Z",
+    name: "Maria",
+    phone: "19993451232",
+    address: "Av Luis-15 n=134",
+    createdAt: "2025-12-31T10:20:00.000Z",
+    businessId: "business-uuid-1",
+    pets: [
+      {
+        id: "pet-uuid-2",
+        name: "Bolinha",
+        breed: "Vira-lata",
+        lastBath: "2026-01-28T21:31:18.551Z",
+        customerId: "2",
+        createdAt: "2025-12-31T10:20:00.000Z",
+      },
+    ],
+    vehicles: [],
   },
   {
     id: "3",
-    customer_name: "carlos",
-    pet_name: "tom",
-    created_at: "2025-12-31T10:20:00.000Z",
-    address: "av luis-15 n=134",
-    number_customer: "19993451232",
-    pet_breed: "vira-lata",
-    last_bath: "2026-01-28T21:31:18.551Z",
+    name: "Carlos",
+    phone: "19993451232",
+    address: "Av Luis-15 n=134",
+    createdAt: "2025-12-31T10:20:00.000Z",
+    businessId: "business-uuid-1",
+    pets: [
+      {
+        id: "pet-uuid-3",
+        name: "Tom",
+        breed: "Vira-lata",
+        lastBath: "2026-01-28T21:31:18.551Z",
+        customerId: "3",
+        createdAt: "2025-12-31T10:20:00.000Z",
+      },
+    ],
+    vehicles: [],
   },
 ];
-
-// Test vazio só pra Jest não reclamar que a suite está vazia
-test(" Mock Test", () => {
-  expect(jest.fn()).toBeDefined();
-});

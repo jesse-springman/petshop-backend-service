@@ -1,8 +1,13 @@
+import { Commerce } from "@/types/commerce";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 interface generateMessage {
   customerId: string;
   type: string;
+  commerce: Commerce;
+  petId?: string;
+  vehicleId?: string;
 }
 
 export async function postGenerateMessageAI(data: generateMessage) {
@@ -15,7 +20,7 @@ export async function postGenerateMessageAI(data: generateMessage) {
     body: JSON.stringify(data),
   });
 
-  if (!response.ok) throw new Error();
+  if (!response.ok) throw new Error("Erro ao gerar mensagem");
 
   const responseBody = await response.json();
   const messageMadeByIA = responseBody.messageIA.choices[0].message.content;

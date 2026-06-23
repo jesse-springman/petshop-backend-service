@@ -4,6 +4,11 @@ import { getClients } from "../../services/customer/get";
 import { mockClients } from "../__mocks__/cliente/list-clientes";
 import RespostaIAPage from "../../app/respostaIA/page";
 import { postGenerateMessageAI } from "../../services/aiGenerate/post";
+import { mockUserContext } from "../__mocks__/userContext";
+
+jest.mock("@/context/UserContext", () => ({
+  useUser: () => mockUserContext,
+}));
 
 jest.mock("next/navigation", () => ({
   useRouter: () => ({
@@ -27,16 +32,17 @@ describe("/respostaIA", () => {
   });
 
   it("should render all clients", async () => {
+    mockUserContext.commerce = "PETSHOP";
     render(<RespostaIAPage />);
 
     await waitFor(() => {
-      expect(screen.getByText("jesse")).toBeInTheDocument();
+      expect(screen.getByText(/jesse/i)).toBeInTheDocument();
     });
   });
 
   it("should message erro when not show clients", async () => {
     (getClients as jest.Mock).mockRejectedValue(new Error("Erro"));
-
+    mockUserContext.commerce = "PETSHOP";
     render(<RespostaIAPage />);
 
     await waitFor(() => {
@@ -46,20 +52,20 @@ describe("/respostaIA", () => {
 
   it("should filter customers when to type name in search", async () => {
     const user = userEvent.setup();
-
+    mockUserContext.commerce = "PETSHOP";
     render(<RespostaIAPage />);
 
     const input = screen.getByPlaceholderText("Buscar por cliente ou pet...");
-    await user.type(input, "jesse");
+    await user.type(input, "Jesse");
 
     await waitFor(() => {
-      expect(screen.getByText("jesse")).toBeInTheDocument();
+      expect(screen.getByText(/jesse/i)).toBeInTheDocument();
     });
   });
 
   it("should message when customer not found in search", async () => {
     const user = userEvent.setup();
-
+    mockUserContext.commerce = "PETSHOP";
     render(<RespostaIAPage />);
 
     const input = screen.getByPlaceholderText("Buscar por cliente ou pet...");
@@ -71,6 +77,7 @@ describe("/respostaIA", () => {
   });
 
   it("should disable generate button when no client is selected", async () => {
+    mockUserContext.commerce = "PETSHOP";
     render(<RespostaIAPage />);
 
     await waitFor(() => {
@@ -84,7 +91,7 @@ describe("/respostaIA", () => {
 
   it("should show selected indicator when client is clicked", async () => {
     const user = userEvent.setup();
-
+    mockUserContext.commerce = "PETSHOP";
     render(<RespostaIAPage />);
 
     await waitFor(() => {
@@ -98,7 +105,7 @@ describe("/respostaIA", () => {
 
   it("should clear the customer selected when click limpar seleção", async () => {
     const user = userEvent.setup();
-
+    mockUserContext.commerce = "PETSHOP";
     render(<RespostaIAPage />);
 
     await waitFor(() => {
@@ -116,13 +123,13 @@ describe("/respostaIA", () => {
 
   it("should release button when customer is selected", async () => {
     const user = userEvent.setup();
-
+    mockUserContext.commerce = "PETSHOP";
     render(<RespostaIAPage />);
 
     const input = screen.getByPlaceholderText("Buscar por cliente ou pet...");
-    await user.type(input, "jesse");
+    await user.type(input, "Jesse");
 
-    expect(screen.getByText("jesse")).toBeInTheDocument();
+    expect(screen.getByText(/jesse/i)).toBeInTheDocument();
 
     const select = await screen.findByRole("combobox");
 
@@ -139,14 +146,14 @@ describe("/respostaIA", () => {
     (postGenerateMessageAI as jest.Mock).mockResolvedValue("Mensagem gerada pela IA");
 
     const user = userEvent.setup();
-
+    mockUserContext.commerce = "PETSHOP";
     render(<RespostaIAPage />);
 
     await waitFor(() => {
-      expect(screen.getByText("jesse")).toBeInTheDocument();
+      expect(screen.getByText(/jesse/i)).toBeInTheDocument();
     });
 
-    await user.click(screen.getByText("jesse"));
+    await user.click(screen.getByText(/jesse/i));
 
     const select = await screen.findByRole("combobox");
 
@@ -163,7 +170,7 @@ describe("/respostaIA", () => {
     (postGenerateMessageAI as jest.Mock).mockRejectedValue(new Error("erro"));
 
     const user = userEvent.setup();
-
+    mockUserContext.commerce = "PETSHOP";
     render(<RespostaIAPage />);
 
     await waitFor(() => {
@@ -187,7 +194,7 @@ describe("/respostaIA", () => {
     (postGenerateMessageAI as jest.Mock).mockResolvedValue("OK");
 
     const user = userEvent.setup();
-
+    mockUserContext.commerce = "PETSHOP";
     render(<RespostaIAPage />);
 
     await waitFor(() => {

@@ -3,12 +3,9 @@ import toast from "react-hot-toast";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 export type UpdateClientDTO = {
-  customer_name: string;
-  pet_name: string;
-  address: string;
-  number_customer: string;
-  pet_breed: string;
-  last_bath: string;
+  name?: string;
+  address?: string;
+  phone?: string;
 };
 
 export async function patchClientList(id: string, data: UpdateClientDTO) {

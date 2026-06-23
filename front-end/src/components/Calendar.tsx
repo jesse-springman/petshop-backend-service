@@ -7,12 +7,12 @@ interface Props {
   appointmentsMap: Record<string, AppointmentType[]>;
   monthDate: Date;
   onDayClick: (day: Date) => void;
-  // onAppointmentClick: (appointments: AppointmentType[], date: Date) => void;
+  primaryHex: string;
 }
 
 const WEEKDAYS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
-export function Calendar({ monthDate, appointmentsMap, onDayClick }: Props) {
+export function Calendar({ monthDate, appointmentsMap, onDayClick, primaryHex }: Props) {
   const router = useRouter();
 
   const days = getMonthDays(monthDate);
@@ -49,6 +49,7 @@ export function Calendar({ monthDate, appointmentsMap, onDayClick }: Props) {
               day={day}
               appointments={dayAppointments}
               onClick={() => onDayClick(day)}
+              primaryHex={primaryHex}
             />
           );
         })}

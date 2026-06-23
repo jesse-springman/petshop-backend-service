@@ -5,43 +5,51 @@ import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import { cadastroData } from "@/services/cadastro";
 import toast from "react-hot-toast";
+import { useUser } from "@/context/UserContext";
+import { commerceThemes } from "@/utils/Commercetheme";
+import { Commerce } from "@/types/commerce";
 
 export default function FormCadastro() {
-  const [nameClient, setNameClient] = useState("");
-  const [namePet, setNamePet] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
-  const [racaPet, setRacaPet] = useState("");
-  const [lastBath, setLastBath] = useState(new Date().toISOString().split("T")[0]);
-  const [numberCustomer, setNumberCustomer] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { commerce } = useUser();
+  const theme = commerceThemes[(commerce ?? "PETSHOP") as Commerce];
 
-  const handleSubimit = async (e: React.FormEvent) => {
+  function maskWhatsapp(value: string) {
+    const digits = value.replace(/\D/g, "").slice(0, 11);
+    if (digits.length <= 2) return `(${digits}`;
+    if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+  }
+
+  const rawPhone = phone.replace(/\D/g, "");
+
+  const handleWhatsapp = (value: string) => {
+    setPhone(maskWhatsapp(value));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!nameClient || !namePet) {
-      setMessage("Preencha todos os campos!");
+    if (!name.trim()) {
+      toast.error("Preencha o nome do cliente!");
+      return;
+    }
+
+    if (rawPhone.length !== 11) {
+      toast.error("Insira um número de WhatsApp válido com DDD (11 dígitos).");
       return;
     }
 
     setLoading(true);
-    setMessage("");
     try {
-      const response = await cadastroData({
-        customer_name: nameClient,
-        pet_name: namePet,
-        address,
-        pet_breed: racaPet,
-        last_bath: new Date(lastBath),
-        number_customer: numberCustomer,
-      });
-
-      setMessage("Cadastro realizado com sucesso!");
-      setTimeout(() => router.push("/"), 3000);
+      await cadastroData({ name, phone: rawPhone, address });
       toast.success("Cadastro realizado com sucesso!");
-    } catch (error) {
-      setMessage("Erro na conexão com o servidor.");
+      setTimeout(() => router.push("/"), 2000);
+    } catch {
       toast.error("Erro na conexão com o servidor.");
     } finally {
       setLoading(false);
@@ -50,111 +58,84 @@ export default function FormCadastro() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#0B0E11] to-[#1A1D22] flex items-center justify-center p-4">
-      <div className="bg-[#1A1D22] p-6 md:p-10 rounded-2xl shadow-2xl [box-shadow:_0_0_40px_rgba(251,191,36,0.2)] border-amber-500/20  max-w-lg w-auto">
-        <h1 className="text-4xl font-bold text-amber-400 text-center mb-8">Cadastro de Cliente</h1>
+      <div
+        className="bg-[#1A1D22] p-6 md:p-10 rounded-2xl shadow-2xl max-w-lg w-full"
+        style={{
+          border: `1px solid ${theme.primaryHex}20`,
+          boxShadow: `0 0 40px ${theme.primaryHex}20`,
+        }}
+      >
+        <h1 className="text-4xl font-bold text-center mb-8" style={{ color: theme.primaryHex }}>
+          Cadastro de Cliente
+        </h1>
 
-        <form onSubmit={handleSubimit} className="space-y-6">
-          <div>
-            <label htmlFor="customer_name" className="block text-gray-300 mb-2 text-lg">
-              Nome do Cliente
-            </label>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="name" className="block text-gray-300 mb-2 text-lg">
+                Nome do Cliente
+              </label>
+              <input
+                id="name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full px-4 py-3 bg-[#0B0E11] border border-gray-700 rounded-lg text-white focus:outline-none transition"
+                onFocus={(e) => (e.currentTarget.style.borderColor = theme.primaryHex)}
+                onBlur={(e) => (e.currentTarget.style.borderColor = "rgb(55,65,81)")}
+                placeholder="Ex: Pedro"
+                disabled={loading}
+              />
+            </div>
 
-            <input
-              id="customer_name"
-              type="text"
-              value={nameClient}
-              onChange={(e) => setNameClient(e.target.value)}
-              className="w-full px-4 py-3  bg-[#0B0E11]  border border-gray-700 rounded-lg tetx-white focus:outline-none focus:border-amber-500 transtion mb-4"
-              placeholder="Ex: Pedro"
-              disabled={loading}
-            />
+            <div>
+              <label htmlFor="phone" className="block text-gray-300 mb-2 text-lg">
+                Telefone <span className="text-zinc-500 text-sm">(opcional)</span>
+              </label>
 
-            <label htmlFor="number_customer" className="block text-gray-300 mb-2 text-lg">
-              Número do Cliente
-            </label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-500 text-sm">
+                  📱
+                </span>
+                <input
+                  id="phone"
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => handleWhatsapp(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 bg-[#0B0E11] text-white rounded-xl border border-amber-500/30 focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400/30 transition placeholder-zinc-600"
+                  onFocus={(e) => (e.currentTarget.style.borderColor = theme.primaryHex)}
+                  onBlur={(e) => (e.currentTarget.style.borderColor = "rgb(55,65,81)")}
+                  placeholder="(11) 99999-9999"
+                  disabled={loading}
+                />
+              </div>
+            </div>
 
-            <input
-              id="number_customer"
-              className="w-full px-4 py-3  bg-[#0B0E11]  border border-gray-700 rounded-lg tetx-white focus:outline-none focus:border-amber-500 transtion mb-4"
-              type="tel"
-              value={numberCustomer}
-              onChange={(e) => setNumberCustomer(e.target.value)}
-              placeholder="(xx) xxxx-xxxx"
-              disabled={loading}
-            />
-
-            <label htmlFor="address" className="block text-gray-300 mb-2 text-lg">
-              Endereço do Cliente
-            </label>
-
-            <input
-              id="address"
-              className="w-full px-4 py-3 bg-[#0B0E11] border border-gray-700 rounded-lg text-white focus:outline-none focus:border-amber-500 transition"
-              type="text"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              placeholder="Av Brasil"
-              disabled={loading}
-            />
-
-            <label htmlFor="name_pet" className="block mt-5 text-gray-300 mb-2 text-lg">
-              Nome do Pet
-            </label>
-
-            <input
-              id="name_pet"
-              type="text"
-              value={namePet}
-              onChange={(e) => setNamePet(e.target.value)}
-              className="w-full px-4 py-3  bg-[#0B0E11] border border-gray-700 rounded-lg text-white focus:outline-none focus:border-amber-500 transation"
-              placeholder="Ex: Tobby"
-              disabled={loading}
-            />
-
-            <label htmlFor="raça_pet" className="block mt-5 text-gray-300 mb-2 text-lg">
-              Raça do Pet
-            </label>
-
-            <input
-              id="raça_pet"
-              className="w-full px-4 py-3  bg-[#0B0E11] border border-gray-700 rounded-lg text-white focus:outline-none focus:border-amber-500 transation"
-              type="text"
-              value={racaPet}
-              onChange={(e) => setRacaPet(e.target.value)}
-              placeholder="Pit-Bull"
-              disabled={loading}
-            />
-
-            <label htmlFor="last_bath" className="block mt-5 text-gray-300 mb-2 text-lg">
-              Data do Último banho :
-            </label>
-
-            <input
-              id="last_bath"
-              className="w-full px-4 py-3 bg-[#0B0E11] border border-gray-700 rounded-lg text-white focus:outline-none focus:border-amber-500 transition"
-              type="date"
-              value={lastBath}
-              onChange={(e) => setLastBath(e.target.value)}
-              disabled={loading}
-            />
+            <div>
+              <label htmlFor="address" className="block text-gray-300 mb-2 text-lg">
+                Endereço <span className="text-zinc-500 text-sm">(opcional)</span>
+              </label>
+              <input
+                id="address"
+                type="text"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                className="w-full px-4 py-3 bg-[#0B0E11] border border-gray-700 rounded-lg text-white focus:outline-none transition"
+                onFocus={(e) => (e.currentTarget.style.borderColor = theme.primaryHex)}
+                onBlur={(e) => (e.currentTarget.style.borderColor = "rgb(55,65,81)")}
+                placeholder="Av. Brasil, 123"
+                disabled={loading}
+              />
+            </div>
           </div>
 
-          {message && (
-            <p
-              className={`text-center text-lg ${
-                message.includes("sucesso") ? "text-green-400" : "text-red-400"
-              }`}
-            >
-              {message}
-            </p>
-          )}
-
-          <Button type="submit" disabled={loading}>
-            {loading ? "Cadastrando" : "Cadastrar"}
+          <Button type="submit" disabled={loading} primaryHex={theme.primaryHex}>
+            {loading ? "Cadastrando..." : "Cadastrar"}
           </Button>
         </form>
-
-        <Button onClick={() => router.push("/")}>← Voltar para início</Button>
+        <Button onClick={() => router.push("/")} primaryHex={theme.primaryHex}>
+          ← Voltar para início
+        </Button>
       </div>
     </main>
   );

@@ -5,5 +5,5 @@ export const propsDetailsModal = {
   appointments: [mockAppointment],
   onClose: jest.fn(),
   onNewAppointment: jest.fn(),
-  onStatusChange: jest.fn(),
+  onStatusChange: jest.fn().mockResolvedValue(undefined),
 };

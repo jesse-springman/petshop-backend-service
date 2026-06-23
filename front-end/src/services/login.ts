@@ -8,11 +8,13 @@ export async function loginUser(name: string, password: string) {
     credentials: "include",
   });
 
+  console.log(response);
   if (!response.ok) {
     throw new Error("Credenciais inválidas");
   }
 
   const data = await response.json();
+  console.log(data);
 
   if (typeof window !== "undefined") {
     localStorage.setItem("access_token", data.access_token);

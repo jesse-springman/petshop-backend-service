@@ -3,6 +3,11 @@ import { registerData } from "@/services/register";
 import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import FormRegister from "../../app/registro/page";
+import { mockUserContext } from "../__mocks__/userContext";
+
+jest.mock("@/context/UserContext", () => ({
+  useUser: () => mockUserContext,
+}));
 
 jest.mock("next/navigation", () => ({
   useRouter: () => ({
@@ -64,6 +69,7 @@ describe("POST /registro", () => {
   });
 
   it("should submit form", async () => {
+    mockUserContext.commerce = "PETSHOP";
     render(<FormRegister />);
 
     const user = userEvent.setup();

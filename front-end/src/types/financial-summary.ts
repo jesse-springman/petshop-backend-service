@@ -1,6 +1,6 @@
 export interface financialSummary {
-  revenue: number;
-  expenses: number;
+  income: number;
+  expense: number;
   profit: number;
-  totalTransactions: number;
+  total: number;
 }

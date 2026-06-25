@@ -6,7 +6,7 @@ import { CommerceTheme, commerceThemes } from "@/utils/Commercetheme";
 import { Commerce } from "@/types/commerce";
 import { Transaction, TransactionType } from "@/types/typeTransaction";
 import { financialSummary } from "@/types/financial-summary";
-import { getTransacoes, calcularResumoDoMes } from "@/services/financeiro/get";
+import { getTransacoes } from "@/services/financeiro/get";
 
 interface FinanceiroPageProps {
   commerce: Commerce;
@@ -24,10 +24,10 @@ function formatData(iso: string) {
 }
 
 const RESUMO_INICIAL: financialSummary = {
-  revenue: 0,
-  expenses: 0,
+  income: 0,
+  expense: 0,
   profit: 0,
-  totalTransactions: 0,
+  total: 0,
 };
 
 export function FinancialPage({ commerce }: FinanceiroPageProps) {
@@ -42,8 +42,8 @@ export function FinancialPage({ commerce }: FinanceiroPageProps) {
     async function carregar() {
       try {
         const data = await getTransacoes();
-        setTransacoes(data.trasaction);
-        setResumo(calcularResumoDoMes(data.summary));
+        setTransacoes(data.transaction);
+        setResumo(data.summary);
       } catch (e) {
         console.error(e);
       } finally {
@@ -62,7 +62,6 @@ export function FinancialPage({ commerce }: FinanceiroPageProps) {
   return (
     <div className="min-h-screen bg-zinc-950 px-4 pt-10 pb-16">
       <div className="max-w-2xl mx-auto">
-        {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
             <p
@@ -99,13 +98,13 @@ export function FinancialPage({ commerce }: FinanceiroPageProps) {
         <div className="grid grid-cols-2 gap-3 mb-8 sm:grid-cols-4">
           <SummaryCard
             label="Receita do mês"
-            value={loading ? "—" : formatBRL(resumo.revenue)}
+            value={loading ? "—" : formatBRL(resumo.income)}
             accent={theme.primaryHex}
             positive
           />
           <SummaryCard
             label="Despesas do mês"
-            value={loading ? "—" : formatBRL(resumo.expenses)}
+            value={loading ? "—" : formatBRL(resumo.expense)}
             accent="#f87171"
           />
           <SummaryCard
@@ -116,12 +115,11 @@ export function FinancialPage({ commerce }: FinanceiroPageProps) {
           />
           <SummaryCard
             label="Transações"
-            value={loading ? "—" : String(resumo.totalTransactions)}
+            value={loading ? "—" : String(resumo.total)}
             accent="#a1a1aa"
           />
         </div>
 
-        {/* Filtros */}
         <div className="flex gap-2 mb-5">
           {(["ALL", "INCOME", "EXPENSE"] as const).map((f) => (
             <button
@@ -139,7 +137,6 @@ export function FinancialPage({ commerce }: FinanceiroPageProps) {
           ))}
         </div>
 
-        {/* Lista de transações */}
         {loading ? (
           <ListSkeleton />
         ) : transacoesFiltradas.length === 0 ? (
@@ -155,8 +152,6 @@ export function FinancialPage({ commerce }: FinanceiroPageProps) {
     </div>
   );
 }
-
-/* ─── Sub-componentes ─── */
 
 function SummaryCard({
   label,
@@ -186,7 +181,6 @@ function TransacaoItem({ transacao }: { transacao: Transaction }) {
   const isIncome = transacao.type === "INCOME";
   return (
     <div className="flex items-center gap-4 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3.5">
-      {/* Ícone */}
       <div
         className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
         style={{ background: isIncome ? "#4ade8015" : "#f8717115" }}
@@ -206,7 +200,6 @@ function TransacaoItem({ transacao }: { transacao: Transaction }) {
         </svg>
       </div>
 
-      {/* Info */}
       <div className="flex-1 min-w-0">
         <p className="text-sm text-zinc-100 font-medium truncate">
           {transacao.description || transacao.category || (isIncome ? "Atendimento" : "Despesa")}
@@ -220,7 +213,6 @@ function TransacaoItem({ transacao }: { transacao: Transaction }) {
         </div>
       </div>
 
-      {/* Valor */}
       <p
         className="text-sm font-semibold flex-shrink-0"
         style={{ color: isIncome ? "#4ade80" : "#f87171" }}
@@ -268,7 +260,7 @@ function EmptyState({ filtro, theme }: { filtro: "ALL" | TransactionType; theme:
       <p className="text-zinc-400 text-sm">{msg}</p>
       {filtro !== "INCOME" && (
         <Link
-          href="/despesas/nova"
+          href="/components/novaDespesa.tsx"
           className="mt-4 text-sm font-medium underline underline-offset-4"
           style={{ color: theme.primaryHex }}
         >

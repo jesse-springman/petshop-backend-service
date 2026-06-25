@@ -23,7 +23,7 @@ export class CreateTransaction {
       data: {
         type: dto.type,
         amount: dto.amount,
-        description: dto.category,
+        description: dto.description,
         category: dto.category,
         businessId,
         appointmentId: dto.appointmentsId,

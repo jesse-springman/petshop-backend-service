@@ -29,7 +29,6 @@ const previewMessages: Record<string, { greeting: string; body: string; signatur
 };
 
 export function IAHighlight({ onNavigate, isLoggedIn, theme, businessName }: Props) {
-  // Detecta o commerce pelo primaryHex
   const commerce =
     theme.primaryHex === "#fbbf24"
       ? "PETSHOP"
@@ -56,17 +55,22 @@ export function IAHighlight({ onNavigate, isLoggedIn, theme, businessName }: Pro
       }}
     >
       <div className="flex flex-col lg:flex-row gap-8 items-start">
-        {/* Lado esquerdo */}
         <div className="flex-1 flex flex-col gap-5">
           <div
             className="w-12 h-12 rounded-2xl flex items-center justify-center"
-            style={{ background: `${theme.primaryHex}15`, border: `1px solid ${theme.primaryHex}30` }}
+            style={{
+              background: `${theme.primaryHex}15`,
+              border: `1px solid ${theme.primaryHex}30`,
+            }}
           >
             <Sparkles size={20} style={{ color: theme.primaryHex }} />
           </div>
 
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: theme.primaryHex }}>
+            <p
+              className="text-xs font-semibold uppercase tracking-widest mb-2"
+              style={{ color: theme.primaryHex }}
+            >
               Inteligência Artificial
             </p>
             <h2 className="text-2xl lg:text-3xl font-black text-white leading-tight">
@@ -78,7 +82,8 @@ export function IAHighlight({ onNavigate, isLoggedIn, theme, businessName }: Pro
               </span>
             </h2>
             <p className="text-zinc-400 text-sm mt-3 max-w-sm leading-relaxed">
-              Economize tempo enviando mensagens personalizadas automaticamente para seus clientes inativos.
+              Economize tempo enviando mensagens personalizadas automaticamente para seus clientes
+              inativos.
             </p>
           </div>
 
@@ -116,13 +121,8 @@ export function IAHighlight({ onNavigate, isLoggedIn, theme, businessName }: Pro
             <p className="font-semibold text-white">{preview.greeting}</p>
             <p className="mt-2 text-zinc-400">{preview.body}</p>
             <p className="mt-3 text-zinc-400">Estamos à disposição!</p>
-            <p className="mt-3 font-medium text-white">
-              — {businessName ?? preview.signature}
-            </p>
-            <div
-              className="text-xs text-right mt-3"
-              style={{ color: `${theme.primaryHex}60` }}
-            >
+            <p className="mt-3 font-medium text-white">— {businessName ?? preview.signature}</p>
+            <div className="text-xs text-right mt-3" style={{ color: `${theme.primaryHex}60` }}>
               10:30 ✓✓
             </div>
           </div>

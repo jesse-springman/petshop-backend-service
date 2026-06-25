@@ -1,19 +1,10 @@
 import { Transaction } from "@/types/typeTransaction";
 import { getHeaders } from "@/utils/headers";
-
-export type typeOfMovimentation = "ENTRADA" | "SAIDA";
+import { CreateTransactionDto } from "@/types/createTransaction";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL;
 
-export interface CreateTransacaoDto {
-  type: typeOfMovimentation;
-  amount: number;
-  category?: string;
-  description?: string;
-  appointmentsId?: string;
-}
-
-export async function createTransacao(dto: CreateTransacaoDto): Promise<Transaction> {
+export async function createTransacao(dto: CreateTransactionDto): Promise<Transaction> {
   const response = await fetch(`${API_BASE}/transactions`, {
     method: "POST",
     credentials: "include",

@@ -15,6 +15,7 @@ import { SuperAdminModule } from './superAdmin/superAdmin.module';
 import { PetModule } from './pet/pet.module';
 import { VehicleModule } from './vehicle/vehicle.module';
 import { TransactionModule } from './transaction/transaction.module';
+import { ServiceModule } from './servicesOfBusiness/service.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { TransactionModule } from './transaction/transaction.module';
     PetModule,
     VehicleModule,
     TransactionModule,
+    ServiceModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',

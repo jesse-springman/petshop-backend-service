@@ -97,7 +97,7 @@ describe("DELETE client", () => {
     fireEvent.click(within(row).getByLabelText("excluir"));
 
     const modal = await screen.findByRole("dialog");
-    const confirmButton = within(modal).getByRole("button", { name: "Excluir" });
+    const confirmButton = within(modal).getByRole("button", { name: "Confirmar" });
 
     fireEvent.click(confirmButton);
 
@@ -127,7 +127,7 @@ describe("DELETE client", () => {
     fireEvent.click(within(row).getByLabelText("excluir"));
 
     const modal = await screen.findByRole("dialog");
-    fireEvent.click(within(modal).getByRole("button", { name: "Excluir" }));
+    fireEvent.click(within(modal).getByRole("button", { name: "Confirmar" }));
 
     await waitFor(() => {
       expect(deleteCliente).toHaveBeenCalledWith("1");

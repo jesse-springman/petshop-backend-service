@@ -6,6 +6,8 @@ import { Client, Pet, Vehicle } from "../types/clients";
 import { useUser } from "@/context/UserContext";
 import { commerceThemes } from "@/utils/Commercetheme";
 import { Commerce } from "@/types/commerce";
+import { ServiceType } from "@/types/serviceType";
+import { getServices } from "@/services/servicesBusiness/get-service";
 import toast from "react-hot-toast";
 import { postAgenda } from "../services/agenda/post";
 
@@ -16,26 +18,11 @@ interface Props {
   existingTimes?: string[];
 }
 
-const servicesByCommerce: Record<Commerce, string[]> = {
-  PETSHOP: ["Banho", "Tosa", "Banho e Tosa", "Hidratação", "Corte de unha"],
-  AUTOMOTIVE: [
-    "Higienização Interna",
-    "Higienização Externa",
-    "Polimento",
-    "Lavagem Completa",
-    "Cristalização",
-  ],
-  FEMININE_AESTHETIC: [
-    "Alongamento de Cílios",
-    "Manutenção de Cílios",
-    "Design de Sobrancelha",
-    "Manicure",
-    "Pedicure",
-  ],
-};
-
 export function NewAppointmentModal({ dateSelect, onClose, onSuccess, existingTimes }: Props) {
   const [customers, setCustomers] = useState<Client[]>([]);
+  const [services, setServices] = useState<ServiceType[]>([]);
+  const [loadingServices, setLoadingServices] = useState(true);
+
   const [customerId, setCustomerId] = useState("");
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
@@ -48,7 +35,6 @@ export function NewAppointmentModal({ dateSelect, onClose, onSuccess, existingTi
   const { commerce } = useUser();
   const currentCommerce = (commerce as Commerce) ?? "PETSHOP";
   const theme = commerceThemes[currentCommerce];
-  const services = servicesByCommerce[currentCommerce];
 
   const generateHours = () => {
     const hours = [];
@@ -69,11 +55,22 @@ export function NewAppointmentModal({ dateSelect, onClose, onSuccess, existingTi
 
   useEffect(() => {
     let cancelled = false;
-    async function loadCustomers() {
-      const data = await getClients();
-      if (!cancelled) setCustomers(data);
+
+    async function loadData() {
+      try {
+        const [clientsData, servicesData] = await Promise.all([getClients(), getServices()]);
+        if (!cancelled) {
+          setCustomers(clientsData);
+          setServices(servicesData.filter((s) => s.active)); // só serviços ativos
+        }
+      } catch {
+        toast.error("Erro ao carregar dados");
+      } finally {
+        if (!cancelled) setLoadingServices(false);
+      }
     }
-    loadCustomers();
+
+    loadData();
     return () => {
       cancelled = true;
     };
@@ -130,7 +127,7 @@ export function NewAppointmentModal({ dateSelect, onClose, onSuccess, existingTi
     }
   }
 
-  const selectClass = `cursor-pointer w-full bg-zinc-800/60 border border-zinc-700/60 rounded-lg px-3 py-3 text-base text-zinc-200 focus:outline-none transition-all appearance-none`;
+  const selectClass = `cursor-pointer disabled:cursor-not-allowed w-full bg-zinc-800/60 border border-zinc-700/60 rounded-lg px-3 py-3 text-base text-zinc-200 focus:outline-none transition-all appearance-none`;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -143,8 +140,13 @@ export function NewAppointmentModal({ dateSelect, onClose, onSuccess, existingTi
         }}
       />
 
-      <div className="relative z-10 w-[570px] rounded-2xl border border-zinc-700/60 bg-zinc-900/95 shadow-2xl shadow-black/60 p-8 backdrop-blur-sm">
-        <div className="absolute top-0 left-8 right-8 h-[1px] bg-gradient-to-r from-transparent via-amber-500/60 to-transparent" />
+      <div className="relative z-10 w-[570px] rounded-2xl border border-zinc-700/60 bg-zinc-900/95 shadow-2xl shadow-black/60 p-8 backdrop-blur-sm font-sans">
+        <div
+          className="absolute top-0 left-8 right-8 h-[1px]"
+          style={{
+            background: `linear-gradient(to right, transparent, ${theme.primaryHex}60, transparent)`,
+          }}
+        />
         <button
           onClick={onClose}
           className="cursor-pointer absolute top-4 right-4 w-7 h-7 flex items-center justify-center rounded-lg text-zinc-600 hover:text-zinc-200 hover:bg-zinc-800 transition-all text-sm"
@@ -165,6 +167,7 @@ export function NewAppointmentModal({ dateSelect, onClose, onSuccess, existingTi
         <div className="border-t border-zinc-800 mb-5" />
 
         <form noValidate onSubmit={handlerSubmit} className="flex flex-col gap-3">
+          {/* Cliente */}
           <label htmlFor="select-client" className="sr-only">
             Selecione o cliente
           </label>
@@ -191,6 +194,7 @@ export function NewAppointmentModal({ dateSelect, onClose, onSuccess, existingTi
             ))}
           </select>
 
+          {/* Pet (só PETSHOP) */}
           {currentCommerce === "PETSHOP" &&
             selectedClient &&
             (selectedClient.pets?.length ?? 0) > 0 && (
@@ -221,6 +225,7 @@ export function NewAppointmentModal({ dateSelect, onClose, onSuccess, existingTi
               </>
             )}
 
+          {/* Veículo (só AUTOMOTIVE) */}
           {currentCommerce === "AUTOMOTIVE" &&
             selectedClient &&
             (selectedClient.vehicles?.length ?? 0) > 0 && (
@@ -252,6 +257,7 @@ export function NewAppointmentModal({ dateSelect, onClose, onSuccess, existingTi
               </>
             )}
 
+          {/* Data e hora */}
           <div className="grid grid-cols-2 gap-3">
             <input
               type="date"
@@ -290,6 +296,7 @@ export function NewAppointmentModal({ dateSelect, onClose, onSuccess, existingTi
             </select>
           </div>
 
+          {/* Serviços do banco */}
           <label htmlFor="select-servico" className="sr-only">
             Selecione o Serviço
           </label>
@@ -300,25 +307,29 @@ export function NewAppointmentModal({ dateSelect, onClose, onSuccess, existingTi
             onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(63,63,70,0.6)")}
             onChange={(e) => setNotes(e.target.value)}
             className={selectClass}
+            disabled={loadingServices}
             required
           >
-            <option value="">
-              {currentCommerce === "PETSHOP"
-                ? "🐾 Selecione o Serviço"
-                : currentCommerce === "AUTOMOTIVE"
-                  ? "🚗 Selecione o Serviço"
-                  : "💅 Selecione o Serviço"}
+            <option value="" className="bg-zinc-900 text-zinc-400">
+              {loadingServices ? "Carregando serviços..." : "Selecione o serviço"}
             </option>
-            {services.map((service) => (
-              <option key={service} value={service} className="bg-zinc-900 text-zinc-200">
-                {service}
+            {services.map((s) => (
+              <option key={s.id} value={s.name} className="bg-zinc-900 text-zinc-200">
+                {s.name} —{" "}
+                {Number(s.price).toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
               </option>
             ))}
           </select>
 
+          {/* Mensagem de erro/sucesso */}
           {message && (
             <p
-              className={`text-center text-lg ${message.includes("sucesso") ? "text-green-400" : "text-red-400"}`}
+              className={`text-center text-lg ${
+                message.includes("sucesso") ? "text-green-400" : "text-red-400"
+              }`}
             >
               {message}
             </p>

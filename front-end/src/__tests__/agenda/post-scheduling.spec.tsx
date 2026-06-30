@@ -6,7 +6,9 @@ import { NewAppointmentModal } from "../../components/NewAppointmentModal";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
 import { getClients } from "../../services/customer/get";
+import { getServices } from "../../services/servicesBusiness/get-service";
 import { mockClients } from "../__mocks__/cliente/list-clientes";
+import { mockServices } from "../__mocks__/servicesBusiness/servicesMock";
 import { mockUserContext } from "../__mocks__/userContext";
 
 jest.mock("@/context/UserContext", () => ({
@@ -19,6 +21,10 @@ jest.mock("../../services/agenda/post", () => ({
 
 jest.mock("../../services/customer/get", () => ({
   getClients: jest.fn(),
+}));
+
+jest.mock("../../services/servicesBusiness/get-service", () => ({
+  getServices: jest.fn(),
 }));
 
 jest.mock("next/navigation", () => ({
@@ -54,6 +60,7 @@ describe("POST /agenda", () => {
     jest.clearAllMocks();
     mockUserContext.commerce = "PETSHOP";
     (getClients as jest.Mock).mockResolvedValue(mockClients);
+    (getServices as jest.Mock).mockResolvedValue(mockServices);
   });
 
   it("should open NewAppointmentModal successfully", async () => {
@@ -85,33 +92,27 @@ describe("POST /agenda", () => {
     });
   });
 
-  it("should render PETSHOP services", async () => {
+  it("should render services from API", async () => {
     const user = userEvent.setup();
     render(<Wrapper />);
     await user.click(screen.getByText(/Novo Agendamento/i));
-    ["Banho", "Tosa", "Banho e Tosa", "Hidratação", "Corte de unha"].forEach((s) => {
-      expect(screen.getByRole("option", { name: s })).toBeInTheDocument();
+
+    await waitFor(() => {
+      const select = screen.getByLabelText(/selecione o serviço/i);
+      expect(select).not.toBeDisabled();
+      const options = Array.from(select.querySelectorAll("option")).map((o) => o.value);
+      expect(options).toContain("Banho");
+      expect(options).toContain("Tosa");
+      expect(options).toContain("Banho e Tosa");
     });
   });
 
-  it("should render AUTOMOTIVE services", async () => {
-    mockUserContext.commerce = "AUTOMOTIVE";
+  it("should show loading state while fetching services", async () => {
+    (getServices as jest.Mock).mockReturnValue(new Promise(() => {}));
     const user = userEvent.setup();
     render(<Wrapper />);
     await user.click(screen.getByText(/Novo Agendamento/i));
-    ["Higienização Interna", "Polimento", "Lavagem Completa"].forEach((s) => {
-      expect(screen.getByRole("option", { name: s })).toBeInTheDocument();
-    });
-  });
-
-  it("should render FEMININE_AESTHETIC services", async () => {
-    mockUserContext.commerce = "FEMININE_AESTHETIC";
-    const user = userEvent.setup();
-    render(<Wrapper />);
-    await user.click(screen.getByText(/Novo Agendamento/i));
-    ["Alongamento de Cílios", "Manicure", "Pedicure"].forEach((s) => {
-      expect(screen.getByRole("option", { name: s })).toBeInTheDocument();
-    });
+    expect(screen.getByRole("option", { name: /Carregando serviços/i })).toBeInTheDocument();
   });
 
   it("should show error when fields are empty", async () => {
@@ -132,6 +133,9 @@ describe("POST /agenda", () => {
     });
     await user.selectOptions(screen.getByLabelText(/selecione o cliente/i), "1");
     await user.selectOptions(screen.getByLabelText(/selecione o horário/i), "14:00");
+    await waitFor(() => {
+      expect(screen.getByRole("option", { name: /Banho —/i })).toBeInTheDocument();
+    });
     await user.selectOptions(screen.getByLabelText(/selecione o serviço/i), "Banho");
     await user.click(screen.getByRole("button", { name: /salvar agendamento/i }));
     expect(screen.getByText("Agendamento realizado com sucesso")).toBeInTheDocument();
@@ -139,7 +143,16 @@ describe("POST /agenda", () => {
   });
 
   it("should mark occupied times as disabled", async () => {
+    (getServices as jest.Mock).mockResolvedValue(mockServices);
+    const user = userEvent.setup();
     render(<NewAppointmentModal {...propsNewAppointments} existingTimes={["10:00", "11:00"]} />);
+
+    await waitFor(() => {
+      const select = screen.getByLabelText(/selecione o serviço/i);
+      expect(select).not.toBeDisabled();
+    });
+    await user.selectOptions(screen.getByLabelText(/selecione o serviço/i), "Banho");
+
     expect(screen.getByRole("option", { name: "10:00 - ocupado" })).toBeDisabled();
     expect(screen.getByRole("option", { name: "11:00 - ocupado" })).toBeDisabled();
     expect(screen.getByRole("option", { name: "09:00" })).not.toBeDisabled();
@@ -155,6 +168,9 @@ describe("POST /agenda", () => {
     });
     await user.selectOptions(screen.getByLabelText(/selecione o cliente/i), "1");
     await user.selectOptions(screen.getByLabelText(/selecione o horário/i), "14:00");
+    await waitFor(() => {
+      expect(screen.getByRole("option", { name: /Banho —/i })).toBeInTheDocument();
+    });
     await user.selectOptions(screen.getByLabelText(/selecione o serviço/i), "Banho");
     await user.click(screen.getByRole("button", { name: /salvar agendamento/i }));
     expect(

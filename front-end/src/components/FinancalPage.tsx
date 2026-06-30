@@ -38,18 +38,19 @@ export function FinancialPage({ commerce }: FinanceiroPageProps) {
   const [loading, setLoading] = useState(true);
   const [filtro, setFiltro] = useState<"ALL" | TransactionType>("ALL");
 
-  useEffect(() => {
-    async function carregar() {
-      try {
-        const data = await getTransacoes();
-        setTransacoes(data.transaction);
-        setResumo(data.summary);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
+  async function carregar() {
+    try {
+      const data = await getTransacoes();
+      setTransacoes(data.transaction);
+      setResumo(data.summary);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
     }
+  }
+
+  useEffect(() => {
     carregar();
   }, []);
 

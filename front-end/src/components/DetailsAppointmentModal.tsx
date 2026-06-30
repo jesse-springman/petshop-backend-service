@@ -6,11 +6,13 @@ import { useUser } from "@/context/UserContext";
 import { Commerce } from "@/types/commerce";
 import Button from "../components/Button";
 import { patchAppointments } from "../services/agenda/patch";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { deleteAppointment } from "../services/agenda/delete";
 import toast from "react-hot-toast";
-import ConfirmModal from "./confimModal";
+import ConfirmModal from "../components/confimModal";
 import { commerceThemes } from "@/utils/Commercetheme";
+import { getServices } from "@/services/servicesBusiness/get-service";
+import { createTransacao } from "@/services/financeiro/post";
 
 interface Props {
   date: Date;
@@ -29,6 +31,7 @@ export function DetailsAppointmentModal({
 }: Props) {
   const [editngId, setEditingId] = useState<string | null>(null);
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [pendingComplete, setPendingComplete] = useState<AppointmentType | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<{
     id: string;
     customerName: string;
@@ -38,10 +41,58 @@ export function DetailsAppointmentModal({
   const currentCommerce = (commerce as Commerce) ?? "PETSHOP";
   const theme = commerceThemes[currentCommerce];
 
-  async function handleStatusChange(idAppointment: string, status: AppointmentStatus) {
+  useEffect(() => {
+    setEditingId(null);
+  }, [appointments]);
+
+  async function handleStatusChange(
+    idAppointment: string,
+    status: AppointmentStatus,
+    appointment: AppointmentType,
+  ) {
+    if (status === "COMPLETED") {
+      setPendingComplete(appointment);
+      return;
+    }
+    await executeStatusChange(idAppointment, status, appointment);
+  }
+
+  async function executeStatusChange(
+    idAppointment: string,
+    status: AppointmentStatus,
+    appointment: AppointmentType,
+  ) {
+    setLoadingId(idAppointment);
     try {
       const response = await patchAppointments(idAppointment, status);
       if (response.ok) {
+        if (status === "COMPLETED") {
+          try {
+            const services = await getServices();
+            const servico = services.find((s) => s.name === appointment.notes);
+            await createTransacao({
+              type: "INCOME",
+              amount: Number(servico?.price ?? 0),
+              category: appointment.notes ?? "Atendimento",
+              description: `Atendimento — ${appointment.customer.name}`,
+              appointmentsId: idAppointment,
+            });
+            if (!servico) {
+              toast("Transação criada sem valor — serviço não encontrado.", { icon: "⚠️" });
+            } else {
+              toast.success(
+                `Receita de ${Number(servico.price).toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })} registrada!`,
+              );
+            }
+          } catch (err: any) {
+            if (!err.message?.includes("Já existe uma transação")) {
+              toast.error("Agendamento concluído, mas falha ao registrar receita.");
+            }
+          }
+        }
         await onStatusChange();
         setEditingId(null);
       }
@@ -115,12 +166,17 @@ export function DetailsAppointmentModal({
         />
 
         <div className="relative z-10 w-[560px] max-h-[80vh] flex flex-col rounded-2xl border border-zinc-700/60 bg-zinc-900/95 shadow-2xl shadow-black/60 backdrop-blur-sm font-sans">
-          <div className="absolute top-0 left-8 right-8 h-[1px] bg-gradient-to-r from-transparent via-amber-500/60 to-transparent" />
+          <div
+            className="absolute top-0 left-8 right-8 h-[1px]"
+            style={{
+              background: `linear-gradient(to right, transparent, ${theme.primaryHex}60, transparent)`,
+            }}
+          />
 
           <div className="p-8 pb-4">
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 w-7 h-7 flex items-center justify-center rounded-lg text-zinc-600 hover:text-zinc-200 hover:bg-zinc-800 transition-all text-sm"
+              className="cursor-pointer absolute top-4 right-4 w-7 h-7 flex items-center justify-center rounded-lg text-zinc-600 hover:text-zinc-200 hover:bg-zinc-800 transition-all text-sm"
             >
               ✕
             </button>
@@ -155,29 +211,50 @@ export function DetailsAppointmentModal({
                 const status = statusConfig[a.status];
                 const isEditing = editngId === a.id;
                 const isLoading = loadingId === a.id;
+                const isCompleted = a.status === "COMPLETED";
 
                 return (
                   <div
                     key={a.id}
-                    className="group rounded-xl border border-zinc-800 bg-zinc-800/40 transition-all duration-200 p-4"
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.borderColor = `${theme.primaryHex}30`)
-                    }
-                    onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgb(39,39,42)")}
+                    className="rounded-xl border border-zinc-800 bg-zinc-800/40 transition-all duration-200 p-4"
+                    style={{
+                      opacity: isCompleted ? 0.55 : 1,
+                      pointerEvents: isCompleted ? "none" : "auto",
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isCompleted) e.currentTarget.style.borderColor = `${theme.primaryHex}30`;
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isCompleted) e.currentTarget.style.borderColor = "rgb(39,39,42)";
+                    }}
                   >
+                    {/* Badge de concluído */}
+                    {isCompleted && (
+                      <div className="flex items-center gap-1.5 mb-3 pb-2 border-b border-zinc-700/40">
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
+                        <span className="text-xs font-semibold text-green-400 line-through opacity-70">
+                          Atendimento concluído — receita registrada
+                        </span>
+                        <span className="text-green-400 text-xs">✓</span>
+                      </div>
+                    )}
+
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
                         <span className="text-lg">{getAppointmentIcon()}</span>
                         {getAppointmentTitle(a)}
-                        <span
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setConfirmDelete({ id: a.id, customerName: a.customer.name });
-                          }}
-                          className="cursor-pointer text-lg"
-                        >
-                          🗑️
-                        </span>
+                        {/* Lixeira só se não concluído */}
+                        {!isCompleted && (
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setConfirmDelete({ id: a.id, customerName: a.customer.name });
+                            }}
+                            className="cursor-pointer text-lg"
+                          >
+                            🗑️
+                          </span>
+                        )}
                       </div>
                       <span
                         className="text-sm font-mono font-semibold rounded-lg px-2.5 py-1"
@@ -218,7 +295,7 @@ export function DetailsAppointmentModal({
                                 <button
                                   key={key}
                                   disabled={isLoading}
-                                  onClick={() => handleStatusChange(a.id, key)}
+                                  onClick={() => handleStatusChange(a.id, key, a)}
                                   className={`cursor-pointer flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-full border transition-all duration-150 ${
                                     a.status === key
                                       ? `${opt.bg} ${opt.border} ${opt.color} opacity-50 cursor-default`
@@ -232,7 +309,7 @@ export function DetailsAppointmentModal({
                             })}
                             <button
                               onClick={() => setEditingId(null)}
-                              className="text-xs text-zinc-600 hover:text-zinc-400 mt-1 text-left transition-colors"
+                              className="text-xs text-zinc-600 hover:text-zinc-400 mt-1 text-left transition-colors cursor-pointer"
                             >
                               cancelar
                             </button>
@@ -262,6 +339,22 @@ export function DetailsAppointmentModal({
         </div>
       </div>
 
+      {/* Modal de confirmação de conclusão */}
+      <ConfirmModal
+        isOpen={!!pendingComplete}
+        onClose={() => setPendingComplete(null)}
+        onConfirm={async () => {
+          if (!pendingComplete) return;
+          await executeStatusChange(pendingComplete.id, "COMPLETED", pendingComplete);
+          setPendingComplete(null);
+        }}
+        title="Confirmar conclusão"
+        message={`O atendimento de ${pendingComplete?.customer.name} será marcado como concluído e a receita será registrada automaticamente. Essa ação não pode ser desfeita.`}
+        theme={theme}
+        confirmLabel="Concluir atendimento"
+      />
+
+      {/* Modal de confirmação de exclusão */}
       <ConfirmModal
         isOpen={!!confirmDelete}
         onClose={() => setConfirmDelete(null)}
@@ -272,6 +365,9 @@ export function DetailsAppointmentModal({
         }}
         title="Confirmar exclusão"
         message={`Tem certeza que deseja excluir o agendamento de ${confirmDelete?.customerName}? Essa ação não pode ser desfeita.`}
+        theme={theme}
+        confirmLabel="Excluir"
+        confirmDanger={true}
       />
     </>
   );
